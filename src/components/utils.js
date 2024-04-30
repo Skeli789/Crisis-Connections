@@ -1,0 +1,59 @@
+/**
+ * A helper function that takes a date string and returns date display formatted string
+ *
+ * @param {string} date - the date to convert
+ * @returns {string} XX/XX/XXXX YY:YY AM/PM
+ * 
+**/
+export const formatDate = (date) => {
+    date = new Date(date);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const time = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    
+    return `${month}/${day}/${year} ${time}`;
+}
+
+/**
+ * A helper function that takes a number string and returns phone display string
+ *
+ * @param {string} label - the phone number to convert.
+ * @returns {string} (XXX) XXX - XXXX
+ * 
+**/
+export const formatPhoneNumber = (number) => {
+    // Filter only numbers from the input
+    const numsOnly = ('' + number).replace(/\D/g, '');
+    
+    // Check if the input is of correct length
+    const match = numsOnly.match(/^(\d{3})(\d{3})(\d{4})$/);
+
+    return match ? `(${match[1]}) ${match[2]} - ${match[3]}` : number;
+};
+
+/**
+ * A helper function that takes the data's keyName and returns the user friendly label name to display.
+ *
+ * @param {string} label - the keyname to convert.
+ * @returns {string} The user friendly label name.
+ * 
+**/
+const labelMap = {
+    aka: 'Also Known As (AKA)'
+}
+
+const toSentenceCase = (string) => {
+    const result = string.replace(/([A-Z])/g, " $1");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+export const getLabelName = (label, fromMap = false) => {
+    return fromMap ? labelMap[label] : toSentenceCase(label);
+}
+
+/***********************************************************/
+
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName };
+
+export default helperFunctions;
