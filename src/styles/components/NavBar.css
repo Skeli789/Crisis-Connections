@@ -1,0 +1,32 @@
+nav {
+    box-shadow: var(--box-shadow);
+}
+
+nav .logos {
+    display: flex;
+    align-items: center;
+    padding: 12px 40px;
+    background: var(--gradient-bkg);
+}
+
+.logos-main {
+    height: 25px;
+    margin-right: 36px;
+}
+
+.logos-secondary {
+    height: 15px;
+    margin-right: 16px;
+}
+
+nav .main {
+    display: flex;
+    align-items: center;
+    margin-right: 36px;
+    padding: 12px 40px;
+}
+
+nav h1 {
+    flex: 1;
+}
+

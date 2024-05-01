@@ -6,6 +6,7 @@ export default function CardList({callers = []}) {
         const lastCalled = formatDate(caller.callHistory[0].dateTime);
         const name = caller.firstName || caller.lastName ? `${caller.firstName} ${caller.lastName}` : '';
         const services = [...new Set(caller.callHistory.map(log => log.service))];
+        const isArchived = caller.archived.isArchived;
 
         return (
             <li key={caller.id}>
@@ -14,6 +15,7 @@ export default function CardList({callers = []}) {
                         phoneNumbers = {caller.phoneNumbers}
                         lastCalled = {lastCalled}
                         services = {services}
+                        isArchived = {isArchived}
                 />
             </li>
         );

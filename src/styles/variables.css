@@ -6,6 +6,9 @@
     --color-blue: #01579B;
     --color-red: #EF4740;
 
+    --gradient-bkg: linear-gradient(45deg, rgba(92, 68, 135, 0.05) 0%, rgba(72, 136, 175, 0.05) 35.59%, rgba(82, 182, 160, 0.05) 100%);
+    --box-shadow: 0 6px 29px 0 #0000000a;
+
     --font-body-size: 16px;
     --font-body-weight: 500;
     --font-body-weight-bold: 700;
@@ -21,6 +24,12 @@
 .font-body {
     font-size: var(--font-body-size);
     font-weight: var(--font-body-weight);
+}
+
+.font-body-italic {
+    font-size: var(--font-body-size);
+    font-weight: var(--font-body-weight);
+    font-style: italic;
 }
 
 .font-body-bold {

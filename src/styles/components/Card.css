@@ -1,4 +1,7 @@
 .card-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
     margin: 0;
     padding: 0;
 }
@@ -11,6 +14,18 @@
     border: 1px solid var(--color-grey-light);
     padding: 20px;
     border-radius: 5px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card .services dd {
+    display: inline-block;
+    margin: 8px 12px 0 0;
+}
+
+.card-data {
+    flex: 1 1 auto;
 }
 
 .card-data_detail {
@@ -19,4 +34,9 @@
 
 .card-data dd {
     margin: 0;
+}
+
+.card-footer {
+    text-align: center;
+    margin-top: 24px;
 }

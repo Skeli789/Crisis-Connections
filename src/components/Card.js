@@ -6,25 +6,34 @@ export default function Card({
     aka = '-',
     phoneNumbers = [], 
     lastCalled = '', 
-    services = []
+    services = [],
+    isArchived = false
 }) {
-    const phoneList = phoneNumbers.map(number => {
+
+    name = name ? name.trim() : 'Anonymous';
+    aka = aka ? aka : '-';
+
+    phoneNumbers = phoneNumbers.map(number => {
         return <dd key={number} className='font-body'>{formatPhoneNumber(number)}</dd>;
     });
 
-    const serviceList = services.map(hotline => {
-        return <dd key={hotline} className='font-body'>{getLabelName(hotline)}</dd>;
+    services = services.map(hotline => {
+        return (
+            <dd key={hotline} className='font-body'>
+                <img className="card-data_services-logo" src={`./images/logo_${hotline}-icon.svg`} alt={getLabelName(hotline)} title={getLabelName(hotline)}/>
+            </dd>
+        );
     });
-
-    const displayName = name ? name.trim() : 'Anonymous';
-    aka = aka ? aka : '-';
 
     return (
         <div className='card'>
             <dl className='card-data'>
                 <div className='card-data_detail name'>
                     <dt className='font-label'>Name</dt>
-                    <dd className='font-body-bold'>{displayName}</dd>
+                    <dd className='font-body-bold'>
+                        {name}
+                        {isArchived && <span className='font-body-italic'> (archived)</span>}
+                    </dd>
                 </div>
                 <div className='card-data_detail aka'>
                     <dt className='font-label'>{getLabelName('aka', true)}</dt>
@@ -32,7 +41,7 @@ export default function Card({
                 </div>
                 <div className='card-data_detail phone-numbers'>
                     <dt className='font-label'>Phone Number(s)</dt>
-                    {phoneList}
+                    {phoneNumbers}
                 </div>
                 <div className='card-data_detail last-called'>
                     <dt className='font-label'>{getLabelName('lastCalled')}</dt>
@@ -40,12 +49,14 @@ export default function Card({
                 </div>
                 <div className='card-data_detail services'>
                     <dt className='font-label'>Services Contacted</dt>
-                    {serviceList}
+                    {services}
                 </div>
             </dl>
-            <Button variant="contained" disableElevation>
-                View Details
-            </Button>
+            <div className="card-footer">
+                <Button variant="contained" disableElevation>
+                    View Details
+                </Button>
+            </div>
         </div>
     );
 }
