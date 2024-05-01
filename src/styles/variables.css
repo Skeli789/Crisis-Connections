@@ -1,0 +1,29 @@
+:root {
+    --color-black: #000;
+    --color-grey: #666666;
+    --color-grey-light: #E0E0E0;
+    --color-grey-x-light: #F5F5F5;
+    --color-blue: #01579B;
+    --color-red: #EF4740;
+
+    --font-body-size: 16px;
+    --font-body-weight: 500;
+    --font-body-weight-bold: 700;
+}
+
+/* Typography */
+.font-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-grey);
+}
+
+.font-body {
+    font-size: var(--font-body-size);
+    font-weight: var(--font-body-weight);
+}
+
+.font-body-bold {
+    font-size: var(--font-body-size);
+    font-weight: var(--font-body-weight-bold);
+}

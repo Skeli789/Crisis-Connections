@@ -1,9 +1,12 @@
+import Button from '@mui/material/Button';
+
 function LogOut() {
     const btn = (
-        <button>
-          Log out
-        </button>
+        <Button variant="contained" disableElevation>
+            Log out
+        </Button>
     );
+    
     const isSignedIn = true; // Replace with SSO info
 
     return isSignedIn ? btn : null;
@@ -11,9 +14,9 @@ function LogOut() {
   
 export default function NavBar() {
     return (
-        <div>
+        <nav>
             <h1>Frequent Callers</h1>
             <LogOut />
-        </div>
+        </nav>
     );
 }

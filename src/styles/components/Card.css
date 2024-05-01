@@ -1,0 +1,22 @@
+.card-list {
+    margin: 0;
+    padding: 0;
+}
+
+.card-list li {
+    list-style: none;
+}
+
+.card-list .card {
+    border: 1px solid var(--color-grey-light);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.card-data_detail {
+    margin-bottom: 24px;
+}
+
+.card-data dd {
+    margin: 0;
+}

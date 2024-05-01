@@ -11,6 +11,7 @@ import Home from "./Home";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
+import './styles/components.css';
 
 function App() {
     return (
