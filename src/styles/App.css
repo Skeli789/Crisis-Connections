@@ -1,4 +1,13 @@
-.app
-{
+.app {
+    * {
+        font-family: "Montserrat", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+    }
+}
 
+.card-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
 }

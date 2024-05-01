@@ -3,6 +3,8 @@
 */
 
 import { useEffect, useState } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 import CardList from "./components/CardList";
 import NavBar from "./components/NavBar";
@@ -13,28 +15,42 @@ const fakeData = `https://api.json-generator.com/templates/5B2bJ0QIu25x/data?acc
 
 export default function Home() {
     const [callers, setCallers] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         fetch(fakeData, {
           method: "GET"
-        }).then((response) => response.json())
-          .then((data) => {
+        }).then((response) => response.json()).then((data) => {
             const callerList = data.map(caller => {
-                return ( {
-                    callHistory: caller.callHistory.sort((a,b) => b.dateTime - a.dateTime),
+                return ({
+                    callHistory: caller.callHistory.sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)),
                     ...caller
                 })
-            }).sort((a,b) => { return b.callHistory[0].dateTime - a.callHistory[0].dateTime });
+            }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
 
             setCallers(callerList);
+            setIsLoaded(true);
+        }).catch((error) => console.log(error));
+    }, []);
 
-          }).catch((error) => console.log(error));
-      }, []);
+    function Content() {
+        if (isLoaded) {
+            return (
+                <CardList callers={callers}/>
+            )
+        } else {
+            return (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '500px' }}>
+                    <CircularProgress />
+                </Box>
+            )
+        }
+      }
 
     return (
         <div className="home">
             <NavBar/>
-            <CardList callers={callers}/>
+            <Content isLoaded/>
         </div>
     );
 }
