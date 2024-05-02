@@ -4,11 +4,12 @@
 
 import { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-// import ToggleButton from '@mui/material/ToggleButton';
-// import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+
 
 import CardList from "./components/CardList";
 import NavBar from "./components/NavBar";
@@ -30,8 +31,7 @@ export default function Home() {
     const [callers, setCallers] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [listType, setListType] = useState(0);
-    const [activeCallers, setActiveCallers] = useState([]);
-    const [archivedCallers, setArchivedCallers] = useState([]);
+    const [allCallers, setAllCallers] = useState([]);
 
     useEffect(() => {
         fetch(fakeData, {
@@ -45,11 +45,13 @@ export default function Home() {
                 })
             }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
             const activeCallers = callerList.filter(caller => !caller.archived.isArchived);
-            const archivedCallers = callerList.filter(caller => caller.archived.isArchived)
-            setActiveCallers(activeCallers);
-            setArchivedCallers(archivedCallers);
+            const archivedCallers = callerList.filter(caller => caller.archived.isArchived);
+            // setActiveCallers(activeCallers);
+            // setArchivedCallers(archivedCallers);
+            setAllCallers([activeCallers, archivedCallers]);
             setCallers(activeCallers);
             setIsLoaded(true);
+            // setOptions([getOptions(activeCallers), getOptions(archivedCallers)]);
         }).catch((error) => console.log(error));
     }, []);
 
@@ -69,13 +71,32 @@ export default function Home() {
 
     const handleChange = (event, newType) => {
         setListType(newType);
-
-        if (newType === 0) {
-            setCallers(activeCallers);
-        } else {
-            setCallers(archivedCallers);
-        }
+        setCallers(allCallers[newType]);
     };
+
+    const handleSearch = (input) => {
+        const searchValue = input.target.value.trim().toLowerCase();
+        let list = allCallers[listType];
+
+        // Todo: clean this up or move to utils or something...
+        if (input) {
+            list = allCallers[listType].filter(card => {
+                const callerName = `${card.firstName} ${card.lastName}`.trim().toLowerCase();
+                const isNameMatch = callerName?.includes(searchValue);
+                const searchNums = searchValue.match(/\d/g);
+                const searchValueNum = searchNums ? (searchValue.includes('+1') && searchNums.length > 10 ? searchValue.replace('+1', '') : searchValue).replace(/\D/g,'') : null;
+            
+                const isPhoneMatch = card.phoneNumbers.some(number => {
+                    return searchNums ? number.toString().includes(searchValueNum) : false;
+                });
+                const isAkaMatch = card.aka.some(detail => detail.toLowerCase().includes(searchValue));
+    
+                return isNameMatch || isPhoneMatch || isAkaMatch;
+            })
+        }
+
+        setCallers(list);
+    }
 
     return (
         <>
@@ -85,6 +106,20 @@ export default function Home() {
                     <Tab label="Active" {...a11yProps(0)} />
                     <Tab label="Archive" {...a11yProps(1)} />
                 </Tabs>
+                <div className="home-search">
+                    <TextField
+                        id="input-with-icon-textfield"
+                        label="Search by name OR phone number"
+                        onChange={handleSearch}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <img className="card-data_services-logo" src={`./images/icon-search.svg`} alt='washingtonRecoveryHelpLine' title=''/>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </div>
                 <Content isLoaded/>
             </div>
         </>

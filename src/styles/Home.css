@@ -2,6 +2,6 @@
     padding: 40px;
 }
 
-.home-tabs {
-    margin-bottom: 32px
+.home-tabs, .home-search {
+    margin-bottom: 32px;
 }
