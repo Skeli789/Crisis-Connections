@@ -116,7 +116,7 @@ export default function Home() {
                                 <InputAdornment position="start">
                                     <img className="card-data_services-logo" src={`./images/icon-search.svg`} alt='washingtonRecoveryHelpLine' title=''/>
                                 </InputAdornment>
-                            ),
+                            )
                         }}
                     />
                 </div>
