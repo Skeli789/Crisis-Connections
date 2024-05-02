@@ -4,6 +4,9 @@
 
 .home-search {
     max-width: 400px;
+}
+
+.home-search, .home-add {
     margin-top: 32px;
 }
 

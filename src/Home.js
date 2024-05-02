@@ -48,11 +48,16 @@ export default function Home() {
             }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
             const activeCallers = callerList.filter(caller => !caller.archived.isArchived);
             const archivedCallers = callerList.filter(caller => caller.archived.isArchived);
+
             setAllCallers([activeCallers, archivedCallers]);
             setCallers(activeCallers);
             setIsLoaded(true);
         }).catch((error) => console.log(error));
     }, []);
+
+    function addNewCaller() {
+        console.log('add new caller');
+    }
 
     function Content() {
         if (isLoaded) {
@@ -66,8 +71,8 @@ export default function Home() {
                     ) : (
                        <div className="home-emptystate">
                             <p>{allCallers[listType].length === 0 ? 'There are no active caller records.' : 'No results matching your search.'}</p>
-                            <Button variant="contained" disableElevation onClick={handleTabChange}>
-                                {`Search ${listType === 0 ? 'Archived' : 'Active'} Callers`}
+                            <Button variant="text" disableElevation onClick={handleTabChange}>
+                                {`Search ${isType.active ? 'Archived' : 'Active'} Callers`}
                             </Button>
                        </div>
                     )}
@@ -82,7 +87,7 @@ export default function Home() {
         }
     }
 
-    const handleTabChange = (event, newType = listType === 1 ? 0 : 1) => {
+    const handleTabChange = (event, newType = isType.active ? 1 : 0) => {
         setListType(newType);
         setCallers(allCallers[newType]);
 
@@ -117,6 +122,11 @@ export default function Home() {
         setSearchQuery(searchValue);
     }
 
+    const isType = {
+        active: listType === 0,
+        archived: listType === 1
+    };
+
     return (
         <>
             <NavBar/>
@@ -125,6 +135,14 @@ export default function Home() {
                     <Tab label="Active" {...a11yProps(0)} />
                     <Tab label="Archive" {...a11yProps(1)} />
                 </Tabs>
+                {isType.active && (
+                    <div className="home-add">
+                        <Button className="button-icon" variant="text" disableElevation onClick={addNewCaller}>
+                            <span aria-hide="true" class="material-symbols-outlined">add_circle</span>
+                            <span className="font-body-bold">add new caller</span>
+                        </Button>
+                    </div>
+                )}
                 <div className="home-search">
                     <TextField
                         aria-controls="content"

@@ -3,7 +3,7 @@ import { getLabelName } from "./utils";
 
 function LogOut() {
     const btn = (
-        <Button variant="contained" disableElevation>
+        <Button variant="text" disableElevation>
             Log out
         </Button>
     );

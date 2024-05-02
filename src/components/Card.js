@@ -53,8 +53,9 @@ export default function Card({
                 </div>
             </dl>
             <div className="card-footer">
-                <Button variant="contained" disableElevation>
-                    View Details
+                <Button variant="text" disableElevation>
+                    <span className="font-body-bold">View Details</span>
+                    <span className="a11y-text">for {name}</span>
                 </Button>
             </div>
         </div>
