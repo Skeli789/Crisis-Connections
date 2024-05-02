@@ -7,6 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -32,6 +33,7 @@ export default function Home() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [listType, setListType] = useState(0);
     const [allCallers, setAllCallers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         fetch(fakeData, {
@@ -46,19 +48,30 @@ export default function Home() {
             }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
             const activeCallers = callerList.filter(caller => !caller.archived.isArchived);
             const archivedCallers = callerList.filter(caller => caller.archived.isArchived);
-            // setActiveCallers(activeCallers);
-            // setArchivedCallers(archivedCallers);
             setAllCallers([activeCallers, archivedCallers]);
             setCallers(activeCallers);
             setIsLoaded(true);
-            // setOptions([getOptions(activeCallers), getOptions(archivedCallers)]);
         }).catch((error) => console.log(error));
     }, []);
 
     function Content() {
         if (isLoaded) {
             return (
-                <CardList callers={callers}/>
+                <>
+                    {callers.length > 0 ? (
+                        <>
+                            <p data-show={callers.length < allCallers[listType].length} className="home-search_results font-body-italic">Showing {callers.length} of {allCallers[listType].length}</p>
+                            <CardList callers={callers}/>
+                        </>
+                    ) : (
+                       <div className="home-emptystate">
+                            <p>{allCallers[listType].length === 0 ? 'There are no active caller records.' : 'No results matching your search.'}</p>
+                            <Button variant="contained" disableElevation onClick={handleTabChange}>
+                                {`Search ${listType === 0 ? 'Archived' : 'Active'} Callers`}
+                            </Button>
+                       </div>
+                    )}
+                </>
             )
         } else {
             return (
@@ -69,18 +82,23 @@ export default function Home() {
         }
     }
 
-    const handleChange = (event, newType) => {
+    const handleTabChange = (event, newType = listType === 1 ? 0 : 1) => {
         setListType(newType);
         setCallers(allCallers[newType]);
+
+        if (searchQuery.length > 0) {
+            handleSearch(searchQuery, newType);
+        }
     };
 
-    const handleSearch = (input) => {
-        const searchValue = input.target.value.trim().toLowerCase();
-        let list = allCallers[listType];
+    const handleSearch = (input, type = undefined) => {
+        const inputText = input.target ? input.target.value : input;
+        const searchValue = inputText.trim().toLowerCase();
+        let list = allCallers[type === undefined ? listType : type];
 
         // Todo: clean this up or move to utils or something...
         if (input) {
-            list = allCallers[listType].filter(card => {
+            list = list.filter(card => {
                 const callerName = `${card.firstName} ${card.lastName}`.trim().toLowerCase();
                 const isNameMatch = callerName?.includes(searchValue);
                 const searchNums = searchValue.match(/\d/g);
@@ -96,20 +114,23 @@ export default function Home() {
         }
 
         setCallers(list);
+        setSearchQuery(searchValue);
     }
 
     return (
         <>
             <NavBar/>
             <div className="home">
-                <Tabs value={listType} onChange={handleChange} aria-label="Change caller list type" className="home-tabs">
+                <Tabs value={listType} onChange={handleTabChange} aria-label="Change caller list type" className="home-tabs">
                     <Tab label="Active" {...a11yProps(0)} />
                     <Tab label="Archive" {...a11yProps(1)} />
                 </Tabs>
                 <div className="home-search">
                     <TextField
+                        aria-controls="content"
                         id="input-with-icon-textfield"
                         label="Search by name OR phone number"
+                        fullWidth
                         onChange={handleSearch}
                         InputProps={{
                             startAdornment: (
@@ -120,7 +141,7 @@ export default function Home() {
                         }}
                     />
                 </div>
-                <Content isLoaded/>
+                <Content aria-live="polite" id="content" isLoaded/>
             </div>
         </>
     );

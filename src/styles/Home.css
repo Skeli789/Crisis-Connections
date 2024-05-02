@@ -2,6 +2,34 @@
     padding: 40px;
 }
 
-.home-tabs, .home-search {
+.home-search {
+    max-width: 400px;
+    margin-top: 32px;
+}
+
+.home-search_results {
+    margin: 5px 10px;
+    color: var(--color-grey);
+}
+
+.home-search_results[data-show="false"] {
+    visibility: hidden;
+}
+
+.MuiOutlinedInput-notchedOutline > legend > span {
+    width: 200px; /* override because line wasn't working correctly */
+}
+
+.home-emptystate {
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: var(--gradient-bkg);
+    margin-top: 32px;
+}
+
+.home-emptystate > p {
     margin-bottom: 32px;
 }
