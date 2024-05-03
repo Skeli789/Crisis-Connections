@@ -26,7 +26,7 @@ const hotlines = [
 
 const logos = hotlines.map(hotline => {
     return (
-        <img key={hotline} className={`logos-secondary ${hotline}`} src={`./images/logo_${hotline}.svg`} alt={getLabelName(hotline)}/>
+        <img key={hotline} className={`logos-secondary ${hotline}`} src={`${process.env.PUBLIC_URL}/images/logo_${hotline}.svg`} alt={getLabelName(hotline)}/>
     )
 });
 
@@ -36,7 +36,7 @@ export default function NavBar() {
     return (
         <nav>
             <div className="logos">
-                <img className="logos-main" alt="Crisis Connections" src='./images/logo_crisisConnections.svg'/>
+                <img className="logos-main" alt="Crisis Connections" src={`${process.env.PUBLIC_URL}/images/logo_crisisConnections.svg`}/>
                 {logos}
             </div>
             <section className="main">

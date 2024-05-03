@@ -17,6 +17,9 @@
     --font-label-weight: 400;
     --font-heading-size: 24px;
     --font-heading-weight: 700;
+    --font-page-heading-size: 36px;
+    --font-page-heading-weight: 700;
+    --font-page-heading-light-weight: 500;
 }
 
 /* Typography */
@@ -31,12 +34,6 @@
     font-weight: var(--font-body-weight);
 }
 
-.font-body-italic {
-    font-size: var(--font-body-size);
-    font-weight: var(--font-body-weight);
-    font-style: italic;
-}
-
 .font-body-bold {
     font-size: var(--font-body-size);
     font-weight: var(--font-body-weight-bold);
@@ -45,6 +42,20 @@
 .font-heading {
     font-size: var(--font-heading-size);
     font-weight: var(--font-heading-weight);
+}
+
+.font-page-heading {
+    font-size: var(--font-page-heading-size);
+    font-weight: var(--font-page-heading-weight);
+}
+
+.font-page-heading-light {
+    font-size: var(--font-page-heading-size);
+    font-weight: var(--font-page-heading-light-weight);
+}
+
+.italic {
+    font-style: italic;
 }
 
 .button-icon .material-symbols-outlined {

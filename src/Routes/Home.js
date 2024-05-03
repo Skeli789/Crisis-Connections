@@ -2,7 +2,7 @@
  * Home Page Content
 */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tabs from '@mui/material/Tabs';
@@ -31,7 +31,7 @@ export default function Home() {
             [searchQuery, setSearchQuery] = useState(''),
             [filteredCallers, setFilteredCallers] = useState(null);
     // API Variables
-    const   activeCallers = useQuery({queryKey: ['activeCallers'], queryFn: getActiveCallers}),
+    const   activeCallers = useQuery({queryKey: ['active'], queryFn: getActiveCallers}),
             archivedCallers = useQuery({queryKey: ['archive'], queryFn: getArchivedCallers}),
             initialCallers = activeCallers.isSuccess ? sortCallers(activeCallers.data) : [],
             allCallers = [
@@ -106,7 +106,7 @@ export default function Home() {
                 <>
                     {callers.length > 0 ? (
                         <>
-                            <p data-show={callers.length < allCallers[listType].length} className="home-search_results font-body-italic">Showing {callers.length} of {allCallers[listType].length}</p>
+                            <p data-show={callers.length < allCallers[listType].length} className="home-search_results font-body italic">Showing {callers.length} of {allCallers[listType].length}</p>
                             <CardList callers={callers}/>
                         </>
                     ) : (
@@ -147,7 +147,7 @@ export default function Home() {
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
-                                <img className="card-data_services-logo" src={`./images/icon-search.svg`} alt='washingtonRecoveryHelpLine' title=''/>
+                                <img className="card-data_services-logo" src={`${process.env.PUBLIC_URL}/images/icon-search.svg`} alt='washingtonRecoveryHelpLine' title=''/>
                             </InputAdornment>
                         )
                     }}

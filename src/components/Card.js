@@ -1,7 +1,10 @@
+import React from "react";
 import { formatPhoneNumber, getLabelName } from "./utils";
 import Button from '@mui/material/Button';
+// import { Link } from "react-router-dom";
   
 export default function Card({
+    id,
     name = 'Anonymous',
     aka = '-',
     phoneNumbers = [], 
@@ -9,8 +12,6 @@ export default function Card({
     services = [],
     isArchived = false
 }) {
-
-    name = name ? name.trim() : 'Anonymous';
     aka = aka ? aka : '-';
 
     phoneNumbers = phoneNumbers.map(number => {
@@ -20,7 +21,7 @@ export default function Card({
     services = services.map(hotline => {
         return (
             <dd key={hotline} className='font-body'>
-                <img className="card-data_services-logo" src={`./images/logo_${hotline}-icon.svg`} alt={getLabelName(hotline)} title={getLabelName(hotline)}/>
+                <img className="card-data_services-logo" src={`${process.env.PUBLIC_URL}/images/logo_${hotline}-icon.svg`} alt={getLabelName(hotline)} title={getLabelName(hotline)}/>
             </dd>
         );
     });
@@ -32,7 +33,7 @@ export default function Card({
                     <dt className='font-label'>Name</dt>
                     <dd className='font-body-bold'>
                         {name}
-                        {isArchived && <span className='font-body-italic'> (archived)</span>}
+                        {isArchived && <span className='font-body italic'> (archived)</span>}
                     </dd>
                 </div>
                 <div className='card-data_detail aka'>
@@ -53,7 +54,7 @@ export default function Card({
                 </div>
             </dl>
             <div className="card-footer">
-                <Button variant="text" disableElevation>
+                <Button variant="text" disableElevation href={`./${isArchived ? 'archive' : 'caller'}/${id}`}>
                     <span className="font-body-bold">View Details</span>
                     <span className="a11y-text">for {name}</span>
                 </Button>

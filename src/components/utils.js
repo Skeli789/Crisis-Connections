@@ -55,6 +55,18 @@ export const getLabelName = (label, fromMap = false) => {
 /**
  * A helper function that takes the caller list and returns sorted version based on call history, latest first.
  *
+ * @param {first, last} string - the first and last name
+ * @returns {string} The combined name or "Anonymous" if empty value for both.
+ * 
+**/
+export function getName(first, last) {
+    const name = `${first} ${last}`.trim();
+    return name ? name: 'Anonymous';
+}
+
+/**
+ * A helper function that takes the caller list and returns sorted version based on call history, latest first.
+ *
  * @param {array} list - the caller list to convert.
  * @returns {array} The sorted caller list
  * 
@@ -70,6 +82,6 @@ export function sortCallers(list = []) {
 
 /***********************************************************/
 
-const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, sortCallers };
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, sortCallers };
 
 export default helperFunctions;

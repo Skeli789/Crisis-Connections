@@ -9,8 +9,6 @@ import {
     RouterProvider,
     Outlet,
 } from "react-router-dom";
-// import { useQuery } from '@tanstack/react-query';
-// import { getActiveCallers, getArchivedCallers } from './api.js';
 
 // This CSS must go above the module imports!
 
@@ -48,12 +46,20 @@ const router = createBrowserRouter([
       element: <AppLayout />,
       children: [
         {
-          path: "/",
-          element: <Home />,
+            path: "/",
+            element: <Home />,
         },
         {
-          path: "/caller",
-          element: <Caller /> 
+            path: "/caller",
+            element: <Home /> 
+        },
+        {
+            path: "caller/:caller",
+            element: <Caller />
+        },
+        {
+            path: "archive/:caller",
+            element: <Caller />
         }
       ]
     },
