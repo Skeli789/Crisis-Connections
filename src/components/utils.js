@@ -52,8 +52,24 @@ export const getLabelName = (label, fromMap = false) => {
     return fromMap ? labelMap[label] : toSentenceCase(label);
 }
 
+/**
+ * A helper function that takes the caller list and returns sorted version based on call history, latest first.
+ *
+ * @param {array} list - the caller list to convert.
+ * @returns {array} The sorted caller list
+ * 
+**/
+export function sortCallers(list = []) {
+    return list.map(caller => {
+        return ({
+            callHistory: caller.callHistory.sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)),
+            ...caller
+        })
+    }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
+}
+
 /***********************************************************/
 
-const helperFunctions = { formatDate, formatPhoneNumber, getLabelName };
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, sortCallers };
 
 export default helperFunctions;

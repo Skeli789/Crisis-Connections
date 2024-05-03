@@ -26,7 +26,15 @@ nav .main {
     padding: 12px 40px;
 }
 
-nav h1 {
+.nav-heading {
     flex: 1;
+}
+
+.nav-heading a {
+    text-decoration: none;
+}
+
+.nav-heading_text {
+    color: var(--color-grey-dark);
 }
 

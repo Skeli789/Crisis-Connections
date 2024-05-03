@@ -1,10 +1,11 @@
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 import { getLabelName } from "./utils";
 
 function LogOut() {
     const btn = (
         <Button variant="text" disableElevation>
-            Log out
+            <span className="font-body-bold">Log out</span>
         </Button>
     );
     
@@ -39,7 +40,11 @@ export default function NavBar() {
                 {logos}
             </div>
             <section className="main">
-                <h1>Frequent Callers</h1>
+                <div className="nav-heading">
+                    <Link to="/">
+                        <span className="nav-heading_text font-heading">Frequent Callers</span>
+                    </Link>
+                </div>
                 <LogOut />
             </section>
         </nav>

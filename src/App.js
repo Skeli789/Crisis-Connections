@@ -1,22 +1,30 @@
 /**
  * The main page of the site.
- */
+*/
 
 import React from "react";
 import { createTheme, alpha, getContrastRatio, ThemeProvider } from '@mui/material/styles';
+import {
+    createBrowserRouter,
+    RouterProvider,
+    Outlet,
+} from "react-router-dom";
+// import { useQuery } from '@tanstack/react-query';
+// import { getActiveCallers, getArchivedCallers } from './api.js';
 
 // This CSS must go above the module imports!
-// import "bootstrap/dist/css/bootstrap.min.css";
 
-import Home from "./Home";
+import NavBar from "./components/NavBar";
+import Home from "./Routes/Home";
+import Caller from "./Routes/Caller";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
 import './styles/components.css';
 
+// Themeing for Material UI
 const blueBase = '#005291';
 const blueMain = alpha(blueBase, 0.9);
-
 const theme = createTheme({
     palette: {
       primary: {
@@ -28,13 +36,32 @@ const theme = createTheme({
     },
 });
 
+const AppLayout = () => (
+    <ThemeProvider theme={theme}>
+        <NavBar />
+        <Outlet />
+    </ThemeProvider>
+);
+
+const router = createBrowserRouter([
+    {
+      element: <AppLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/caller",
+          element: <Caller /> 
+        }
+      ]
+    },
+]);
+
 function App() {
     return (
-        <div className="app">
-            <ThemeProvider theme={theme}>
-                <Home/>
-            </ThemeProvider>
-        </div>
+        <RouterProvider router={router} />
     );
 }
 

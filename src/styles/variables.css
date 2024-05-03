@@ -1,5 +1,6 @@
 :root {
     --color-black: #000;
+    --color-grey-dark: #4F4F4F;
     --color-grey: #666666;
     --color-grey-light: #E0E0E0;
     --color-grey-x-light: #F5F5F5;
@@ -12,12 +13,16 @@
     --font-body-size: 16px;
     --font-body-weight: 500;
     --font-body-weight-bold: 700;
+    --font-label-size: 12px;
+    --font-label-weight: 400;
+    --font-heading-size: 24px;
+    --font-heading-weight: 700;
 }
 
 /* Typography */
 .font-label {
-    font-size: 12px;
-    font-weight: 400;
+    font-size: var(--font-label-size);
+    font-weight: var(--font-label-weight);
     color: var(--color-grey);
 }
 
@@ -35,6 +40,11 @@
 .font-body-bold {
     font-size: var(--font-body-size);
     font-weight: var(--font-body-weight-bold);
+}
+
+.font-heading {
+    font-size: var(--font-heading-size);
+    font-weight: var(--font-heading-weight);
 }
 
 .button-icon .material-symbols-outlined {

@@ -1,10 +1,9 @@
-.app {
-    *:not(.material-symbols-outlined) {
-        font-family: "Montserrat", sans-serif;
-        font-optical-sizing: auto;
-        font-style: normal;
-    }
+*:not(.material-symbols-outlined) {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
+
 
 .a11y-text {
     position: absolute;
