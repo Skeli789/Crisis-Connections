@@ -9,6 +9,8 @@ import {
     RouterProvider,
     Outlet,
 } from "react-router-dom";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 // This CSS must go above the module imports!
 
@@ -67,7 +69,9 @@ const router = createBrowserRouter([
 
 function App() {
     return (
-        <RouterProvider router={router} />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <RouterProvider router={router} />
+        </LocalizationProvider>
     );
 }
 

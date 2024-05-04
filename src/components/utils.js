@@ -71,6 +71,10 @@ export function getName(first, last) {
  * @returns {array} The sorted caller list
  * 
 **/
+export function sortByCallHistory(list = []) {
+    return list.sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime))
+}
+
 export function sortCallers(list = []) {
     return list.map(caller => {
         return ({
@@ -82,23 +86,6 @@ export function sortCallers(list = []) {
 
 /***********************************************************/
 
-export const hotlines = [
-    "988KingCounty",
-    "washingtonTeenLink",
-    "washingtonRecoveryHelpLine",
-    "washingtonWarmLine",
-    "crisisServices",
-    "211KingCounty",
-    "washingtonSupportAfterSuicide"
-];
-
-export const serviceOptions = hotlines.sort().map(line => {
-    return ({
-        label: getLabelName(line),
-        id: line
-    });
-});
-
-const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, hotlines, serviceOptions, sortCallers };
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, sortByCallHistory, sortCallers };
 
 export default helperFunctions;

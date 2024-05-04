@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import { getLabelName, hotlines } from "./utils";
+import { getLabelName } from "./utils";
+import { hotlines } from './fields';
 
 function LogOut() {
     const btn = (

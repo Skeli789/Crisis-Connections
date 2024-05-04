@@ -19,5 +19,3 @@ export const getArchivedCallers = async () => {
     const response = await axios.get(mockArchivedCallers, { headers: apiHeader });
     return response.data.record.archivedCallers;
 };
-
-export default { getActiveCallers, getArchivedCallers };

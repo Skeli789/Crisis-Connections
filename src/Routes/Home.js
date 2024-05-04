@@ -4,24 +4,17 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import CircularProgress from '@mui/material/CircularProgress';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
+import { Box, Button, CircularProgress, InputAdornment, Tab, Tabs, TextField } from '@mui/material';
 import { getActiveCallers, getArchivedCallers } from '../api.js';
 import { sortCallers } from '../components/utils';
-
 import CardList from "../components/CardList";
 
 import '../styles/Home.css';
 
 function a11yProps(index) {
     return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
+      id: `tab-${index}`,
+      'aria-controls': `tabpanel-${index}`,
     };
 }
 
