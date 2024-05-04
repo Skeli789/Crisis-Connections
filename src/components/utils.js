@@ -82,6 +82,23 @@ export function sortCallers(list = []) {
 
 /***********************************************************/
 
-const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, sortCallers };
+export const hotlines = [
+    "988KingCounty",
+    "washingtonTeenLink",
+    "washingtonRecoveryHelpLine",
+    "washingtonWarmLine",
+    "crisisServices",
+    "211KingCounty",
+    "washingtonSupportAfterSuicide"
+];
+
+export const serviceOptions = hotlines.sort().map(line => {
+    return ({
+        label: getLabelName(line),
+        id: line
+    });
+});
+
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, hotlines, serviceOptions, sortCallers };
 
 export default helperFunctions;

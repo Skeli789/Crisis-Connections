@@ -15,6 +15,8 @@
     --font-body-weight-bold: 700;
     --font-label-size: 12px;
     --font-label-weight: 400;
+    --font-title-size: 18px;
+    --font-title-weight: 600;
     --font-heading-size: 24px;
     --font-heading-weight: 700;
     --font-page-heading-size: 36px;
@@ -39,6 +41,11 @@
     font-weight: var(--font-body-weight-bold);
 }
 
+.font-title {
+    font-size: var(--font-title-size);
+    font-weight: var(--font-title-weight);
+}
+
 .font-heading {
     font-size: var(--font-heading-size);
     font-weight: var(--font-heading-weight);
@@ -58,6 +65,11 @@
     font-style: italic;
 }
 
+/* MUI Orverides */
 .button-icon .material-symbols-outlined {
     margin-right: 7px;
+}
+
+.MuiAccordionSummary-root {
+    flex-direction: row-reverse;
 }

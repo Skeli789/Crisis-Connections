@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import { getLabelName } from "./utils";
+import { getLabelName, hotlines } from "./utils";
 
 function LogOut() {
     const btn = (
@@ -13,16 +13,6 @@ function LogOut() {
 
     return isSignedIn ? btn : null;
 }
-
-const hotlines = [
-    "988KingCounty",
-    "washingtonTeenLink",
-    "washingtonRecoveryHelpLine",
-    "washingtonWarmLine",
-    "crisisServices",
-    "211KingCounty",
-    "washingtonSupportAfterSuicide"
-];
 
 const logos = hotlines.map(hotline => {
     return (
