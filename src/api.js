@@ -19,3 +19,48 @@ export const getArchivedCallers = async () => {
     const response = await axios.get(mockArchivedCallers, { headers: apiHeader });
     return response.data.record.archivedCallers;
 };
+
+// TODO: add required * on fields
+export const baseUser = {
+    "id": "",
+    "aka": [],
+    "zip": "",
+    "city": "",
+    "county": "",
+    "gender": [],
+    "archived": {
+      "by": null,
+      "reason": null,
+      "dateTime": null,
+      "isArchived": false
+    },
+    "birthday": "",
+    "lastName": "",
+    "ethnicity": [],
+    "firstName": "",
+    "insurance": [],
+    "callHistory": [
+      {
+        "with": "",
+        "notes": "",
+        "service": "",
+        "dateTime": new Date()
+      }
+    ],
+    "lastUpdated": {
+      "by": "",
+      "dateTime": new Date()
+    },
+    "phoneNumbers": [],
+    "relevantInfo": "",
+    "sexualOrientation": [],
+    "specificInstructions": "",
+    "currentBehavioralTreatment": []
+};
+
+export const userFields = [
+    {
+        name: '',
+        value: ''
+    }
+]

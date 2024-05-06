@@ -1,0 +1,31 @@
+.footer {
+    background: var(--gradient-bkg-dark);
+    color: var(--color-blue-dark);
+    /* text-align: center; */
+    margin-top: 40px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
+}
+
+.footer .footer-company {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+.footer .material-symbols-outlined {
+    font-size: small;
+}
+
+.footer .footer-company > a {
+    color: var(--color-blue-dark);
+    text-decoration: none;
+}
+
+.footer-company_date {
+    margin: 0 5px;
+}

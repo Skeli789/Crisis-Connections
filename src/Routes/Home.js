@@ -9,7 +9,7 @@ import { getActiveCallers, getArchivedCallers } from '../api.js';
 import { sortCallers } from '../components/utils';
 import CardList from "../components/CardList";
 
-import '../styles/Home.css';
+import '../styles/routes/Home.css';
 
 function a11yProps(index) {
     return {
@@ -116,7 +116,7 @@ export default function Home() {
     }
 
     return (
-        <div className="home">
+        <div className="home page-padding">
             <h1 className="a11y-text">All Callers</h1>
             <Tabs value={listType} onChange={handleTabChange} aria-label="Change caller list type" className="home-tabs">
                 <Tab label="Active" {...a11yProps(0)} />
@@ -124,7 +124,7 @@ export default function Home() {
             </Tabs>
             {isType.active && (
                 <div className="home-add">
-                    <Button className="button-icon" variant="text" disableElevation onClick={addNewCaller}>
+                    <Button className="button-icon" variant="text" disableElevation href="./new">
                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                         <span className="font-body-bold">add new caller</span>
                     </Button>
@@ -137,6 +137,7 @@ export default function Home() {
                     label="Search by name OR phone number"
                     fullWidth
                     onChange={handleSearch}
+                    type="search"
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">

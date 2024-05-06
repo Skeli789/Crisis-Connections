@@ -1,0 +1,121 @@
+.caller-details-header {
+    display: flex;
+    align-items: center;
+}
+
+.caller-details-header > button {
+    margin-right: 20px;
+}
+
+.caller-details-header > h1 {
+    margin-right: 30px;
+}
+
+.archive-reason {
+    background: var(--color-grey-x-light);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.caller-form_row {
+    display: grid;
+    grid-template-columns: repeat(6, 2fr);
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.caller-form_row.name > * {
+    grid-column-end: span 2;
+}
+
+.caller-form_row.name > .additional {
+    grid-column-end: span 1;
+}
+
+.caller-form_row.info > * {
+    grid-column-end: span 3;
+}
+
+textarea {
+    field-sizing: content;
+}
+
+.caller-details_header {
+    margin-bottom: 40px;
+}
+
+.history {
+    padding: 0;
+    list-style: none;
+}
+
+.history_header {
+    display: flex;
+}
+
+.history_header .material-symbols-outlined {
+    margin-right: 20px;
+}
+
+.history_content {
+    margin: 14px 0 24px 12px;
+    padding-left: 33px;
+    border-left: 1px dotted black;
+}
+
+.history_content .caller-form_row {
+    margin-top: 0;
+}
+
+.history_content .caller-form_row > *{
+    grid-column-end: span 6;
+}
+
+.caller-form_row.info .MuiTextField-root[readOnly] .MuiInputBase-multiline {
+    min-height: calc(100% - 16px);
+    align-items: flex-start;
+}
+
+.caller-form_row.personal > * {
+    grid-column-end: span 3;
+}
+
+.caller-form_row.treatment > * {
+    grid-column-end: span 2;
+}
+
+@media (min-width: 768px) {
+    .history_content .caller-form_row > *{
+        grid-column-end: span 3;
+    }    
+
+    .history_content .history_content-notes {
+        grid-column-end: span 6;
+    }
+
+    .caller-form_row.personal > * {
+        grid-column-end: span 2;
+    }
+}
+
+@media (min-width: 1200px) {
+    .history_content .caller-form_row > *{
+        grid-column-end: span 2;
+    }
+
+    .history_content .history_content-notes {
+        grid-column-end: span 4;
+    }
+
+    .history_content .caller-form_row > .history_content-date {
+        grid-column-end: span 1;
+    }
+
+    .caller-form_row.personal > * {
+        grid-column-end: span 1;
+    }
+
+    .caller-form_row .city {
+        grid-column-end: span 2;
+    }
+}

@@ -5,7 +5,6 @@ nav {
 nav .logos {
     display: flex;
     align-items: center;
-    padding: 12px 40px;
     background: var(--gradient-bkg);
 }
 
@@ -23,7 +22,6 @@ nav .main {
     display: flex;
     align-items: center;
     margin-right: 36px;
-    padding: 12px 40px;
 }
 
 .nav-heading {

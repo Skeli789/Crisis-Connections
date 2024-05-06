@@ -15,12 +15,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 // This CSS must go above the module imports!
 
 import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 import Home from "./Routes/Home";
 import Caller from "./Routes/Caller";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
-import './styles/components.css';
 
 // Themeing for Material UI
 const blueBase = '#005291';
@@ -40,6 +40,7 @@ const AppLayout = () => (
     <ThemeProvider theme={theme}>
         <NavBar />
         <Outlet />
+        <Footer />
     </ThemeProvider>
 );
 
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
         {
             path: "/caller",
             element: <Home /> 
+        },
+        {
+            path: "/new",
+            element: <Caller />
         },
         {
             path: "caller/:caller",

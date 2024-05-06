@@ -20,17 +20,15 @@ const logos = hotlines.map(hotline => {
         <img key={hotline} className={`logos-secondary ${hotline}`} src={`${process.env.PUBLIC_URL}/images/logo_${hotline}.svg`} alt={getLabelName(hotline)}/>
     )
 });
-
-// make svg component?
   
 export default function NavBar() {
     return (
         <nav>
-            <div className="logos">
+            <div className="logos page-padding">
                 <img className="logos-main" alt="Crisis Connections" src={`${process.env.PUBLIC_URL}/images/logo_crisisConnections.svg`}/>
                 {logos}
             </div>
-            <section className="main">
+            <section className="main page-padding">
                 <div className="nav-heading">
                     <Link to="/">
                         <span className="nav-heading_text font-heading">Frequent Callers</span>

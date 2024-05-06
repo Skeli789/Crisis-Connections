@@ -1,7 +1,3 @@
-.home {
-    padding: 40px;
-}
-
 .home-search {
     max-width: 400px;
 }
@@ -19,20 +15,12 @@
     visibility: hidden;
 }
 
-.MuiOutlinedInput-notchedOutline > legend > span {
-    width: 200px; /* override because line wasn't working correctly */
-}
-
 .home-emptystate {
-    height: 500px;
+    min-height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     background: var(--gradient-bkg);
     margin-top: 32px;
-}
-
-.home-emptystate > p {
-    margin-bottom: 32px;
 }
