@@ -40,17 +40,19 @@ const ethnicities = [
     "puertoRican"
 ];
 
-const treatmentUndergoing = ["Yes", "No", "Unknown"];
+const treatmentUndergoing = ["yes", "no", "unknown"];
 
 function mapOptions(list, sort = true, formatString = true) {
     list = sort ? list.sort() : list;
 
-    return list.sort().map(item => {
+    list = list.map(item => {
         return ({
             label: formatString ? getLabelName(item) : item,
             id: item
         });
     });
+
+    return list;
 };
 
 export function mapSelection(item, formatString = true) {
@@ -63,5 +65,5 @@ export const fields = {
     insurance: mapOptions(insurances),
     ethnicity: mapOptions(ethnicities),
     services: mapOptions(hotlines),
-    treatmentUndergoing: mapOptions(treatmentUndergoing, false, false)
+    treatmentUndergoing: mapOptions(treatmentUndergoing, false)
 };

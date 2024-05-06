@@ -106,7 +106,7 @@ export default function Home() {
                        <div className="home-emptystate">
                             <p>{allCallers[listType].length === 0 ? `There are no ${activeType.toLowerCase()} caller records.` : 'No results matching your search.'}</p>
                             <Button variant="text" disableElevation onClick={handleTabChange}>
-                                {`Search ${activeType} Callers`}
+                                <span className="font-body-bold">{`Search ${activeType} Callers`}</span>
                             </Button>
                        </div>
                     )}
@@ -124,7 +124,7 @@ export default function Home() {
             </Tabs>
             {isType.active && (
                 <div className="home-add">
-                    <Button className="button-icon" variant="text" disableElevation href="./new">
+                    <Button className="button-icon" variant="text" disableElevation href="/new">
                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                         <span className="font-body-bold">add new caller</span>
                     </Button>

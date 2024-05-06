@@ -84,6 +84,42 @@ textarea {
     grid-column-end: span 2;
 }
 
+.caller-form_actions {
+    bottom: 0;
+    left: 0;
+    background: #ffffffb5;
+    width: 100%;
+    display: flex;
+    position: relative;
+    position: sticky;
+    padding: 20px 0 20px;
+    z-index: 100;
+}
+
+.caller-form_actions:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: -40px;
+    width: 100vw;
+    height: 100%;
+    box-shadow: 0 -13px 29px 0 #0000000a;
+}
+
+.caller-form_actions .MuiButton-textPrimary {
+    background-color: white;
+}
+
+.caller-form_actions-save {
+    flex: 1 1 auto;
+    text-align: right;
+}
+
+.caller-form_actions-save > button:first-of-type {
+    margin-right: 20px;
+}
+
 @media (min-width: 768px) {
     .history_content .caller-form_row > *{
         grid-column-end: span 3;

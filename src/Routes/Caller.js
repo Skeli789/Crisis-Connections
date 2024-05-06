@@ -41,9 +41,10 @@ export default function Caller() {
             isNew = type === 'new',
             callerId = params[2];
     // State Variables
-    const [isEditMode, setIsEditMode] = useState(isNew ? true : false);
-    const [newUser, setNewUser] = useState({...baseUser});
-    const [editedUser, setEditedUser] = useState({...baseUser});
+    const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
+            [newUser, setNewUser] = useState({...baseUser}),
+            [editedUser, setEditedUser] = useState({...baseUser}),
+            [isNotProvided, setIsNotProvided] = useState({firstName: false, lastName: false})
     
     // Caller Variables
     const   data = useQuery({queryKey: [type], queryFn: callerQueries[type]}),
@@ -52,10 +53,22 @@ export default function Caller() {
     // Form Variables
     const fieldVarient = isEditMode ? 'outlined' :  'standard';
     const textAreaProps = { rows: 4, multiline: true, inputComponent: 'textarea' }; // using to avoid a known issue with MUI text field multiline throwing error on browser resize
+    const initialCheck = {
+        firstName: !isNew && !caller.firstName,
+        lastName: !isNew && !caller.lastName,
+    };
 
     function handleReactivate() {
         setIsEditMode(true);
     }
+
+    const handleNotProvided = (e) => {
+        // let newParams = {
+        //     ...isNotProvided
+        // };
+        // newParams[fieldName] = e.target.checked;
+        // setIsNotProvided(newParams);
+    };
 
     // const handleChange = (event) => {
     //     setValues({
@@ -85,17 +98,17 @@ export default function Caller() {
     function Action() {
         const archived = (
             <Button variant="contained" disableElevation onClick={handleReactivate}>
-                Reactivate
+                <span className="font-body-bold">Reactivate</span>
             </Button>
         );
 
         const active = (!isEditMode && (
                 <>
                     <Button variant="contained" disableElevation onClick={handleReactivate}>
-                        Edit
+                        <span className="font-body-bold">Edit</span>
                     </Button>
                     <Button variant="text" disableElevation onClick={handleReactivate}>
-                        Archive
+                        <span className="font-body-bold">Archive</span>
                     </Button>
                 </>
             )
@@ -120,16 +133,18 @@ export default function Caller() {
     function PhoneNumbers() {
         const numbers = isNew ? [''] : caller.phoneNumbers;
 
-        return numbers.map( (number, i) => {
+        return numbers.map((number, i) => {
             // TODO: add +new
+            let label = "Phone Number"
+            label = i === 0 ? `${label} (Required)` : label;
 
             return (
                 <FormControl variant={fieldVarient} key={number}>
-                    <InputLabel variant={fieldVarient} htmlFor={`phoneNumber-${i}`}>Phone Number</InputLabel>
+                    <InputLabel variant={fieldVarient} htmlFor={`phoneNumber-${i}`}>{label}</InputLabel>
                     {isEditMode ? (
                         <OutlinedInput
-                            label="Phone Number"
-                            defaultValue={number.toString()}
+                            label={label}
+                            defaultValue={isNew ? undefined :  number.toString()}
                             name={`phoneNumber-${i}`}
                             id={`phoneNumber-${i}`}
                             inputComponent={TextMaskCustom}
@@ -137,7 +152,7 @@ export default function Caller() {
                         />
                     ) : (
                         <Input
-                            defaultValue={number.toString()}
+                            defaultValue={isNew ? undefined :  number.toString()}
                             name={`phoneNumber-${i}`}
                             id={`phoneNumber-${i}`}
                             inputComponent={TextMaskCustom}
@@ -156,22 +171,26 @@ export default function Caller() {
             <>
                 <TextField
                     id="firstName"
-                    label="First Name"
+                    label="First Name (Required)"
                     variant={fieldVarient}
-                    defaultValue={isNew ? '' : firstName}
-                    readOnly={!isEditMode}/>
+                    defaultValue={isNew ? undefined :  firstName}
+                    readOnly={!isEditMode}
+                    disabled={initialCheck.firstName || isNotProvided.firstName}
+                />
                     {/* Todo: if not provided check, disable name field */}
                 { isEditMode && 
-                    <FormControlLabel className="additional" control={<Checkbox defaultChecked={!isNew && !caller.firstName} />} label="Not Provided" />
+                    <FormControlLabel className="additional" data-for="firstName" control={<Checkbox defaultChecked={initialCheck.firstName} />} label="Not Provided" onChange={handleNotProvided()} />
                 }
                 <TextField
                     id="lastName"
-                    label="Last Name"
+                    label="Last Name (Required)"
                     variant={fieldVarient}
-                    defaultValue={isNew ? '' : lastName}
-                    readOnly={!isEditMode}/>
+                    defaultValue={isNew ? undefined :  lastName}
+                    readOnly={!isEditMode}
+                    disabled={initialCheck.firstName || isNotProvided.lastName}
+                />
                 { isEditMode && 
-                    <FormControlLabel className="additional" control={<Checkbox defaultChecked={!isNew && !caller.lastName} />} label="Not Provided" />
+                    <FormControlLabel className="additional" control={<Checkbox defaultChecked={initialCheck.lastName} />} label="Not Provided" />
                 }
             </>
         )
@@ -193,7 +212,7 @@ export default function Caller() {
                                 className="history_content-date"
                                 id={`caller-log-date-${i}`}
                                 label="Date and Time"
-                                defaultValue={dayjs(log.dateTime)}
+                                defaultValue={isNew ? undefined :  dayjs(log.dateTime)}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
                                 slotProps={{ textField: { variant: fieldVarient } }}
@@ -205,13 +224,13 @@ export default function Caller() {
                                 id={`caller-log-service-${i}`}
                                 variant={fieldVarient}
                                 options={fields.services}
-                                defaultValue={mapSelection(log.service)}
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                defaultValue={isNew ? undefined :  mapSelection(log.service)}
+                                isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                                 readOnly={!isEditMode}
                                 renderInput={(params) => <TextField {...params} variant={fieldVarient} label="Service" />}
                             />
                             {/* Call With */}
-                            <TextField id={`caller-log-with-${i}`} label="With" variant={fieldVarient} defaultValue={log.with} readOnly={!isEditMode} />
+                            <TextField id={`caller-log-with-${i}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} />
                             {/* Call Notes */}
                             <TextField
                                 id={`caller-log-note-${1}`}
@@ -219,7 +238,7 @@ export default function Caller() {
                                 label="Notes"
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
-                                defaultValue={log.notes}
+                                defaultValue={isNew ? undefined :  log.notes}
                             />
                         </div>
                     </div>
@@ -246,45 +265,28 @@ export default function Caller() {
     }
 
     function PersonalDetails() {
-        const location = (
-            <div className="caller-form_row personal">
-                <TextField
-                    className='city'
-                    id='city'
-                    label="City"
-                    variant={fieldVarient}
-                    defaultValue={caller.city}
-                    readOnly={!isEditMode} />
-                <TextField
-                    id='county'
-                    label="County"
-                    variant={fieldVarient}
-                    defaultValue={caller.county}
-                    readOnly={!isEditMode} />
-                <TextField
-                    id='zip'
-                    label="Zip"
-                    variant={fieldVarient}
-                    defaultValue={caller.zip}
-                    readOnly={!isEditMode} />
-                <DatePicker
-                    id='caller-log-birthday'
-                    label="Birthday"
-                    defaultValue={caller.birthday ? dayjs(caller.birthday) : null} 
-                    variant={fieldVarient}
-                    readOnly={!isEditMode}
-                    slotProps={{ textField: { variant: fieldVarient } }}/>
-            </div>
-        );
-
+        const locationFields = ['city', 'county', 'zip'];
         const backgroundFields = ['gender', 'sexualOrientation', 'insurance', 'ethnicity'];
-
+        const location = locationFields.map(field => {
+                return (
+                    <TextField
+                        key={field}
+                        className={field}
+                        id={field}
+                        label={getLabelName(field)}
+                        variant={fieldVarient}
+                        defaultValue={isNew ? undefined :  caller[field]}
+                        readOnly={!isEditMode} />
+                )
+            }
+        );
         const background = (
             <div className="caller-form_row personal">
                 {/* TODO: in read only show all answers of a type together, comma seperated */}
                 { backgroundFields.map(field => {
+                    const backgroundData = isNew ? [''] : caller[field];
                     return (
-                        caller[field].map((selection, i) => {
+                        backgroundData.map((selection, i) => {
                             return (
                                 <Autocomplete
                                     key={`${field}-${selection}-${i}`}
@@ -293,8 +295,11 @@ export default function Caller() {
                                     id={`${field}-${selection}-${i}`}
                                     variant={fieldVarient}
                                     options={fields[field]}
-                                    defaultValue={mapSelection(selection)}
-                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    defaultValue={isNew ? undefined :  mapSelection(selection)}
+                                    isOptionEqualToValue={isNew ? undefined : (option, value) => {
+                                        console.log(option, value);
+                                        return option.id === value.id
+                                    }}
                                     readOnly={!isEditMode}
                                     renderInput={(params) => <TextField {...params} variant={fieldVarient} label={getLabelName(field)} />}
                                 />
@@ -316,7 +321,16 @@ export default function Caller() {
                     <h2 className="font-heading">Personal Information</h2>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {location}
+                    <div className="caller-form_row personal">
+                        {location}
+                        <DatePicker
+                            id='caller-log-birthday'
+                            label="Birthday"
+                            defaultValue={isNew ? undefined :  caller.birthday ? dayjs(caller.birthday) : null} 
+                            variant={fieldVarient}
+                            readOnly={!isEditMode}
+                            slotProps={{ textField: { variant: fieldVarient } }}/>
+                    </div>
                     {background}
                 </AccordionDetails>
             </Accordion>
@@ -345,8 +359,11 @@ export default function Caller() {
                             id={`caller-undergoing-${i}`}
                             variant={fieldVarient}
                             options={fields.treatmentUndergoing}
-                            defaultValue={mapSelection(item.undergoing, false)}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                            defaultValue={isNew ? undefined : mapSelection(item.undergoing, false)}
+                            isOptionEqualToValue={isNew ? undefined : (option, value) => {
+                                console.log(option, value);
+                                return option.id === value.id
+                            }}
                             readOnly={!isEditMode}
                             renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
                         />
@@ -356,7 +373,7 @@ export default function Caller() {
                             label="Location"
                             InputProps={textAreaProps}
                             variant={fieldVarient}
-                            defaultValue={item.location}
+                            defaultValue={isNew ? undefined :  item.location}
                         />
                         {/* Notes */}
                         <TextField
@@ -364,7 +381,7 @@ export default function Caller() {
                             label="Notes"
                             InputProps={textAreaProps}
                             variant={fieldVarient}
-                            defaultValue={item.notes}
+                            defaultValue={isNew ? undefined :  item.notes}
                         />
                     </div>
                 </li>
@@ -395,14 +412,16 @@ export default function Caller() {
             isEditMode && (
                 <div className="caller-form_actions">
                     <Button variant="text" disableElevation onClick={handleFormCancel}>
-                        Cancel
+                        <span className="font-body-bold">Cancel</span>
                     </Button>
-                    <Button variant="text" disableElevation onClick={handleFormSaveAnother}>
-                        Save & Add Another
-                    </Button>
-                    <Button variant="contained" disableElevation onClick={handleFormSave}>
-                        Save
-                    </Button>
+                    <div className="caller-form_actions-save">
+                        <Button variant="text" disableElevation onClick={handleFormSaveAnother}>
+                            <span className="font-body-bold">Save & Add Another</span>
+                        </Button>
+                        <Button variant="contained" disableElevation onClick={handleFormSave}>
+                            <span className="font-body-bold">Save</span>
+                        </Button>
+                    </div>
                 </div>
             )
         )
@@ -410,6 +429,11 @@ export default function Caller() {
 
     return ( (data.isSuccess || isNew) ? (
             <div className="caller-details page-padding" data-is-edit={isEditMode}>
+                {!isEditMode && (
+                    <Button variant="text" disableElevation href="./">
+                        <span className="font-body-bold">Back to caller list</span>
+                    </Button>
+                )}
                 <div className="caller-details-header">
                     <PageTitle />
                     <Action/>
@@ -431,19 +455,19 @@ export default function Caller() {
                         <div className="caller-form_row info">
                             <TextField
                                 id="relevantInfo"
-                                label="Relavent Information"
+                                label="Relavent Information (Required)"
                                 variant={fieldVarient}
-                                defaultValue={caller.relevantInfo}
+                                defaultValue={isNew ? undefined :  caller.relevantInfo}
                                 InputProps={textAreaProps}
                                 readOnly={!isEditMode}
                             />
                             <TextField
                                 id="specificInstructions"
-                                label="Specific Instruction"
+                                label="Specific Instruction (Required)"
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
-                                defaultValue={caller.specificInstructions}
+                                defaultValue={isNew ? undefined :  caller.specificInstructions}
                             />
                         </div>
                     </fieldset>
