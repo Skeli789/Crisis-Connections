@@ -94,7 +94,8 @@ textarea {
 }
 
 .phone-group_add .material-symbols-outlined,
-.call-history_add .material-symbols-outlined {
+.call-history_add .material-symbols-outlined,
+.treatment-history_add .material-symbols-outlined {
     margin-right: 10px;
 }
 
@@ -136,6 +137,27 @@ textarea {
 
 .caller-form_actions-save > button:first-of-type {
     margin-right: 20px;
+}
+
+.caller-form_row button {
+    justify-self: start;
+}
+
+[data-is-edit="true"] .caller-form_row .personal-field {
+    display: flex;
+    width: 100%;
+}
+
+[data-is-edit="true"] .caller-form_row .personal-field[data-is-last="true"] {
+    grid-column-end: span 2;
+}
+
+[data-is-edit="true"] .caller-form_row  .personal-field[data-is-last="true"] .MuiAutocomplete-root {
+    width: calc(100% - 216px);
+}
+
+[data-is-edit="true"] .caller-form_row  .personal-field[data-is-last="false"] .MuiAutocomplete-root {
+    width: 100%;
 }
 
 @media (min-width: 768px) {

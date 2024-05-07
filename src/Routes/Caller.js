@@ -1,5 +1,4 @@
 import { forwardRef, useState } from 'react';
-import axios from 'axios';
 import { useLocation } from "react-router-dom";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, Box, Checkbox, CircularProgress, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, TextField} from '@mui/material';
@@ -11,7 +10,6 @@ import { getLabelName, getName, sortByCallHistory } from '../components/utils.js
 import { fields, mapSelection } from '../components/fields.js';
 
 import '../styles/routes/Caller.css';
-
 
 const callerQueries = {
     caller: getActiveCallers,
@@ -116,9 +114,9 @@ const PhoneNumbers = ({isNew, caller, fieldVarient, isEditMode}) => {
     );
 }
 
-const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange}) => {
-    const [firstName, setFirstName] = useState(isNew ? '' : 'Not Provided');
-    const [lastName, setLastName] = useState(isNew ? '' : 'Not Provided');
+const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange, caller}) => {
+    const [firstName, setFirstName] = useState(isNew ? '' : (caller.firstName ? caller.firstName : 'Not Provided'));
+    const [lastName, setLastName] = useState(isNew ? '' : (caller.lastName ? caller.lastName : 'Not Provided'));
     const [isNotProvided, setIsNotProvided] = useState({firstName: initialCheck.firstName, lastName: initialCheck.lastName});
     const fnCheck = isNotProvided.firstName;
     const lnCheck = isNotProvided.lastName;
@@ -157,7 +155,7 @@ const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange
                 variant={fieldVarient}
                 value={firstName}
                 readOnly={!isEditMode}
-                disabled={isNotProvided.firstName}
+                disabled={isEditMode && isNotProvided.firstName}
                 onChange={handleFieldChange}
             />
             { isEditMode && 
@@ -170,7 +168,7 @@ const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange
                 variant={fieldVarient}
                 value={lastName}
                 readOnly={!isEditMode}
-                disabled={initialCheck.lastName || isNotProvided.lastName}
+                disabled={isEditMode && isNotProvided.lastName}
                 onChange={handleFieldChange}
             />
             { isEditMode && 
@@ -180,7 +178,7 @@ const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange
     )
 }
 
-const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog}) => {
+const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, handleFieldChange}) => {
     return (
         <>
             <div className="history_header">
@@ -205,6 +203,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog}) => {
                         defaultValue={isNew ? undefined :  dayjs(log.dateTime)}
                         variant={fieldVarient}
                         readOnly={!isEditMode}
+                        onBlur={(e) => { handleFieldChange(e.target.value, 'dateTime', index) }}
                         slotProps={{ textField: { variant: fieldVarient } }}
                     />
                     {/* Call Service */}
@@ -217,10 +216,11 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog}) => {
                         defaultValue={isNew ? undefined :  mapSelection(log.service)}
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
+                        onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
                         renderInput={(params) => <TextField {...params} variant={fieldVarient} label="Service" />}
                     />
                     {/* Call With */}
-                    <TextField id={`caller-log-with-${index}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} />
+                    <TextField id={`caller-log-with-${index}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }} />
                     {/* Call Notes */}
                     <TextField
                         id={`caller-log-note-${index}`}
@@ -229,6 +229,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog}) => {
                         InputProps={textAreaProps}
                         variant={fieldVarient}
                         defaultValue={isNew ? undefined :  log.notes}
+                        onBlur={(e) => { handleFieldChange(e.target.value, 'notes', index) }}
                     />
                 </div>
             </div>
@@ -244,7 +245,6 @@ const CallHistory = ({isNew, fieldVarient, isEditMode, caller}) => {
     const [history, setHistory] = useState(initialEmpty ? [newLog] : caller.callHistory);
 
     const addLog = () => {
-        const allLogs = [...history, newLog];
         setHistory([...history, newLog]);
     }
 
@@ -260,7 +260,7 @@ const CallHistory = ({isNew, fieldVarient, isEditMode, caller}) => {
     const callLog = sortByCallHistory(history).map((log, i) => {
         return (
             <li key={log.dateTime}>
-                <CallLog log={log} index={i} isNew={isNew} fieldVarient={fieldVarient} isEditMode={isEditMode} removeLog={() => { removeLog(i) }} />
+                <CallLog log={log} index={i} isNew={isNew} fieldVarient={fieldVarient} isEditMode={isEditMode} removeLog={() => { removeLog(i) }} handleFieldChange={handleFieldChange} />
             </li>
         )
     })
@@ -288,6 +288,227 @@ const CallHistory = ({isNew, fieldVarient, isEditMode, caller}) => {
         </Accordion>
     )
 }
+
+const PersonalDetails = ({caller, isNew, fieldVarient, isEditMode}) => {
+    const locationFields = ['city', 'county', 'zip'];
+    const location = locationFields.map(field => {
+            return (
+                <TextField
+                    key={field}
+                    className={field}
+                    id={field}
+                    label={getLabelName(field)}
+                    variant={fieldVarient}
+                    defaultValue={isNew ? undefined :  caller[field]}
+                    readOnly={!isEditMode} />
+            )
+        }
+    );
+
+
+    return (
+        <Accordion className="caller-form_section" defaultExpanded elevation={0} square>
+            {/* TODO: default expand to false if no info set and in read only */}
+            <AccordionSummary
+                expandIcon={<span className="material-symbols-outlined">expand_more</span>}
+                aria-controls="personal-history-panel"
+                id="personal-history-header"
+            >
+                <h2 className="font-heading">Personal Information</h2>
+            </AccordionSummary>
+            <AccordionDetails>
+                <div className="caller-form_row personal">
+                    {location}
+                    <DatePicker
+                        id='caller-log-birthday'
+                        label="Birthday"
+                        defaultValue={isNew ? undefined :  caller.birthday ? dayjs(caller.birthday) : null} 
+                        variant={fieldVarient}
+                        readOnly={!isEditMode}
+                        slotProps={{ textField: { variant: fieldVarient } }}/>
+                </div>
+                <Background 
+                    isNew={isNew}
+                    caller={caller}
+                    fieldVarient={fieldVarient}
+                    isEditMode={isEditMode}
+                />
+            </AccordionDetails>
+        </Accordion>
+    )
+}
+
+const Background = ({isNew, caller, fieldVarient, isEditMode}) => { 
+    const backgroundFields = ['gender', 'sexualOrientation', 'insurance', 'ethnicity'];
+    let fieldValues = {};
+    // Add empty fields if not provided
+    backgroundFields.forEach(field => {
+        if (caller[field].length === 0) {
+            fieldValues = {
+                ...fieldValues,
+                [field]: ['']
+            }
+        } else {
+            fieldValues[field] = caller[field];
+        }
+    });
+
+    const [backgroundData, setBackgroundData] = useState(fieldValues);
+
+    
+    const addField = (field) => {
+        const newObj = {...backgroundData, [field]: [...backgroundData[field], '']}
+        setBackgroundData(newObj);
+    }
+
+    function removeField(index) {
+        // setHistory(history.filter((log, i) => i !== index));
+    }
+
+    const handleFieldChange = (newValue, field, index) => {
+        const newObj = {...backgroundData};
+        newObj[field][index] = newValue;
+        setBackgroundData(newObj);
+    }
+
+    return (
+        <div className="caller-form_row personal">
+            {/* TODO: in read only show all answers of a type together, comma seperated */}
+            { backgroundFields.map(field => {
+                const data = backgroundData[field];
+                const fieldLabel = getLabelName(field);
+                const disableAdd = data[data.length - 1].length === 0;
+
+                return (
+                    data.map((selection, i) => {
+                        const isLast = isEditMode && i === data.length - 1;
+
+                        return (
+                            <div className="personal-field" data-is-last={isLast} key={`${field}-${selection}-${i}`}>
+                                <Autocomplete
+                                    disablePortal
+                                    freeSolo
+                                    id={`${field}-${selection}-${i}`}
+                                    variant={fieldVarient}
+                                    options={fields[field]}
+                                    value={mapSelection(selection)}
+                                    isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
+                                    readOnly={!isEditMode}
+                                    forcePopupIcon={true}
+                                    onBlur={(e) => { handleFieldChange(e.target.value, field, i) }}
+                                    renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
+                                />
+                                {isLast && (
+                                    <Button className="call-history_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
+                                        <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
+                                        <span className="font-body-bold">Add {field === 'sexualOrientation' ? 'Orientation' : fieldLabel}</span>
+                                    </Button>
+                                )}
+                            </div>
+                        )
+                    })
+                )
+            })}
+        </div>
+    );
+}
+
+const TreatmentHistory = ({isNew, caller, fieldVarient, isEditMode}) => {
+    const newTreatment = {
+        undergoing: '',
+        location: '',
+        notes: '',
+        showDelete: true
+    };
+    const [data, setData] = useState(caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : [newTreatment]);
+
+    const addTreatment = () => {
+        setData([...data, newTreatment]);
+    }
+
+    const removeItem = (index) => {
+        setData(data.filter((item, i) => i !== index));
+    }
+
+    const treatments = data.map((item, i) => {
+        return (
+            <li key={`treatment-${i}`}>
+                <Treatment isNew={isNew} item={item} fieldVarient={fieldVarient} isEditMode={isEditMode} index={i} removeTreatment={() => { removeItem(i) }} />
+            </li>
+        )
+    });
+
+    return (
+        <Accordion className="caller-form_section" defaultExpanded elevation={0} square>
+            <AccordionSummary
+                expandIcon={<span className="material-symbols-outlined">expand_more</span>}
+                aria-controls="treatment-history-panel"
+                id="treatment-history-header"
+            >
+                <h2 className="font-heading">Treatment History</h2>
+            </AccordionSummary>
+            <AccordionDetails>
+                <ul className="history">
+                    {treatments}
+                </ul>
+                {isEditMode && (
+                    <Button className="treatment-history_add" variant="text" disableElevation onClick={addTreatment}>
+                        <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
+                        <span className="font-body-bold">Add treatment</span>
+                    </Button>
+                )}
+            </AccordionDetails>
+        </Accordion>
+    )
+}
+
+const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatment}) => {
+    return (
+        <>
+            <div className="history_header">
+                <span aria-hidden="true" className="material-symbols-outlined">medical_services</span>
+                <h3 className="font-title">Treatment</h3>
+                {(isEditMode && item.showDelete) && (
+                    <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeTreatment()}>
+                        <>
+                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                            <span className="a11y-text font-body-bold">Remove treatment</span>
+                        </>
+                    </Button>
+                )}
+            </div>
+            <div className="history_content caller-form_row treatment">
+                {/* Undergoing */}
+                <Autocomplete
+                    disablePortal
+                    id={`caller-undergoing-${index}`}
+                    variant={fieldVarient}
+                    options={fields.treatmentUndergoing}
+                    defaultValue={isNew ? undefined : mapSelection(item.undergoing, false)}
+                    isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
+                    readOnly={!isEditMode}
+                    renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
+                />
+                {/* Location */}
+                <TextField
+                    id={`caller-treatment-location-${index}`}
+                    label="Location"
+                    InputProps={textAreaProps}
+                    variant={fieldVarient}
+                    defaultValue={isNew ? undefined :  item.location}
+                />
+                {/* Notes */}
+                <TextField
+                    id={`caller-treatment-notes-${index}`}
+                    label="Notes"
+                    InputProps={textAreaProps}
+                    variant={fieldVarient}
+                    defaultValue={isNew ? undefined :  item.notes}
+                />
+            </div>
+        </>
+    )
+};
 
 export default function Caller() {
     // Page Info
@@ -317,7 +538,12 @@ export default function Caller() {
 
     function handleFormCancel() {
         // TODO: reset values
-        setIsEditMode(false);
+
+        if (isNew) {
+            window.location.href = '/';
+        } else {
+            setIsEditMode(false);
+        }
     }
 
     function handleFormSave(e) {
@@ -377,144 +603,6 @@ export default function Caller() {
         )
     }
 
-    function PersonalDetails() {
-        const locationFields = ['city', 'county', 'zip'];
-        const backgroundFields = ['gender', 'sexualOrientation', 'insurance', 'ethnicity'];
-        const location = locationFields.map(field => {
-                return (
-                    <TextField
-                        key={field}
-                        className={field}
-                        id={field}
-                        label={getLabelName(field)}
-                        variant={fieldVarient}
-                        defaultValue={isNew ? undefined :  caller[field]}
-                        readOnly={!isEditMode} />
-                )
-            }
-        );
-        const background = (
-            <div className="caller-form_row personal">
-                {/* TODO: in read only show all answers of a type together, comma seperated */}
-                { backgroundFields.map(field => {
-                    const backgroundData = isNew ? [''] : caller[field];
-                    return (
-                        backgroundData.map((selection, i) => {
-                            return (
-                                <Autocomplete
-                                    key={`${field}-${selection}-${i}`}
-                                    disablePortal
-                                    freeSolo
-                                    id={`${field}-${selection}-${i}`}
-                                    variant={fieldVarient}
-                                    options={fields[field]}
-                                    defaultValue={isNew ? undefined :  mapSelection(selection)}
-                                    isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
-                                    readOnly={!isEditMode}
-                                    forcePopupIcon={true}
-                                    renderInput={(params) => <TextField {...params} variant={fieldVarient} label={getLabelName(field)} />}
-                                />
-                            )
-                        })
-                    )
-                })}
-            </div>
-        );
-
-        return (
-            <Accordion className="caller-form_section" defaultExpanded elevation={0} square>
-                {/* TODO: default expand to false if no info set and in read only */}
-                <AccordionSummary
-                    expandIcon={<span className="material-symbols-outlined">expand_more</span>}
-                    aria-controls="personal-history-panel"
-                    id="personal-history-header"
-                >
-                    <h2 className="font-heading">Personal Information</h2>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <div className="caller-form_row personal">
-                        {location}
-                        <DatePicker
-                            id='caller-log-birthday'
-                            label="Birthday"
-                            defaultValue={isNew ? undefined :  caller.birthday ? dayjs(caller.birthday) : null} 
-                            variant={fieldVarient}
-                            readOnly={!isEditMode}
-                            slotProps={{ textField: { variant: fieldVarient } }}/>
-                    </div>
-                    {background}
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
-
-    function TreatmentHistory() {
-        const data = caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : [
-            {
-                undergoing: '',
-                location: '',
-                notes: ''
-            }
-        ];
-
-        const treatments = data.map((item, i) => {
-            return (
-                <li key={`treatment-${i}`}>
-                    <div className="history_header">
-                        <span aria-hidden="true" className="material-symbols-outlined">medical_services</span>
-                        <h3 className="font-title">Treatment</h3>
-                    </div>
-                    <div className="history_content caller-form_row treatment">
-                        {/* Undergoing */}
-                        <Autocomplete
-                            disablePortal
-                            id={`caller-undergoing-${i}`}
-                            variant={fieldVarient}
-                            options={fields.treatmentUndergoing}
-                            defaultValue={isNew ? undefined : mapSelection(item.undergoing, false)}
-                            isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
-                            readOnly={!isEditMode}
-                            renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
-                        />
-                        {/* Location */}
-                        <TextField
-                            id={`caller-treatment-location-${1}`}
-                            label="Location"
-                            InputProps={textAreaProps}
-                            variant={fieldVarient}
-                            defaultValue={isNew ? undefined :  item.location}
-                        />
-                        {/* Notes */}
-                        <TextField
-                            id={`caller-treatment-notes-${1}`}
-                            label="Notes"
-                            InputProps={textAreaProps}
-                            variant={fieldVarient}
-                            defaultValue={isNew ? undefined :  item.notes}
-                        />
-                    </div>
-                </li>
-            )
-        });
-
-        return (
-            <Accordion className="caller-form_section" defaultExpanded elevation={0} square>
-                <AccordionSummary
-                    expandIcon={<span className="material-symbols-outlined">expand_more</span>}
-                    aria-controls="treatment-history-panel"
-                    id="treatment-history-header"
-                >
-                    <h2 className="font-heading">Treatment History</h2>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <ul className="history">
-                        {treatments}
-                    </ul>
-                </AccordionDetails>
-            </Accordion>
-        )
-    }
-
     function FormAction() {
         // TODO:  style and route actions
         return (
@@ -569,6 +657,7 @@ export default function Caller() {
                                 fieldVarient = {fieldVarient}
                                 isEditMode = {isEditMode}
                                 initialCheck = {initialCheck}
+                                caller = {caller}
                             />
                         </div>
                         <div className="caller-form_row info">
@@ -599,10 +688,20 @@ export default function Caller() {
                         />
                     </fieldset>
                     <fieldset className="caller-form_section"  disabled={!isEditMode}>
-                        <PersonalDetails/>
+                        <PersonalDetails
+                            isNew={isNew}
+                            fieldVarient={fieldVarient}
+                            isEditMode={isEditMode}
+                            caller={caller}
+                        />
                     </fieldset>
                     <fieldset className="caller-form_section"  disabled={!isEditMode}>
-                        <TreatmentHistory/>
+                        <TreatmentHistory
+                            isNew={isNew}
+                            fieldVarient={fieldVarient}
+                            isEditMode={isEditMode}
+                            caller={caller}
+                        />
                     </fieldset>
                     <FormAction/>
                 </form>
