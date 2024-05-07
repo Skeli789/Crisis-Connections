@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, Box, Checkbox, CircularProgress, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, TextField} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, TextField} from '@mui/material';
 import { IMaskInput } from 'react-imask';
 import { DatePicker, DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -520,6 +520,51 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
     )
 };
 
+const Modal = ({modalOpen, setModalOpen, setIsArchived}) => {
+    const [archiveReason, setArchiveReason] = useState(''),
+            [test, setTest] = useState('');
+            
+    const handleModalClose = () => {
+        setModalOpen(false);
+    };
+
+    const handleModalContinue = (e) => {
+        console.log(e);
+        setModalOpen(false);
+        setIsArchived(true);
+    };
+
+    return (
+        <Dialog
+                open={modalOpen}
+                onClose={handleModalClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">Are you sure you want to archive this profile?</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        required
+                        fullWidth
+                        id="archiveReason"
+                        label="Archive Reason"
+                        variant='outlined'
+                        InputProps={textAreaProps}
+                        // value={archiveReason}
+                        onChange={(e) => { setTest(e.target.value)}}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleModalClose}>Cancel</Button>
+                    <Button onClick={(e) => {handleModalContinue(e)}}>
+                        Continue
+                    </Button>
+                </DialogActions>
+            </Dialog>
+    )
+}
+
 export default function Caller() {
     // Page Info
     const { pathname } = useLocation(),
@@ -530,10 +575,16 @@ export default function Caller() {
     // State Variables
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
             [newUser, setNewUser] = useState({...baseUser}),
-            [editedUser, setEditedUser] = useState({...baseUser});    
+            [editedUser, setEditedUser] = useState({...baseUser}),
+            [modalOpen, setModalOpen] = useState(false);  
     // Caller Variables
     const   data = useQuery({queryKey: [type], queryFn: callerQueries[type]}),
-            caller = data.isSuccess ? data.data.find(caller => caller.id === callerId) : newUser;   
+            caller = data.isSuccess ? data.data.find(caller => caller.id === callerId) : newUser;  
+            
+    const   [isArchived, setIsArchived] = useState(isNew ? false : caller.archived.isArchived);
+            // [archiveReason, setArchiveReason] = useState(''),
+            // [test, setTest] = useState('');
+            // TODO: remove this archive demo stuff...
 
     // Form Variables
     const fieldVarient = isEditMode ? 'outlined' :  'standard';
@@ -542,7 +593,25 @@ export default function Caller() {
         lastName: !isNew && !caller.lastName,
     };
 
+    const handleArchive = () => {
+        setModalOpen(true);
+    };
+    
+    // const handleModalClose = () => {
+    //     setModalOpen(false);
+    // };
+
+    // const handleModalContinue = (e) => {
+    //     console.log(e);
+    //     setModalOpen(false);
+    //     setIsArchived(true);
+    // };
+
     function handleReactivate() {
+        // TODO: handle reactivate
+    }
+
+    function handleEdit() {
         setIsEditMode(true);
     }
 
@@ -580,19 +649,49 @@ export default function Caller() {
     // Sub Components
     function Action() {
         const archived = (
-            <Button variant="contained" disableElevation onClick={handleReactivate}>
-                <span className="font-body-bold">Reactivate</span>
-            </Button>
+            <>
+                <Button variant="contained" disableElevation onClick={handleReactivate}>
+                    <span className="font-body-bold">Reactivate</span>
+                </Button>
+            </>
         );
 
         const active = (!isEditMode && (
                 <>
-                    <Button variant="contained" disableElevation onClick={handleReactivate}>
+                    <Button variant="contained" disableElevation onClick={handleEdit}>
                         <span className="font-body-bold">Edit</span>
                     </Button>
-                    <Button variant="text" disableElevation onClick={handleReactivate}>
+                    <Button variant="text" disableElevation onClick={handleArchive}>
                         <span className="font-body-bold">Archive</span>
                     </Button>
+                    <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} setIsArchived={setIsArchived}/>
+                    {/* <Dialog
+                        open={modalOpen}
+                        onClose={handleModalClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">Are you sure you want to archive this profile?</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                autoFocus
+                                required
+                                fullWidth
+                                id="archiveReason"
+                                label="Archive Reason"
+                                variant='outlined'
+                                InputProps={textAreaProps}
+                                // value={archiveReason}
+                                onChange={(e) => { setTest(e.target.value)}}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleModalClose}>Cancel</Button>
+                            <Button onClick={(e) => {handleModalContinue(e)}}>
+                                Continue
+                            </Button>
+                        </DialogActions>
+                    </Dialog> */}
                 </>
             )
         )
@@ -606,7 +705,7 @@ export default function Caller() {
         return (
             <h1 className="font-page-heading">
                 { isNew ? 'New User' : getName(caller.firstName, caller.lastName) }
-                { caller.archived.isArchived && (
+                { isArchived && (
                     <span className="font-page-heading-light italic"> (archived)</span>
                 )}
             </h1>
@@ -637,7 +736,7 @@ export default function Caller() {
     return ( (data.isSuccess || isNew) ? (
             <div className="caller-details page-padding" data-is-edit={isEditMode}>
                 {!isEditMode && (
-                    <Button variant="text" disableElevation href="./">
+                    <Button variant="text" disableElevation href="/">
                         <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span>
                         <span className="font-body-bold">Back to caller list</span>
                     </Button>
@@ -646,10 +745,11 @@ export default function Caller() {
                     <PageTitle />
                     <Action/>
                 </div>
-                {caller.archived.isArchived && (
+                {(caller.archived.isArchived || isArchived) && !modalOpen && (
                     <p className='archive-reason font-body italic'>
                         <span className='font-body-bold'>Archive Reason: </span>
                         {caller.archived.reason}
+                        {/* {caller.archived.reason ? caller.archived.reason : archiveReason} */}
                     </p>
                 )}
                 <form action='' method="post" onSubmit={handleFormSave} className="caller-form">

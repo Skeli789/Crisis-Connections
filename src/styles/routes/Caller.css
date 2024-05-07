@@ -160,6 +160,10 @@ textarea {
     width: 100%;
 }
 
+.MuiDialogContent-root .MuiTextField-root {
+    margin-top: 10px;
+}
+
 @media (min-width: 768px) {
     .history_content .caller-form_row > *{
         grid-column-end: span 3;
