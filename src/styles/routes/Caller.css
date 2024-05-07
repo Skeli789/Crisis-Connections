@@ -51,6 +51,7 @@ textarea {
 
 .history_header {
     display: flex;
+    align-items: center;
 }
 
 .history_header .material-symbols-outlined {
@@ -84,19 +85,36 @@ textarea {
     grid-column-end: span 2;
 }
 
+.caller-form_row.phone .phone-group {
+    display: flex;
+}
+
+.caller-form_row.phone .phone-group_field {
+    flex: 1 1 auto;
+}
+
+.phone-group_add .material-symbols-outlined,
+.call-history_add .material-symbols-outlined {
+    margin-right: 10px;
+}
+
+#call-history-panel .call-history_add {
+    margin-bottom: 20px;
+    transform: translateX(-8px);
+}
+
 .caller-form_actions {
     bottom: 0;
     left: 0;
     background: #ffffffb5;
     width: 100%;
     display: flex;
-    position: relative;
-    position: sticky;
+    position: sticky; 
     padding: 20px 0 20px;
     z-index: 100;
 }
 
-.caller-form_actions:after {
+.caller-form_actions:before {
     content: '';
     display: block;
     position: absolute;

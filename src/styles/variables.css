@@ -76,6 +76,10 @@
     padding: 12px 40px;
 }
 
+.red {
+    color: var(--color-red);
+}
+
 /* MUI Orverides */
 .button-icon .material-symbols-outlined {
     margin-right: 7px;

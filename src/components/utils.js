@@ -40,7 +40,8 @@ export const formatPhoneNumber = (number) => {
  * 
 **/
 const labelMap = {
-    aka: 'Also Known As (AKA)'
+    aka: 'Also Known As (AKA)',
+    lgbtq: 'LGBTQ'
 }
 
 const toSentenceCase = (string) => {
@@ -48,7 +49,7 @@ const toSentenceCase = (string) => {
     return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-export const getLabelName = (label, fromMap = false) => {
+export const getLabelName = (label, fromMap = labelMap[label]) => {
     return fromMap ? labelMap[label] : toSentenceCase(label);
 }
 

@@ -20,6 +20,20 @@ export const getArchivedCallers = async () => {
     return response.data.record.archivedCallers;
 };
 
+export const pushNewCaller = (data) => {
+
+  // req.open("PUT", "https://api.jsonbin.io/v3/b/<BIN_ID>", true);
+
+  axios.post('https://api.jsonbin.io/v3/b/66344daee41b4d34e4ee0418', data)
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+}
+
 // TODO: add required * on fields
 export const baseUser = {
     "id": "",
