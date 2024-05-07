@@ -1,0 +1,38 @@
+nav {
+    box-shadow: var(--box-shadow);
+}
+
+nav .logos {
+    display: flex;
+    align-items: center;
+    background: var(--gradient-bkg);
+}
+
+.logos-main {
+    height: 25px;
+    margin-right: 36px;
+}
+
+.logos-secondary {
+    height: 15px;
+    margin-right: 16px;
+}
+
+nav .main {
+    display: flex;
+    align-items: center;
+    margin-right: 36px;
+}
+
+.nav-heading {
+    flex: 1;
+}
+
+.nav-heading a {
+    text-decoration: none;
+}
+
+.nav-heading_text {
+    color: var(--color-grey-dark);
+}
+

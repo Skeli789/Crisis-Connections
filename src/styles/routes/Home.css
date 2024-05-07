@@ -1,0 +1,26 @@
+.home-search {
+    max-width: 400px;
+}
+
+.home-search, .home-add {
+    margin-top: 32px;
+}
+
+.home-search_results {
+    margin: 5px 10px;
+    color: var(--color-grey);
+}
+
+.home-search_results[data-show="false"] {
+    visibility: hidden;
+}
+
+.home-emptystate {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: var(--gradient-bkg);
+    margin-top: 32px;
+}
