@@ -1,4 +1,5 @@
 import Card from './Card';
+import dayjs from "dayjs";
 import { formatDate, getName } from './utils';
   
 export default function CardList({callers = []}) {
@@ -8,6 +9,9 @@ export default function CardList({callers = []}) {
         const services = [...new Set(caller.callHistory.map(log => log.service))];
         const isArchived = caller.archived.isArchived;
         const aka = caller.aka.join(', ');
+        const sixMonthsAgo = dayjs().subtract(2, 'month');
+        // const sixMonthsAgo = dayjs().subtract(6, 'month');
+        const isOld = dayjs(lastCalled).isBefore(sixMonthsAgo, 'day');
 
         return (
             <li key={caller.id}>
@@ -18,6 +22,7 @@ export default function CardList({callers = []}) {
                         lastCalled = {lastCalled}
                         services = {services}
                         isArchived = {isArchived}
+                        isOld = {isOld}
                 />
             </li>
         );

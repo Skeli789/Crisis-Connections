@@ -28,8 +28,8 @@ export default function Home() {
             archivedCallers = useQuery({queryKey: ['archive'], queryFn: getArchivedCallers}),
             initialCallers = activeCallers.isSuccess ? sortCallers(activeCallers.data) : [],
             allCallers = [
-                activeCallers.isSuccess ? activeCallers.data : [],
-                archivedCallers.isSuccess ? archivedCallers.data : []
+                activeCallers.isSuccess ? sortCallers(activeCallers.data) : [],
+                archivedCallers.isSuccess ? sortCallers(archivedCallers.data) : []
             ];
     // List Type Variables
     const   isType = {
@@ -146,6 +146,15 @@ export default function Home() {
                         )
                     }}
                 />
+                {/* Filter by last called date
+                    all dates
+                    within last 6 months
+                    over 6 months ago  
+                    
+                    and or
+
+                    iconbutton that toggles old only?
+                 */}
             </div>
             <Content aria-live="polite" id="content" isLoaded/>
         </div>

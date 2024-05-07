@@ -1,7 +1,7 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, Fragment } from 'react';
 import { useLocation } from "react-router-dom";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Alert, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, Snackbar, TextField} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Alert, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, Snackbar, TextField} from '@mui/material';
 import { IMaskInput } from 'react-imask';
 import { DatePicker, DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -134,17 +134,15 @@ const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange
         const isChecked = e.target.checked;
         let prop = {...isNotProvided};
 
-        // if (isNotProvided[name] !== isChecked) {
-            prop[name] = isChecked;
-            setIsNotProvided(prop);
-            
-            if (name === 'firstName') {
-                setFirstName(isChecked ? 'Not Provided' : '');
-            } else if (name === 'lastName') {
-                setLastName(isChecked ? 'Not Provided' : '');
-            }
-        // }
-    }
+        prop[name] = isChecked;
+        setIsNotProvided(prop);
+        
+        if (name === 'firstName') {
+            setFirstName(isChecked ? 'Not Provided' : '');
+        } else if (name === 'lastName') {
+            setLastName(isChecked ? 'Not Provided' : '');
+        }
+}
 
     return (
         <>
@@ -159,7 +157,9 @@ const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange
                 onChange={handleFieldChange}
             />
             { isEditMode && 
-                <FormControlLabel className="additional" name="na-firstName" control={<Checkbox checked={fnCheck} />} label="Not Provided" onChange={handleNotProvided} />
+                <div className="additional">
+                    <FormControlLabel name="na-firstName" control={<Checkbox checked={fnCheck} />} label="Not Provided" onChange={handleNotProvided} />
+                </div>
             }
             <TextField
                 id="lastName"
@@ -172,7 +172,9 @@ const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange
                 onChange={handleFieldChange}
             />
             { isEditMode && 
-                <FormControlLabel className="additional" name="na-lastName" control={<Checkbox checked={lnCheck} />} label="Not Provided" onChange={handleNotProvided} />
+                <div className="additional">
+                    <FormControlLabel className="additional" name="na-lastName" control={<Checkbox checked={lnCheck} />} label="Not Provided" onChange={handleNotProvided} />
+                </div>
             }
         </>
     )
@@ -374,21 +376,19 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
     }
 
     return (
-        <div className="caller-form_row personal">
-            {/* TODO: in read only show all answers of a type together, comma seperated */}
-            { backgroundFields.map(field => {
-                const data = backgroundData[field];
-                const fieldLabel = getLabelName(field);
-                const disableAdd = data[data.length - 1].length === 0;
+        backgroundFields.map(field => {
+            const data = backgroundData[field];
+            const fieldLabel = getLabelName(field);
+            const disableAdd = data[data.length - 1].length === 0;
 
-                return (
-                    data.map((selection, i) => {
+            return (
+                <div key={field} className="personal-background">
+                    { data.map((selection, i) => {
                         const isLast = isEditMode && i === data.length - 1;
-
                         return (
-                            <div className="personal-field" data-is-last={isLast} key={`${field}-${selection}-${i}`}>
+                            <Fragment key={`${field}-${selection}-${i}`}>
                                 {(isEditMode && i !== 0) && (
-                                    <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
+                                    <Button className="personal-background_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
                                         <>
                                             <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
                                             <span className="a11y-text font-body-bold">Remove {field}</span>
@@ -409,17 +409,18 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
                                     renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
                                 />
                                 {isLast && (
-                                    <Button className="call-history_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
+                                    <Button className="personal-background_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
                                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                                         <span className="font-body-bold">Add {field === 'sexualOrientation' ? 'Orientation' : fieldLabel}</span>
                                     </Button>
                                 )}
-                            </div>
+                            </Fragment>
                         )
                     })
-                )
-            })}
-        </div>
+                }
+            </div>
+            )
+        })
     );
 }
 
@@ -708,10 +709,12 @@ export default function Caller() {
     return ( (data.isSuccess || isNew) ? (
             <div className="caller-details page-padding" data-is-edit={isEditMode}>
                 {!isEditMode && (
-                    <Button variant="text" disableElevation href="/">
-                        <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span>
-                        <span className="font-body-bold">Back to caller list</span>
-                    </Button>
+                    <div className="caller-details_back">
+                        <Button variant="text" disableElevation href="/">
+                            <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span>
+                            <span className="font-body-bold">Back to caller list</span>
+                        </Button>
+                    </div>
                 )}
                 <div className="caller-details-header">
                     <PageTitle />
@@ -721,7 +724,6 @@ export default function Caller() {
                     <p className='archive-reason font-body italic'>
                         <span className='font-body-bold'>Archive Reason: </span>
                         {caller.archived.reason}
-                        {/* {caller.archived.reason ? caller.archived.reason : archiveReason} */}
                     </p>
                 )}
                 <form action='' method="post" onSubmit={handleFormSave} className="caller-form">
