@@ -361,8 +361,10 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
         setBackgroundData(newObj);
     }
 
-    function removeField(index) {
-        // setHistory(history.filter((log, i) => i !== index));
+    function removeField(field, index) {
+        let newObj = {...backgroundData};
+        newObj[field] = newObj[field].filter((item, i) => i !== index);
+        setBackgroundData(newObj);
     }
 
     const handleFieldChange = (newValue, field, index) => {
@@ -385,6 +387,14 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
 
                         return (
                             <div className="personal-field" data-is-last={isLast} key={`${field}-${selection}-${i}`}>
+                                {(isEditMode && i !== 0) && (
+                                    <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
+                                        <>
+                                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                                            <span className="a11y-text font-body-bold">Remove {field}</span>
+                                        </>
+                                    </Button>
+                                )}
                                 <Autocomplete
                                     disablePortal
                                     freeSolo

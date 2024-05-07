@@ -153,7 +153,7 @@ textarea {
 }
 
 [data-is-edit="true"] .caller-form_row  .personal-field[data-is-last="true"] .MuiAutocomplete-root {
-    width: calc(100% - 216px);
+    width: calc(100% - 280px);
 }
 
 [data-is-edit="true"] .caller-form_row  .personal-field[data-is-last="false"] .MuiAutocomplete-root {
