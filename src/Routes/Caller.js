@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, TextField} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Alert, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, Snackbar, TextField} from '@mui/material';
 import { IMaskInput } from 'react-imask';
 import { DatePicker, DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -521,8 +521,6 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
 };
 
 const Modal = ({modalOpen, setModalOpen, setIsArchived}) => {
-    const [archiveReason, setArchiveReason] = useState(''),
-            [test, setTest] = useState('');
             
     const handleModalClose = () => {
         setModalOpen(false);
@@ -552,7 +550,7 @@ const Modal = ({modalOpen, setModalOpen, setIsArchived}) => {
                         variant='outlined'
                         InputProps={textAreaProps}
                         // value={archiveReason}
-                        onChange={(e) => { setTest(e.target.value)}}
+                        // onChange={(e) => { setTest(e.target.value)}}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -576,15 +574,13 @@ export default function Caller() {
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
             [newUser, setNewUser] = useState({...baseUser}),
             [editedUser, setEditedUser] = useState({...baseUser}),
-            [modalOpen, setModalOpen] = useState(false);  
+            [modalOpen, setModalOpen] = useState(false),
+            [openToast, setOpenToast] = useState(false);
     // Caller Variables
     const   data = useQuery({queryKey: [type], queryFn: callerQueries[type]}),
             caller = data.isSuccess ? data.data.find(caller => caller.id === callerId) : newUser;  
             
     const   [isArchived, setIsArchived] = useState(isNew ? false : caller.archived.isArchived);
-            // [archiveReason, setArchiveReason] = useState(''),
-            // [test, setTest] = useState('');
-            // TODO: remove this archive demo stuff...
 
     // Form Variables
     const fieldVarient = isEditMode ? 'outlined' :  'standard';
@@ -597,15 +593,6 @@ export default function Caller() {
         setModalOpen(true);
     };
     
-    // const handleModalClose = () => {
-    //     setModalOpen(false);
-    // };
-
-    // const handleModalContinue = (e) => {
-    //     console.log(e);
-    //     setModalOpen(false);
-    //     setIsArchived(true);
-    // };
 
     function handleReactivate() {
         // TODO: handle reactivate
@@ -626,24 +613,31 @@ export default function Caller() {
     }
 
     function handleFormSave(e) {
-        const inputs = Array.from(e.currentTarget).filter(item => item.nodeName === 'INPUT');
-        const fakeForm = {
-            ...baseUser,
-            firstName: 'Emily',
-            lastName: 'Painter',
-            phoneNumbers: [1234567890],
-            relevantInfo: 'baby shark do do do dod dooo',
-            specificInstructions: 'mama shark do do do dod dodooo'
-        };
-        const activeUsers = [...data, fakeForm];
+        // TODO: better handle save, aggregating all values
 
-        pushNewCaller(activeUsers);
+        // const inputs = Array.from(e.currentTarget).filter(item => item.nodeName === 'INPUT');
+        // const fakeForm = {
+        //     ...baseUser,
+        //     firstName: 'Emily',
+        //     lastName: 'Painter',
+        //     phoneNumbers: [1234567890],
+        //     relevantInfo: 'baby shark do do do dod dooo',
+        //     specificInstructions: 'mama shark do do do dod dodooo'
+        // };
+        // const activeUsers = [...data, fakeForm];
 
-        console.log('save form');
+        // pushNewCaller(activeUsers);
+        setIsEditMode(false);
+        setOpenToast(true);
+
     }
 
     function handleFormSaveAnother() {
         console.log('save form and add another')
+    }
+
+    function handleCloseToast() {
+        setOpenToast(false);
     }
 
     // Sub Components
@@ -665,33 +659,6 @@ export default function Caller() {
                         <span className="font-body-bold">Archive</span>
                     </Button>
                     <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} setIsArchived={setIsArchived}/>
-                    {/* <Dialog
-                        open={modalOpen}
-                        onClose={handleModalClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                    >
-                        <DialogTitle id="alert-dialog-title">Are you sure you want to archive this profile?</DialogTitle>
-                        <DialogContent>
-                            <TextField
-                                autoFocus
-                                required
-                                fullWidth
-                                id="archiveReason"
-                                label="Archive Reason"
-                                variant='outlined'
-                                InputProps={textAreaProps}
-                                // value={archiveReason}
-                                onChange={(e) => { setTest(e.target.value)}}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleModalClose}>Cancel</Button>
-                            <Button onClick={(e) => {handleModalContinue(e)}}>
-                                Continue
-                            </Button>
-                        </DialogActions>
-                    </Dialog> */}
                 </>
             )
         )
@@ -724,7 +691,12 @@ export default function Caller() {
                         <Button variant="text" disableElevation onClick={handleFormSaveAnother}>
                             <span className="font-body-bold">Save & Add Another</span>
                         </Button>
-                        <Button variant="contained" disableElevation type="submit" onClick={() => { console.log('submit')}}>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            // type="submit"
+                            onClick={() => { handleFormSave()}}
+                        >
                             <span className="font-body-bold">Save</span>
                         </Button>
                     </div>
@@ -814,6 +786,16 @@ export default function Caller() {
                         />
                     </fieldset>
                     <FormAction/>
+                    <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={openToast} autoHideDuration={6000} onClose={handleCloseToast}>
+                        <Alert
+                            onClose={handleCloseToast}
+                            severity="success"
+                            variant="filled"
+                            sx={{ width: '100%' }}
+                        >
+                            Profile successfully saved!
+                        </Alert>
+                    </Snackbar>
                 </form>
             </div>
         ) : (
