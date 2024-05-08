@@ -1,6 +1,7 @@
 import React from "react";
 import { formatPhoneNumber, getLabelName } from "./utils";
-import { Button, IconButton, Tooltip} from '@mui/material';
+import { Button } from '@mui/material';
+import OldProfile from "./OldProfile";
   
 export default function Card({
     id,
@@ -29,15 +30,7 @@ export default function Card({
 
     return (
         <div className='card' data-is-old={isOld}>
-            {(isOld && !isArchived) && (
-                <div className="card-alert">
-                    <Tooltip title="Last called over 6 months ago">
-                        <IconButton>
-                            <span className="material-symbols-outlined">call_quality</span>
-                        </IconButton>
-                    </Tooltip>
-                </div>
-            )}
+            {(isOld && !isArchived) && <OldProfile className="card-alert" />}
             <dl className='card-data'>
                 <div className='card-data_detail name'>
                     <dt className='font-label'>Name</dt>

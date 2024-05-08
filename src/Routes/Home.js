@@ -88,7 +88,7 @@ export default function Home() {
             )
         } else if (isType.active ? activeCallers.isError : archivedCallers.isError) {
             return (
-                <div className="home-emptystate">
+                <div className="empty-state">
                     <p>There was an error retrieving caller data.</p>
                 </div>
             );
@@ -103,7 +103,7 @@ export default function Home() {
                             <CardList callers={callers}/>
                         </>
                     ) : (
-                       <div className="home-emptystate">
+                       <div className="empty-state">
                             <p>{allCallers[listType].length === 0 ? `There are no ${activeType.toLowerCase()} caller records.` : 'No results matching your search.'}</p>
                             <Button variant="text" disableElevation onClick={handleTabChange}>
                                 <span className="font-body-bold">{`Search ${activeType} Callers`}</span>
@@ -150,7 +150,7 @@ export default function Home() {
                     all dates
                     within last 6 months
                     over 6 months ago  
-                    
+
                     and or
 
                     iconbutton that toggles old only?

@@ -97,10 +97,21 @@ textarea {
 
 .caller-form_row.phone .phone-group {
     display: flex;
+    position: relative;
 }
 
 .caller-form_row.phone .phone-group_field {
     flex: 1 1 auto;
+}
+
+.duplicate-error {
+    padding-top: 20px;
+}
+
+.duplicate-error .material-symbols-outlined {
+    color: var(--color-yellow);
+    vertical-align: bottom;
+    margin-right: 5px;
 }
 
 .phone-group_add .material-symbols-outlined,
@@ -179,6 +190,10 @@ textarea {
     display: flex;
     align-items: center;
     margin-top: 40px;
+}
+
+.personal-background.phone {
+    margin-top: 0;
 }
 
 .personal-background .MuiAutocomplete-root {

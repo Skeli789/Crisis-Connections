@@ -18,6 +18,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Home from "./Routes/Home";
 import Caller from "./Routes/Caller";
+import Error404 from "./Routes/Error404";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
         {
             path: "archive/:caller",
             element: <Caller />
+        },
+        {
+            path: '*',
+            element: <Error404/>
         }
       ]
     },

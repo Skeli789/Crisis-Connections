@@ -81,6 +81,17 @@
     color: var(--color-red);
 }
 
+.empty-state {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: var(--gradient-bkg);
+    margin-top: 32px;
+    padding: 20px;
+}
+
 /* MUI Orverides */
 .button-icon .material-symbols-outlined {
     margin-right: 7px;

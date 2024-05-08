@@ -1,3 +1,7 @@
 @import url("./Card");
 @import url("./NavBar");
 @import url("./Footer");
+
+.old-profile .material-symbols-outlined {
+    color: var(--color-yellow);
+}

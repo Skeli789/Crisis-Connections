@@ -54,10 +54,6 @@
     top: 20px;
 }
 
-.card-alert .material-symbols-outlined {
-    color: var(--color-yellow);
-}
-
 @media (min-width: 768px) {
     .card-list {
         display: grid;
