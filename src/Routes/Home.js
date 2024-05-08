@@ -39,10 +39,6 @@ export default function Home() {
             activeType = isType.active ? 'Archived' : 'Active';
     
     // Component Functions
-    function addNewCaller() {
-        console.log('add new caller');
-    }
-
     const handleSearch = (input, type = listType) => {
         const inputText = input.target ? input.target.value : input;
         const searchValue = inputText.trim().toLowerCase();

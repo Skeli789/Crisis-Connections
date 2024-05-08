@@ -30,7 +30,7 @@ export default function Card({
 
     return (
         <div className='card' data-is-old={isOld}>
-            {(isOld && !isArchived) && <OldProfile className="card-alert" />}
+            {(isOld && !isArchived) && <div className="card-alert"><OldProfile /></div>}
             <dl className='card-data'>
                 <div className='card-data_detail name'>
                     <dt className='font-label'>Name</dt>

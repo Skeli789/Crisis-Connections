@@ -1,11 +1,11 @@
 import { forwardRef, useState, Fragment } from 'react';
 import { useLocation } from "react-router-dom";
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Alert, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, Snackbar, TextField, Tooltip } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Alert, Button, Box, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Input, InputLabel, FormControl, FormControlLabel, OutlinedInput, Snackbar, TextField } from '@mui/material';
 import { IMaskInput } from 'react-imask';
 import { DatePicker, DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { getActiveCallers, getArchivedCallers, pushNewCaller, baseUser } from '../api.js';
+import { getActiveCallers, getArchivedCallers, baseUser } from '../api.js';
 import { formatPhoneNumber, getLabelName, getName, isOld, sortByCallHistory } from '../components/utils.js';
 import { fields, mapSelection } from '../components/fields.js';
 import OldProfile from '../components/OldProfile.js';
@@ -124,7 +124,6 @@ const PhoneNumbers = ({isNew, caller, fieldVarient, isEditMode, callerList, dupl
         <div className="personal-background">
             {numbers.map((number, i) => {
                 return (
-                    // <div key={`${number}-${i}`} className="phone-group">
                     <Fragment key={`${number}-${i}`}>
                         {(isEditMode && i !== 0) && (
                             <Button className="phone-group_remove personal-background_remove" variant="text" disableElevation type='button' onClick={() => removeField(i)}>
@@ -134,11 +133,7 @@ const PhoneNumbers = ({isNew, caller, fieldVarient, isEditMode, callerList, dupl
                                 </>
                             </Button>
                         )}
-                        {/* <div> */}
-                            <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew}/>
-                            
-                        {/* </div> */}
-                    {/* </div> */}
+                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew}/>
                     </Fragment>
                 )
             })}
@@ -152,7 +147,7 @@ const PhoneNumbers = ({isNew, caller, fieldVarient, isEditMode, callerList, dupl
     );
 }
 
-const Names = ({isNew, fieldVarient, isEditMode, initialCheck, handleFieldChange, caller}) => {
+const Names = ({isNew, fieldVarient, isEditMode, initialCheck, caller}) => {
     const [firstName, setFirstName] = useState(isNew ? '' : (caller.firstName ? caller.firstName : 'Not Provided'));
     const [lastName, setLastName] = useState(isNew ? '' : (caller.lastName ? caller.lastName : 'Not Provided'));
     const [isNotProvided, setIsNotProvided] = useState({firstName: initialCheck.firstName, lastName: initialCheck.lastName});
@@ -611,13 +606,13 @@ export default function Caller() {
             callerId = params[2];
     // State Variables
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
-            [newUser, setNewUser] = useState({...baseUser}),
-            [editedUser, setEditedUser] = useState({...baseUser}),
+            // [newUser, setNewUser] = useState({...baseUser}),
+            // [editedUser, setEditedUser] = useState({...baseUser}),
             [modalOpen, setModalOpen] = useState(false),
             [openToast, setOpenToast] = useState(false);
     // Caller Variables
     const   callerList = useQuery({queryKey: [type], queryFn: callerQueries[type]}),
-            caller = callerList.isSuccess ? callerList.data.find(caller => caller.id === callerId) : newUser;  
+            caller = callerList.isSuccess ? callerList.data.find(caller => caller.id === callerId) : {...baseUser};  
             
     const   [isArchived, setIsArchived] = useState(isNew ? false : caller.archived.isArchived);
     const   [duplicates, setDuplicates] = useState([]);
@@ -776,19 +771,24 @@ export default function Caller() {
                     <div className="duplicate-error">
                         <span>
                             <span className="material-symbols-outlined">error</span>
-                            There are potential duplicate profile(s).
+                            There are potential duplicate caller profile(s).
                         </span>
                         <ul>
                             {duplicates.map(item => {
                                 return (
                                     <li key={item.phoneNumber}>
-                                        {formatPhoneNumber(item.phoneNumber)} is used in 
-                                        { item.dupes.map(profile => {
-                                                return (
-                                                    <Button key={profile.id} variant="text" disableElevation target="_blank" href={`/caller/${profile.id}`}>{profile.name}</Button>
-                                                )
-                                            })
-                                        }
+                                        <span>
+                                            {formatPhoneNumber(item.phoneNumber)} is used in 
+                                            { item.dupes.map((profile, i) => {
+                                                    return (
+                                                        <span key={profile.id}>
+                                                            <Button variant="text" disableElevation target="_blank" href={`/caller/${profile.id}`}>{profile.name}</Button>
+                                                            {i < item.dupes.length - 1 && ','}
+                                                        </span>
+                                                    )
+                                                })
+                                            }
+                                        </span>
                                     </li>
                                 )
                             })}
@@ -797,7 +797,7 @@ export default function Caller() {
                 )}
                 <form action='' method="post" onSubmit={handleFormSave} className="caller-form">
                     <fieldset className="caller-details_header" disabled={!isEditMode}>
-                        <div className="caller-form_row phone">
+                        <div className="phone">
                             <PhoneNumbers
                                 isNew = {isNew}
                                 caller = {caller}
