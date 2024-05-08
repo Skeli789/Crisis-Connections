@@ -25,7 +25,7 @@ const textAreaProps = { rows: 4, multiline: true, inputComponent: 'textarea' }; 
 const BackButton = () => {
     return (
         <div className="caller-details_back">
-            <Button variant="text" disableElevation href="/">
+            <Button variant="text" disableElevation href="#/">
                 <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span>
                 <span className="font-body-bold">Back to caller list</span>
             </Button>
@@ -111,7 +111,7 @@ export default function Caller() {
         // TODO: reset values
 
         if (isNew) {
-            window.location.href = '/';
+            window.location.href = '#/';
         } else {
             setIsEditMode(false);
         }
