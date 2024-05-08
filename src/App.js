@@ -5,7 +5,7 @@
 import React from "react";
 import { createTheme, alpha, getContrastRatio, ThemeProvider } from '@mui/material/styles';
 import {
-    createBrowserRouter,
+    createHashRouter,
     RouterProvider,
     Outlet,
 } from "react-router-dom";
@@ -45,14 +45,10 @@ const AppLayout = () => (
     </ThemeProvider>
 );
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
       element: <AppLayout />,
       children: [
-        {
-            path: "/",
-            element: <Home />,
-        },
         {
             path: "/caller",
             element: <Home /> 
@@ -72,6 +68,10 @@ const router = createBrowserRouter([
         {
             path: '*',
             element: <Error404/>
+        },
+        {
+            path: "/",
+            element: <Home />,
         }
       ]
     },

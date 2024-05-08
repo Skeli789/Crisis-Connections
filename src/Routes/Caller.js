@@ -42,7 +42,7 @@ const DuplicateWarning = ({duplicates}) => {
                     { item.dupes.map((profile, i) => {
                             return (
                                 <span key={profile.id}>
-                                    <Button variant="text" disableElevation target="_blank" href={`/caller/${profile.id}`}>{profile.name}</Button>
+                                    <Button variant="text" disableElevation target="_blank" href={`#/caller/${profile.id}`}>{profile.name}</Button>
                                     {i < item.dupes.length - 1 && ','}
                                 </span>
                             )

@@ -120,7 +120,7 @@ export default function Home() {
             </Tabs>
             {isType.active && (
                 <div className="home-add">
-                    <Button className="button-icon" variant="text" disableElevation href="/new">
+                    <Button className="button-icon" variant="text" disableElevation href="#/new">
                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                         <span className="font-body-bold">add new caller</span>
                     </Button>
