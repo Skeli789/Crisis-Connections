@@ -1,5 +1,5 @@
 import React from "react";
-import { formatPhoneNumber, getLabelName } from "./utils";
+import { formatPhoneNumber, getLabelName } from "../utils/utils";
 import { Button } from '@mui/material';
 import OldProfile from "./OldProfile";
   

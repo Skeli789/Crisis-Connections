@@ -1,5 +1,5 @@
 import Card from './Card';
-import { formatDate, getName, isOld } from './utils';
+import { formatDate, getName, isOld } from '../utils/utils';
   
 export default function CardList({callers = []}) {
     const list = callers?.map(caller => {

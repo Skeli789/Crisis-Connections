@@ -5,8 +5,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, CircularProgress, InputAdornment, Tab, Tabs, TextField } from '@mui/material';
-import { getActiveCallers, getArchivedCallers } from '../api.js';
-import { sortCallers } from '../components/utils';
+import { getActiveCallers, getArchivedCallers } from '../utils/api.js';
+import { sortCallers } from '../utils/utils.js';
 import CardList from "../components/CardList";
 
 import '../styles/routes/Home.css';

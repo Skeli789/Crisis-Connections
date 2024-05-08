@@ -118,3 +118,7 @@
 #root .MuiButton-root {
     border-radius: 20px;
 }
+
+button.MuiButtonBase-root.MuiButton-root.MuiButton-text:hover {
+    background-color: #F5F8FB;
+}

@@ -188,15 +188,23 @@ textarea {
 
 .personal-background {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    margin-top: 40px;
+    margin-top: 20px;
+}
+
+.personal-background > .phone-group_field,
+.personal-background > .MuiAutocomplete-root,
+.personal-background > .MuiButton-root {
+    margin-top: 20px;
 }
 
 .personal-background.phone {
     margin-top: 0;
 }
 
-.personal-background .MuiAutocomplete-root {
+.personal-background .MuiAutocomplete-root,
+.personal-background .phone-group_field {
     min-width: 200px;
 }
 
@@ -218,7 +226,8 @@ textarea {
     margin-left: 20px;
 }
 
-[data-is-edit="false"] .personal-background .MuiAutocomplete-root:not(:first-of-type) {
+[data-is-edit="false"] .personal-background .MuiAutocomplete-root:not(:first-of-type), 
+[data-is-edit="false"] .personal-background .phone-group_field:not(:first-of-type) {
     margin-left: 20px;
 }
 
