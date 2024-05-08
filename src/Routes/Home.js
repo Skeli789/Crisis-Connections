@@ -5,8 +5,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, CircularProgress, InputAdornment, Tab, Tabs, TextField } from '@mui/material';
-import { getActiveCallers, getArchivedCallers } from '../api.js';
-import { sortCallers } from '../components/utils';
+import { getActiveCallers, getArchivedCallers } from '../utils/api.js';
+import { sortCallers } from '../utils/utils.js';
 import CardList from "../components/CardList";
 
 import '../styles/routes/Home.css';
@@ -28,8 +28,8 @@ export default function Home() {
             archivedCallers = useQuery({queryKey: ['archive'], queryFn: getArchivedCallers}),
             initialCallers = activeCallers.isSuccess ? sortCallers(activeCallers.data) : [],
             allCallers = [
-                activeCallers.isSuccess ? activeCallers.data : [],
-                archivedCallers.isSuccess ? archivedCallers.data : []
+                activeCallers.isSuccess ? sortCallers(activeCallers.data) : [],
+                archivedCallers.isSuccess ? sortCallers(archivedCallers.data) : []
             ];
     // List Type Variables
     const   isType = {
@@ -39,10 +39,6 @@ export default function Home() {
             activeType = isType.active ? 'Archived' : 'Active';
     
     // Component Functions
-    function addNewCaller() {
-        console.log('add new caller');
-    }
-
     const handleSearch = (input, type = listType) => {
         const inputText = input.target ? input.target.value : input;
         const searchValue = inputText.trim().toLowerCase();
@@ -88,7 +84,7 @@ export default function Home() {
             )
         } else if (isType.active ? activeCallers.isError : archivedCallers.isError) {
             return (
-                <div className="home-emptystate">
+                <div className="empty-state">
                     <p>There was an error retrieving caller data.</p>
                 </div>
             );
@@ -103,7 +99,7 @@ export default function Home() {
                             <CardList callers={callers}/>
                         </>
                     ) : (
-                       <div className="home-emptystate">
+                       <div className="empty-state">
                             <p>{allCallers[listType].length === 0 ? `There are no ${activeType.toLowerCase()} caller records.` : 'No results matching your search.'}</p>
                             <Button variant="text" disableElevation onClick={handleTabChange}>
                                 <span className="font-body-bold">{`Search ${activeType} Callers`}</span>
@@ -146,6 +142,15 @@ export default function Home() {
                         )
                     }}
                 />
+                {/* Filter by last called date
+                    all dates
+                    within last 6 months
+                    over 6 months ago  
+
+                    and or
+
+                    iconbutton that toggles old only?
+                 */}
             </div>
             <Content aria-live="polite" id="content" isLoaded/>
         </div>

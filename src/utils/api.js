@@ -20,17 +20,16 @@ export const getArchivedCallers = async () => {
     return response.data.record.archivedCallers;
 };
 
-export const pushNewCaller = (data) => {
+export const pushNewCaller = async (data) => {
+  // TODO: push new data.. I may have set up the jsbin.io incorrectly, putting the whole lists where single obj should have been.
 
   // req.open("PUT", "https://api.jsonbin.io/v3/b/<BIN_ID>", true);
 
-  axios.post('https://api.jsonbin.io/v3/b/66344daee41b4d34e4ee0418', data)
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+  // axios.post('https://api.jsonbin.io/v3/b/66344daee41b4d34e4ee0418', data, { headers: apiHeader}).then(function (response) {
+  //   console.log(response);
+  // }).catch(function (error) {
+  //   console.log(error);
+  // });
 
 }
 

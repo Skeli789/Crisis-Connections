@@ -8,7 +8,7 @@ export default function Footer() {
             <div className="footer-company font-label-bold">
                 <span className="material-symbols-outlined">copyright</span>
                 <span className="footer-company_date"> 2024, </span>
-                <a target="_blank" href="https://www.crisisconnections.org/">Crisis Connections</a>
+                <a target="_blank" rel="noreferrer noopener" href="https://www.crisisconnections.org/">Crisis Connections</a>
             </div>
         </footer>
     );

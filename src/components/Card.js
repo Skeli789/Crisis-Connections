@@ -1,6 +1,7 @@
 import React from "react";
-import { formatPhoneNumber, getLabelName } from "./utils";
-import Button from '@mui/material/Button';
+import { formatPhoneNumber, getLabelName } from "../utils/utils";
+import { Button } from '@mui/material';
+import OldProfile from "./OldProfile";
   
 export default function Card({
     id,
@@ -9,8 +10,10 @@ export default function Card({
     phoneNumbers = [], 
     lastCalled = '', 
     services = [],
-    isArchived = false
+    isArchived = false,
+    isOld = false
 }) {
+
     aka = aka ? aka : '-';
 
     phoneNumbers = phoneNumbers.map(number => {
@@ -26,7 +29,8 @@ export default function Card({
     });
 
     return (
-        <div className='card'>
+        <div className='card' data-is-old={isOld}>
+            {(isOld && !isArchived) && <div className="card-alert"><OldProfile /></div>}
             <dl className='card-data'>
                 <div className='card-data_detail name'>
                     <dt className='font-label'>Name</dt>
@@ -44,8 +48,19 @@ export default function Card({
                     {phoneNumbers}
                 </div>
                 <div className='card-data_detail last-called'>
-                    <dt className='font-label'>{getLabelName('lastCalled')}</dt>
-                    <dd className='font-body'>{lastCalled}</dd>
+                    <dt className='font-label'>
+                        {getLabelName('lastCalled')}
+                    </dt>
+                    <dd className='font-body'>
+                        {/* {isOld && (
+                            <Tooltip title="Last called over 6 months ago">
+                                <IconButton>
+                                    <span className="material-symbols-outlined">call_quality</span>
+                                </IconButton>
+                            </Tooltip>
+                        )} */}
+                        {lastCalled}
+                    </dd>
                 </div>
                 <div className='card-data_detail services'>
                     <dt className='font-label'>Services Contacted</dt>

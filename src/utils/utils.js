@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 /**
  * A helper function that takes a date string and returns date display formatted string
  *
@@ -85,8 +87,21 @@ export function sortCallers(list = []) {
     }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
 }
 
+/**
+ * A helper function that takes date and returns if older than 6 months ago
+ *
+ * @param {string} date - the date to check.
+ * @returns {boolean} if older than 6 months
+ * 
+**/
+
+export function isOld(date) {
+    const sixMonthsAgo = dayjs().subtract(6, 'month');
+    return dayjs(date).isBefore(sixMonthsAgo, 'day');
+}
+
 /***********************************************************/
 
-const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, sortByCallHistory, sortCallers };
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, isOld, sortByCallHistory, sortCallers };
 
 export default helperFunctions;

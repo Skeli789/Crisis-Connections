@@ -1,5 +1,5 @@
 import Card from './Card';
-import { formatDate, getName } from './utils';
+import { formatDate, getName, isOld } from '../utils/utils';
   
 export default function CardList({callers = []}) {
     const list = callers?.map(caller => {
@@ -18,6 +18,7 @@ export default function CardList({callers = []}) {
                         lastCalled = {lastCalled}
                         services = {services}
                         isArchived = {isArchived}
+                        isOld = {isOld(lastCalled)}
                 />
             </li>
         );
