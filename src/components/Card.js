@@ -68,7 +68,7 @@ export default function Card({
                 </div>
             </dl>
             <div className="card-footer">
-                <Button variant="text" disableElevation href={`./${isArchived ? 'archive' : 'caller'}/${id}`}>
+                <Button variant="text" disableElevation href={`#/${isArchived ? 'archive' : 'caller'}/${id}`}>
                     <span className="font-body-bold">View Details</span>
                     <span className="a11y-text">for {name}</span>
                 </Button>
