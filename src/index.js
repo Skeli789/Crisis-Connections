@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// Regular tanstack query:
+// Regular tanstack query (will also need QueryClientProvider instead of PersistQueryClientProvider):
 // const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, refetchOnWindowFocus: false, refetchOnMount: false, refetchOnReconnect: false}}});
 
 // Tanstack query with local storage:
@@ -33,7 +32,6 @@ root.render(
   <React.StrictMode>
     <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
       <App />
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </PersistQueryClientProvider>
   </React.StrictMode>
 );
