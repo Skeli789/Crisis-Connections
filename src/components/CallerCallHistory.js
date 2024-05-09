@@ -40,7 +40,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         id={`caller-log-service-${index}`}
                         variant={fieldVarient}
                         options={fields.services}
-                        defaultValue={isNew ? undefined :  mapSelection(log.service)}
+                        defaultValue={isNew || !log.service ? undefined :  mapSelection(log.service)}
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}

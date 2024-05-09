@@ -52,13 +52,6 @@ export default function Card({
                         {getLabelName('lastCalled')}
                     </dt>
                     <dd className='font-body'>
-                        {/* {isOld && (
-                            <Tooltip title="Last called over 6 months ago">
-                                <IconButton>
-                                    <span className="material-symbols-outlined">call_quality</span>
-                                </IconButton>
-                            </Tooltip>
-                        )} */}
                         {lastCalled}
                     </dd>
                 </div>
