@@ -20,20 +20,6 @@ export const getArchivedCallers = async () => {
     return response.data.record.archivedCallers;
 };
 
-export const pushNewCaller = async (data) => {
-  // TODO: push new data.. I may have set up the jsbin.io incorrectly, putting the whole lists where single obj should have been.
-
-  // req.open("PUT", "https://api.jsonbin.io/v3/b/<BIN_ID>", true);
-
-  // axios.post('https://api.jsonbin.io/v3/b/66344daee41b4d34e4ee0418', data, { headers: apiHeader}).then(function (response) {
-  //   console.log(response);
-  // }).catch(function (error) {
-  //   console.log(error);
-  // });
-
-}
-
-// TODO: add required * on fields
 export const baseUser = {
     "id": "",
     "aka": [],
@@ -42,9 +28,9 @@ export const baseUser = {
     "county": "",
     "gender": [],
     "archived": {
-      "by": null,
-      "reason": null,
-      "dateTime": null,
+      "by": '',
+      "reason": '',
+      "dateTime": undefined,
       "isArchived": false
     },
     "birthday": "",
@@ -56,7 +42,7 @@ export const baseUser = {
       {
         "with": "",
         "notes": "",
-        "service": "",
+        "service": undefined,
         "dateTime": new Date()
       }
     ],
@@ -64,11 +50,17 @@ export const baseUser = {
       "by": "",
       "dateTime": new Date()
     },
-    "phoneNumbers": [],
+    "phoneNumbers": [''],
     "relevantInfo": "",
-    "sexualOrientation": [],
+    "sexualOrientation": [''],
     "specificInstructions": "",
-    "currentBehavioralTreatment": []
+    "currentBehavioralTreatment": [
+      {
+        undergoing: undefined,
+        location: '',
+        notes: ''
+      }
+    ]
 };
 
 export const userFields = [

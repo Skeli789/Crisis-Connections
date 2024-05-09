@@ -68,7 +68,6 @@ export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, t
     const initialEmpty = isNew || caller.callHistory.length === 0;
     // TODO: Prefill "with" name using login information, if possible
     const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: true};
-    // TODO: Very duplicative of phone numbers, etc behavior. Can be consolidated?
     const [history, setHistory] = useState(initialEmpty ? [newLog] : caller.callHistory);
 
     const addLog = () => {

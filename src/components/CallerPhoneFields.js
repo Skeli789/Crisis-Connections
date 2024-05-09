@@ -1,4 +1,4 @@
-import { forwardRef, useState, Fragment } from 'react';
+import { forwardRef, useState } from 'react';
 import { Button, Input, InputLabel, FormControl, OutlinedInput } from '@mui/material';
 import { IMaskInput } from 'react-imask';
 import { getName } from '../utils/utils.js';
@@ -23,7 +23,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     let label = "Phone Number"
         label = index === 0 ? `${label} (Required)` : label;
     
-    number = number.toString();
+    number = isNew ? undefined : number.toString();
 
     return (
         <FormControl className="phone-group_field" variant={fieldVarient}>
@@ -42,7 +42,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
                 </>
             ) : (
                 <Input
-                    defaultValue={isNew ? undefined :  number.toString()}
+                    defaultValue={number}
                     name={`phoneNumber-${index}`}
                     id={`phoneNumber-${index}`}
                     inputComponent={TextMaskCustom}
@@ -105,12 +105,12 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
     }
 
     return (
-        <div className="personal-background">
+        <div className="multiple-field">
             {numbers.map((number, i) => {
                 return (
-                    <Fragment key={`${number}-${i}`}>
+                    <div key={`${number}-${i}`} className="multiple-field_item">
                         {(isEditMode && i !== 0) && (
-                            <Button className="phone-group_remove personal-background_remove" variant="text" disableElevation type='button' onClick={() => removeField(i)}>
+                            <Button className="phone-group_remove multiple-field_remove" variant="text" disableElevation type='button' onClick={() => removeField(i)}>
                                 <>
                                     <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
                                     <span className="a11y-text font-body-bold">Remove phone number:{number}</span>
@@ -118,11 +118,11 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
                             </Button>
                         )}
                         <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew}/>
-                    </Fragment>
+                    </div>
                 )
             })}
             {isEditMode && (
-                <Button className="phone-group_add personal-background_add" variant="text" disableElevation disabled={!allHaveValue} onClick={addField}>
+                <Button className="phone-group_add multiple-field_add" variant="text" disableElevation disabled={!allHaveValue} onClick={addField}>
                     <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                     <span className="font-body-bold">Add phone number</span>
                 </Button>

@@ -77,7 +77,11 @@ export default function Caller() {
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
             // [editedUser, setEditedUser] = useState({...baseUser}),
             [modalOpen, setModalOpen] = useState(false),
-            [openToast, setOpenToast] = useState(false);
+            [toast, setToast] = useState({
+                open: false,
+                severity: '', // "success" or "error"
+                message: ''
+            });
     // Caller Variables
     const   callerList = useQuery({queryKey: [type], queryFn: callerQueries[type]}),
             caller = callerList.isSuccess ? callerList.data.find(caller => caller.id === callerId) : {...baseUser};  
@@ -98,9 +102,8 @@ export default function Caller() {
         setModalOpen(true);
     };
     
-
     function handleReactivate() {
-        // TODO: handle reactivate
+        // TODO: set caller profile archive.isArchived = false
     }
 
     function handleEdit() {
@@ -108,8 +111,6 @@ export default function Caller() {
     }
 
     function handleFormCancel() {
-        // TODO: reset values
-
         if (isNew) {
             window.location.href = '#/';
         } else {
@@ -118,31 +119,14 @@ export default function Caller() {
     }
 
     function handleFormSave(e) {
-        // TODO: better handle save, aggregating all values
-
-        // const inputs = Array.from(e.currentTarget).filter(item => item.nodeName === 'INPUT');
-        // const fakeForm = {
-        //     ...baseUser,
-        //     firstName: 'Emily',
-        //     lastName: 'Painter',
-        //     phoneNumbers: [1234567890],
-        //     relevantInfo: 'baby shark do do do dod dooo',
-        //     specificInstructions: 'mama shark do do do dod dodooo'
-        // };
-        // const activeUsers = [...data, fakeForm];
-
-        // pushNewCaller(activeUsers);
+        // TODO: push update to database
         setIsEditMode(false);
-        setOpenToast(true);
-
-    }
-
-    function handleFormSaveAnother() {
-        console.log('save form and add another')
+        // TODO: update toast to reflect status
+        setToast({open: true, severity: "success", message: "Profile successfully saved!"});
     }
 
     function handleCloseToast() {
-        setOpenToast(false);
+        setToast({...toast, open: false})
     }
 
     // Sub Components
@@ -185,7 +169,7 @@ export default function Caller() {
     }
 
     function FormAction() {
-        // TODO:  style and route actions
+        // TODO: style and route actions
         return (
             isEditMode && (
                 <div className="caller-form_actions">
@@ -193,9 +177,6 @@ export default function Caller() {
                         <span className="font-body-bold">Cancel</span>
                     </Button>
                     <div className="caller-form_actions-save">
-                        <Button variant="text" disableElevation onClick={handleFormSaveAnother}>
-                            <span className="font-body-bold">Save & Add Another</span>
-                        </Button>
                         <Button
                             variant="contained"
                             disableElevation
@@ -300,17 +281,17 @@ export default function Caller() {
                     <FormAction/>
                     <Snackbar
                         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                        open={openToast}
+                        open={toast.open}
                         autoHideDuration={6000}
                         onClose={handleCloseToast}
                     >
                         <Alert
                             onClose={handleCloseToast}
-                            severity="success"
+                            severity={toast.severity}
                             variant="filled"
                             sx={{ width: '100%' }}
                         >
-                            Profile successfully saved!
+                            {toast.message}
                         </Alert>
                     </Snackbar>
                 </form>

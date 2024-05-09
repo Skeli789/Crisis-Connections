@@ -117,7 +117,7 @@ textarea {
 .phone-group_add .material-symbols-outlined,
 .call-history_add .material-symbols-outlined,
 .treatment-history_add .material-symbols-outlined,
-.personal-background_add .material-symbols-outlined {
+.multiple-field_add .material-symbols-outlined {
     margin-right: 10px;
 }
 
@@ -186,35 +186,43 @@ textarea {
     margin-top: 10px;
 }
 
-.personal-background {
+.multiple-field {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     margin-top: 20px;
 }
 
-.personal-background > .phone-group_field,
-.personal-background > .MuiAutocomplete-root,
-.personal-background > .MuiButton-root {
+.multiple-field .phone-group_field,
+.multiple-field .MuiAutocomplete-root,
+.multiple-field .MuiButton-root {
     margin-top: 20px;
 }
 
-.personal-background.phone {
+.multiple-field_item {
+    display: flex;
+    align-items: center;
+}
+
+.multiple-field.phone {
     margin-top: 0;
 }
 
-.personal-background .MuiAutocomplete-root,
-.personal-background .phone-group_field {
+.multiple-field .MuiAutocomplete-root {
+    min-width: 250px;
+}
+
+.multiple-field .phone-group_field {
     min-width: 200px;
 }
 
-.personal-background .personal-background_remove {
+.multiple-field .multiple-field_remove {
     min-width: unset;
     height: 40px;
     margin-left: 10px;
 }
 
-.personal-background > .personal-background_remove:before {
+.multiple-field .multiple-field_remove:before {
     content: '';
     width: 15px;
     height: 1px;
@@ -222,12 +230,11 @@ textarea {
     border-top: 1px dotted var(--color-grey);
 }
 
-.personal-background .personal-background_add {
+.multiple-field .multiple-field_add {
     margin-left: 20px;
 }
 
-[data-is-edit="false"] .personal-background .MuiAutocomplete-root:not(:first-of-type), 
-[data-is-edit="false"] .personal-background .phone-group_field:not(:first-of-type) {
+[data-is-edit="false"] .multiple-field .multiple-field_item:not(:first-of-type) {
     margin-left: 20px;
 }
 

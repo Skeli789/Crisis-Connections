@@ -6,37 +6,29 @@ import { getLabelName } from '../utils/utils';
 import { fields, mapSelection } from '../utils/fields.js';
 
 const Background = ({isNew, caller, fieldVarient, isEditMode}) => { 
-    const backgroundFields = ['gender', 'sexualOrientation', 'insurance', 'ethnicity'];
-    let fieldValues = {};
-    // Add empty fields if not provided
-    backgroundFields.forEach(field => {
-        if (caller[field].length === 0) {
-            fieldValues = {
-                ...fieldValues,
-                [field]: ['']
-            }
-        } else {
-            fieldValues[field] = caller[field];
-        }
-    });
-
+    const fieldValues = {
+        gender: !caller.gender.length ? [''] : caller.gender.map(item => mapSelection(item)),
+        sexualOrientation: !caller.sexualOrientation.length ? [''] : caller.sexualOrientation.map(item => mapSelection(item)),
+        insurance: !caller.insurance.length ? [''] : caller.insurance.map(item => mapSelection(item)),
+        ethnicity: !caller.ethnicity.length ? [''] : caller.ethnicity.map(item => mapSelection(item))
+    };
+    const backgroundFields = Object.keys(fieldValues);
     const [backgroundData, setBackgroundData] = useState(fieldValues);
-
     
     const addField = (field) => {
         const newObj = {...backgroundData, [field]: [...backgroundData[field], '']}
         setBackgroundData(newObj);
     }
 
-    function removeField(field, index) {
-        let newObj = {...backgroundData};
-        newObj[field] = newObj[field].filter((item, i) => i !== index);
-        setBackgroundData(newObj);
-    }
-
     const handleFieldChange = (newValue, field, index) => {
         const newObj = {...backgroundData};
         newObj[field][index] = newValue;
+        setBackgroundData(newObj);
+    }
+
+    const removeField = (field, index) => {
+        let newObj = {...backgroundData};
+        newObj[field] = newObj[field].filter((item, i) => i !== index);
         setBackgroundData(newObj);
     }
 
@@ -47,34 +39,36 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
             const disableAdd = data[data.length - 1].length === 0;
 
             return (
-                <div key={field} className="personal-background">
+                <div key={field} className="multiple-field">
                     { data.map((selection, i) => {
                         const isLast = isEditMode && i === data.length - 1;
                         return (
                             <Fragment key={`${field}-${selection}-${i}`}>
-                                {(isEditMode && i !== 0) && (
-                                    <Button className="personal-background_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
-                                        <>
-                                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
-                                            <span className="a11y-text font-body-bold">Remove {field}</span>
-                                        </>
-                                    </Button>
-                                )}
-                                <Autocomplete
-                                    disablePortal
-                                    freeSolo
-                                    id={`${field}-${selection}-${i}`}
-                                    variant={fieldVarient}
-                                    options={fields[field]}
-                                    value={mapSelection(selection)}
-                                    isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
-                                    readOnly={!isEditMode}
-                                    forcePopupIcon={true}
-                                    onBlur={(e) => { handleFieldChange(e.target.value, field, i) }}
-                                    renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
-                                />
+                                <div className="multiple-field_item">
+                                    {(isEditMode && i !== 0) && (
+                                        <Button className="multiple-field_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
+                                            <>
+                                                <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                                                <span className="a11y-text font-body-bold">Remove {field}</span>
+                                            </>
+                                        </Button>
+                                    )}
+                                    <Autocomplete
+                                        disablePortal
+                                        freeSolo
+                                        id={`${field}-${selection}-${i}`}
+                                        variant={fieldVarient}
+                                        options={fields[field]}
+                                        value={selection}
+                                        isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
+                                        readOnly={!isEditMode}
+                                        forcePopupIcon={true}
+                                        onBlur={(e) => { handleFieldChange(e.target.value, field, i) }}
+                                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
+                                    />
+                                </div>
                                 {isLast && (
-                                    <Button className="personal-background_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
+                                    <Button className="multiple-field_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
                                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                                         <span className="font-body-bold">Add {field === 'sexualOrientation' ? 'Orientation' : fieldLabel}</span>
                                     </Button>
@@ -88,7 +82,6 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
         })
     );
 }
-// TODO: Group x icon with the field, also for phone numbers. Update so "ethnicity" longest line fits
 
 export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode}) {
     const locationFields = ['city', 'county', 'zip'];
@@ -100,16 +93,14 @@ export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode
                     id={field}
                     label={getLabelName(field)}
                     variant={fieldVarient}
-                    defaultValue={isNew ? undefined :  caller[field]}
+                    defaultValue={isNew ? undefined : caller[field]}
                     readOnly={!isEditMode} />
             )
         }
     );
 
-
     return (
         <Accordion className="caller-form_section" defaultExpanded elevation={0} square>
-            {/* TODO: default expand to false if no info set and in read only */}
             <AccordionSummary
                 expandIcon={<span className="material-symbols-outlined">expand_more</span>}
                 aria-controls="personal-history-panel"
