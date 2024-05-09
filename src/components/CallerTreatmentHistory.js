@@ -24,7 +24,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     id={`caller-undergoing-${index}`}
                     variant={fieldVarient}
                     options={fields.treatmentUndergoing}
-                    defaultValue={isNew ? undefined : mapSelection(item.undergoing, false)}
+                    defaultValue={isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, false)}
                     isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                     readOnly={!isEditMode}
                     renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
