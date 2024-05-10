@@ -36,7 +36,7 @@ export default function Home() {
                 active: listType === 0,
                 archived: listType === 1
             },
-            activeType = isType.active ? 'Archived' : 'Active';
+            activeType = isType.active ? 'Active' : 'Archived';
     
     // Component Functions
     const handleSearch = (input, type = listType) => {

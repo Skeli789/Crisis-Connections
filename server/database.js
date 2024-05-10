@@ -111,6 +111,7 @@ async function CloseDatabase(connectionId)
         try {await gDatabaseClient.close()}
         catch (error) {}
         gDatabaseClient = null;
+        console.log("Database connection closed.")
     }
 
     gDatabaseMutex.release();

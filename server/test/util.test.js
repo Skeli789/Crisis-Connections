@@ -5,17 +5,15 @@ const util = require('../util.js');
 
 
 describe("Test ValidateCallerJSONSchema", async () => {
-    it("should return true for a valid caller object", async () => {
+    it("should throw no error for a valid caller object", async () => {
         let caller = gTestCaller;
-        const isValid = util.ValidateCallerJSONSchema(caller);
-        expect(isValid).to.be.true;
+        expect(() => util.ValidateCallerJSONSchema(caller)).to.not.throw();
     });
 
-    it("should return false for an invalid caller object", async () => {
+    it("should throw error for an invalid caller object", async () => {
         let caller = _.cloneDeep(gTestCaller);
-        delete caller.firstName;
-        const isValid = util.ValidateCallerJSONSchema(caller);
-        expect(isValid).to.be.false;
+        delete caller.phoneNumbers;
+        expect(() => util.ValidateCallerJSONSchema(caller)).to.throw();
     });
 });
 

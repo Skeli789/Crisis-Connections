@@ -84,7 +84,12 @@ exports =
                         "otherPacificIslander",
                         "white",
                         "unknown",
-                        "otherRace"
+                        "otherRace",
+                        "cuban",
+                        "hispanicSpecificOriginUnknown",
+                        "mexican",
+                        "hispanic",
+                        "puertoRican"
                     ]
                 }
             },
@@ -109,7 +114,6 @@ exports =
                     "enum": [
                         "unknown",
                         "medicaid",
-                        "medicaidAndOther",
                         "medicare",
                         "other",
                         "private",
@@ -120,28 +124,31 @@ exports =
             },
             "currentBehavioralTreatment": {
                 "type": "array",
-                "items": {
-                    "type": "object"
-                },
-                "properties": {
-                    "undergoing": {
-                        "type": "string",
-                        "enum": [
-                            "yes",
-                            "no",
-                            "unknown"
+                "items": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "notes": {
+                                "type": "string"
+                            },
+                            "location": {
+                                "type": "string"
+                            },
+                            "undergoing": {
+                                "type": "string",
+                                "enum": [
+                                    "yes",
+                                    "no",
+                                    "unknown"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "notes",
+                            "location",
+                            "undergoing"
                         ]
-                    },
-                    "location": {
-                        "type": "string"
-                    },
-                    "notes": {
-                        "type": "string"
                     }
-                },
-                "required": [
-                    "undergoing",
-                    "location"
                 ]
             },
             "relevantInfo": {
@@ -152,35 +159,108 @@ exports =
             },
             "callHistory": {
                 "type": "array",
-                "items": {
-                    "type": "object"
-                },
-                "properties": {
-                    "dateTime": {
-                        "type": "integer"
-                    },
-                    "service": {
-                        "type": "string",
-                        "enum": [
-                            "988KingCounty", 
-                            "washingtonTeenLink", 
-                            "washingtonRecoveryHelpLine", 
-                            "washingtonWarmLine", 
-                            "crisisServices", 
-                            "211KingCounty", 
-                            "washingtonSupportAfterSuicide"
+                "items": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "with": {
+                                "type": "string"
+                            },
+                            "notes": {
+                                "type": "string"
+                            },
+                            "service": {
+                                "type": "string",
+                                "enum": [
+                                    "988KingCounty",
+                                    "washingtonTeenLink",
+                                    "washingtonRecoveryHelpLine",
+                                    "washingtonWarmLine",
+                                    "crisisServices",
+                                    "211KingCounty",
+                                    "washingtonSupportAfterSuicide"
+                                ]
+                            },
+                            "dateTime": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "with",
+                            "notes",
+                            "service",
+                            "dateTime"
                         ]
                     },
-                    "with": {
-                        "type": "string"
+                    {
+                        "type": "object",
+                        "properties": {
+                            "with": {
+                                "type": "string"
+                            },
+                            "notes": {
+                                "type": "string"
+                            },
+                            "service": {
+                                "type": "string"
+                            },
+                            "dateTime": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "with",
+                            "notes",
+                            "service",
+                            "dateTime"
+                        ]
                     },
-                    "notes": {
-                        "type": "string"
+                    {
+                        "type": "object",
+                        "properties": {
+                            "with": {
+                                "type": "string"
+                            },
+                            "notes": {
+                                "type": "string"
+                            },
+                            "service": {
+                                "type": "string"
+                            },
+                            "dateTime": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "with",
+                            "notes",
+                            "service",
+                            "dateTime"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "with": {
+                                "type": "string"
+                            },
+                            "notes": {
+                                "type": "string"
+                            },
+                            "service": {
+                                "type": "string"
+                            },
+                            "dateTime": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "with",
+                            "notes",
+                            "service",
+                            "dateTime"
+                        ]
                     }
-                },
-                "required": [
-                    "date",
-                    "service"
                 ]
             },
             "lastUpdated": {
@@ -213,17 +293,20 @@ exports =
                     "reason": {
                         "type": "string"
                     }
-                }
+                },
+                "required": [
+                    "isArchived"
+                ]
             }
         },
         "required": [
-            "firstName",
-            "lastName",
+            "id",
+            "archived",
+            "callHistory",
+            "lastUpdated",
             "phoneNumbers",
             "relevantInfo",
-            "specificInstructions",
-            "callHistory",
-            "lastUpdated"
+            "specificInstructions"
         ]
     }
 };

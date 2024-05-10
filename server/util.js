@@ -5,7 +5,7 @@ const {gCallerSchema} = require('./schemas.js');
 /**
  * Validates the caller against a JSON schema.
  * @param {object} caller - The caller object to validate.
- * @returns {boolean} - Returns true if the caller is valid according to the schema, otherwise false.
+ * @throws {Error} - Throws an error if the caller is invalid according to the schema.
  */
 function ValidateCallerJSONSchema(caller)
 {
@@ -13,7 +13,8 @@ function ValidateCallerJSONSchema(caller)
     const ajv = new Ajv();
     const validate = ajv.compile(schema);
     const valid = validate(caller);
-    return valid;
+    if (!valid)
+        throw new Error(`Invalid caller JSON schema: ${JSON.stringify(validate.errors)}`);
 }
 module.exports.ValidateCallerJSONSchema = ValidateCallerJSONSchema;
 

@@ -12,9 +12,9 @@ export const hotlines = [
     "washingtonSupportAfterSuicide"
 ];
 
-const genders = ["heterosexual","lgbtq","bisexual","unknown","undisclosed"];
+const genders = ['male','female','non-binary','transgender','other','unknown'];
 
-const sexualOrientations = ['male','female','non-binary','transgender','other','unknown'];
+const sexualOrientations = ["heterosexual","lgbtq","bisexual","unknown","undisclosed"];
 
 const insurances = ["unknown","medicaid","medicare","other","private","va","none"];
 
@@ -49,7 +49,7 @@ function mapOptions(list, sort = true, formatString = true) {
 
     list = list.map(item => {
         return ({
-            label: formatString ? getLabelName(item) : item,
+            label: item, // TODO: label: formatString ? getLabelName(item) : item,
             id: item
         });
     });

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import { Alert, Button, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
-import { getActiveCallers, getArchivedCallers, baseUser } from '../utils/api';
+import { getActiveCallers, getArchivedCallers, saveNewCaller, saveUpdatedCaller, baseUser } from '../utils/api';
 import { requiredFields } from '../utils/fields';
 import { formatPhoneNumber, getName, isOld } from '../utils/utils';
 
@@ -73,10 +73,10 @@ export default function Caller() {
             params = pathname.split('/'),
             type = params[1],
             isNew = type === 'new',
-            callerId = params[2];
+            callerId = parseInt(params[2]);
     // State Variables
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
-            [editedUser, setEditedUser] = useState({}),
+            [editedUser, setEditedUser] = useState({...baseUser}),
             [modalOpen, setModalOpen] = useState(false),
             [disableSave, setDisableSave] = useState(true),
             [toast, setToast] = useState({
@@ -87,7 +87,7 @@ export default function Caller() {
     // Caller Variables
     const   callerList = useQuery({queryKey: [isNew ? 'caller' : type], queryFn: callerQueries[isNew ? 'caller' : type]}),
             caller = !isNew && callerList.isSuccess ? callerList.data.find(caller => caller.id === callerId) : {...baseUser};  
-            
+
     const   [isArchived, setIsArchived] = useState(isNew ? false : caller.archived.isArchived);
     const   [duplicates, setDuplicates] = useState([]);
 
@@ -102,7 +102,7 @@ export default function Caller() {
 
     const handleArchive = (reason) => {
         // TODO: fill by with logged in user information if possible.
-        const user = {...caller, archived: { isArchived: true, by: '', dateTime: Date.now(), reason: reason }};
+        const user = {...caller, archived: { isArchived: true, by: "", dateTime: Date.now(), reason: reason }};
         setIsArchived(true);
         setEditedUser(user);
         handleFormSave(user);
@@ -160,18 +160,34 @@ export default function Caller() {
             return hasValue;
         });
 
-
+        // set last updated to now
+        changedProfile.lastUpdated = {
+            by: "", // TODO: Replace with username
+            dateTime: Date.now(),
+        }
 
         return ({ isReady: isReady, latestUserInfo: changedProfile });
     }
 
     function handleFormSave(user) {
         const { isReady, latestUserInfo } = isFormReady(user);
-        // TODO: push update to database
         if (isReady) {
             console.log('this is the user info to send to DB', latestUserInfo);
             // TODO: when hooked up to DB response, remove line 167 and use new caller's id to navigate to detail page:
             //  `#/caller/${profile.id}`
+
+            if (isNew) {
+                // Create a new id that is one higher than the highest id in the list
+                if (callerList.data == null || callerList.data.length === 0) {
+                    latestUserInfo.id = 1;
+                } else {
+                    latestUserInfo.id = Math.max(...callerList.data.map(caller => caller.id)) + 1;
+                }
+                saveNewCaller(latestUserInfo);
+            } else {
+                saveUpdatedCaller(latestUserInfo);
+            }
+
             setIsEditMode(false);
             // TODO: update toast to reflect DB save status
             setToast({open: true, severity: "success", message: "Profile successfully saved!"});
@@ -283,7 +299,7 @@ export default function Caller() {
                                 caller = {caller}
                                 fieldVarient = {fieldVarient}
                                 isEditMode = {isEditMode}
-                                callerList = {callerList.data}
+                                callerList = {callerList.data != null ? callerList.data : []}
                                 duplicateData = {handleDuplicates}
                                 saveChanges = {handleNewChanges}
                             />
