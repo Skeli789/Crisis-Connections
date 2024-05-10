@@ -100,7 +100,15 @@ export default function Caller() {
     const latestCallDate = isNew ? new Date() : new Date(Math.max(...caller.callHistory.map(e => new Date(e.dateTime))));
     const isOldCaller = isOld(latestCallDate);
 
-    const handleArchive = () => {
+    const handleArchive = (reason) => {
+        // TODO: fill by with logged in user information if possible.
+        const user = {...caller, archived: { isArchived: true, by: '', dateTime: Date.now(), reason: reason }};
+        setIsArchived(true);
+        setEditedUser(user);
+        handleFormSave(user);
+    };
+
+    const openArchiveModal = () => {
         setModalOpen(true);
     };
     
@@ -157,8 +165,8 @@ export default function Caller() {
         return ({ isReady: isReady, latestUserInfo: changedProfile });
     }
 
-    function handleFormSave(e) {
-        const { isReady, latestUserInfo } = isFormReady();
+    function handleFormSave(user) {
+        const { isReady, latestUserInfo } = isFormReady(user);
         // TODO: push update to database
         if (isReady) {
             console.log('this is the user info to send to DB', latestUserInfo);
@@ -201,10 +209,10 @@ export default function Caller() {
                     <Button variant="contained" disableElevation onClick={handleEdit}>
                         <span className="font-body-bold">Edit</span>
                     </Button>
-                    <Button variant="text" disableElevation onClick={handleArchive}>
+                    <Button variant="text" disableElevation onClick={openArchiveModal}>
                         <span className="font-body-bold">Archive</span>
                     </Button>
-                    <CallerArchiveModal textAreaProps={textAreaProps} modalOpen={modalOpen} setModalOpen={setModalOpen} setIsArchived={setIsArchived}/>
+                    <CallerArchiveModal textAreaProps={textAreaProps} modalOpen={modalOpen} setModalOpen={setModalOpen} setIsArchived={setIsArchived} archiveUser={handleArchive}/>
                 </>
             )
         )
