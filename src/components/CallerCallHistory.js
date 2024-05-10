@@ -26,8 +26,8 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                     <DateTimePicker
                         className="history_content-date"
                         id={`caller-log-date-${index}`}
-                        label="Date and Time"
-                        defaultValue={isNew ? undefined :  dayjs(log.dateTime)}
+                        label="Date and Time (Required)"
+                        defaultValue={dayjs(log.dateTime)}
                         variant={fieldVarient}
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'dateTime', index) }}
@@ -44,7 +44,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
-                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label="Service" />}
+                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label="Service (Required)" />}
                     />
                     {/* Call With */}
                     <TextField id={`caller-log-with-${index}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }} />
@@ -64,26 +64,31 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
     )
 } 
 
-export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, textAreaProps}) {
+export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
     const initialEmpty = isNew || caller.callHistory.length === 0;
     // TODO: Prefill "with" name using login information, if possible
-    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: true};
+    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: !initialEmpty};
     const [history, setHistory] = useState(initialEmpty ? [newLog] : caller.callHistory);
 
     const addLog = () => {
-        setHistory([...history, newLog]);
+        const logs = [...history, newLog];
+        setHistory(logs);
+        saveChanges('callHistory', logs);
     }
 
     function removeLog(index) {
-        setHistory(history.filter((log, i) => i !== index));
+        const logs = history.filter((log, i) => i !== index);
+        setHistory(logs);
+        saveChanges('callHistory', logs);
     }
 
     const handleFieldChange = (newValue, field, i) => {
         let logs = history.map((existing, index) => { return index === i ? {...existing, [field]: newValue} : existing });
         setHistory(logs);
+        saveChanges('callHistory', logs);
     }
 
-    const callLog = sortByCallHistory(history).map((log, i) => {
+    const callLogs = sortByCallHistory(history).map((log, i) => {
         return (
             <li key={log.dateTime}>
                 <CallLog log={log} index={i} isNew={isNew} fieldVarient={fieldVarient} isEditMode={isEditMode} textAreaProps={textAreaProps} removeLog={() => { removeLog(i) }} handleFieldChange={handleFieldChange} />
@@ -108,7 +113,7 @@ export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, t
                     </Button>
                 )}
                 <ul className="history">
-                    {callLog}
+                    {callLogs}
                 </ul>
             </AccordionDetails>
         </Accordion>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Checkbox, FormControlLabel, TextField } from '@mui/material';
 
-export default function Names({isNew, fieldVarient, isEditMode, initialCheck, caller}) {
+export default function Names({isNew, fieldVarient, isEditMode, initialCheck, caller, saveChanges}) {
     const [firstName, setFirstName] = useState(isNew ? '' : (caller.firstName ? caller.firstName : 'Not Provided'));
     const [lastName, setLastName] = useState(isNew ? '' : (caller.lastName ? caller.lastName : 'Not Provided'));
     const [isNotProvided, setIsNotProvided] = useState({firstName: initialCheck.firstName, lastName: initialCheck.lastName});
@@ -9,11 +9,16 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
     const lnCheck = isNotProvided.lastName;
 
     function handleFieldChange(e) {
-        if (e.target.name === 'firstName') {
-            setFirstName(e.target.value);
-        } else if (e.target.name === 'lastName') {
-            setLastName(e.target.value);
+        const fieldName = e.target.name;
+        const value = e.target.value;
+
+        if (fieldName === 'firstName') {
+            setFirstName(value);
+        } else if (fieldName === 'lastName') {
+            setLastName(value);
         }
+
+        saveChanges(fieldName, value);
     }
 
     function handleNotProvided(e) {
@@ -29,6 +34,9 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
         } else if (name === 'lastName') {
             setLastName(isChecked ? 'Not Provided' : '');
         }
+
+        saveChanges(name, '');
+
 }
 
     return (

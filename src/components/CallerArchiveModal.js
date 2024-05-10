@@ -9,6 +9,7 @@ export default function Modal ({modalOpen, setModalOpen, setIsArchived, textArea
     const handleModalContinue = (e) => {
         setModalOpen(false);
         setIsArchived(true);
+        // send updated data to parent
     };
 
     return (

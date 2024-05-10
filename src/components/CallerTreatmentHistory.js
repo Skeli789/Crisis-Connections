@@ -2,7 +2,21 @@ import { useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, TextField } from '@mui/material';
 import { fields, mapSelection } from '../utils/fields.js';
 
-const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatment, textAreaProps}) => {
+const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatment, textAreaProps, saveChanges}) => {
+    const defaultUndergoing = isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, false);
+    const [value, setValue] = useState({ ...item, undergoing: defaultUndergoing });
+
+    function handleFieldChange(e, name) {
+        const fieldName = name ? name : e.target.name;
+        const newValue = e.target.value ? e.target.value : e.target.innerText.toLowerCase();
+        let obj = {...value, [fieldName]: newValue};
+
+        setValue(obj);
+
+        delete obj.showDelete;
+        saveChanges(obj, index);
+    }
+
     return (
         <>
             <div className="history_header">
@@ -24,25 +38,30 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     id={`caller-undergoing-${index}`}
                     variant={fieldVarient}
                     options={fields.treatmentUndergoing}
-                    defaultValue={isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, false)}
+                    defaultValue={defaultUndergoing}
                     isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                     readOnly={!isEditMode}
+                    onChange={(e) => {handleFieldChange(e, 'undergoing')}}
                     renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
                 />
                 {/* Location */}
                 <TextField
                     id={`caller-treatment-location-${index}`}
+                    name='location'
                     label="Location"
                     InputProps={textAreaProps}
                     variant={fieldVarient}
+                    onChange={(e) => {handleFieldChange(e)}}
                     defaultValue={isNew ? undefined :  item.location}
                 />
                 {/* Notes */}
                 <TextField
                     id={`caller-treatment-notes-${index}`}
+                    name="notes"
                     label="Notes"
                     InputProps={textAreaProps}
                     variant={fieldVarient}
+                    onChange={(e) => {handleFieldChange(e)}}
                     defaultValue={isNew ? undefined :  item.notes}
                 />
             </div>
@@ -50,7 +69,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
     )
 };
 
-export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMode, textAreaProps}) {
+export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMode, textAreaProps, saveChanges}) {
     const newTreatment = {
         undergoing: undefined,
         location: '',
@@ -60,17 +79,26 @@ export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMo
     const [data, setData] = useState(caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : [newTreatment]);
 
     const addTreatment = () => {
-        setData([...data, newTreatment]);
+        const list = [...data, newTreatment];
+        setData(list);
+        saveChanges('currentBehavioralTreatment', list);
     }
 
     const removeItem = (index) => {
-        setData(data.filter((item, i) => i !== index));
+        const list = data.filter((item, i) => i !== index);
+        setData(list);
+        saveChanges('currentBehavioralTreatment', list);
+    }
+
+    const saveData = (obj, index) => {
+        const list = data.map((item, i) => i === index ? obj : item);
+        saveChanges('currentBehavioralTreatment', list);
     }
 
     const treatments = data.map((item, i) => {
         return (
             <li key={`treatment-${i}`}>
-                <Treatment isNew={isNew} item={item} fieldVarient={fieldVarient} isEditMode={isEditMode} index={i} removeTreatment={() => { removeItem(i) }} />
+                <Treatment isNew={isNew} item={item} textAreaProps={textAreaProps} fieldVarient={fieldVarient} isEditMode={isEditMode} index={i} removeTreatment={() => { removeItem(i) }} saveChanges={saveData} />
             </li>
         )
     });
