@@ -213,7 +213,13 @@ textarea {
 }
 
 .multiple-field .phone-group_field {
-    min-width: 200px;
+    min-width: 220px;
+}
+
+.phone-group_field .MuiFormHelperText-root {
+    position: absolute;
+    bottom: -50%;
+    margin: 0;
 }
 
 .multiple-field .multiple-field_remove {

@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
-export default function Modal ({modalOpen, setModalOpen, setIsArchived, textAreaProps}) {
+export default function Modal ({modalOpen, setModalOpen, textAreaProps, archiveUser}) {
+    const [archiveReason, setArchiveReason] = useState('');
             
     const handleModalClose = () => {
         setModalOpen(false);
@@ -8,7 +10,8 @@ export default function Modal ({modalOpen, setModalOpen, setIsArchived, textArea
 
     const handleModalContinue = (e) => {
         setModalOpen(false);
-        setIsArchived(true);
+        archiveUser(archiveReason);
+        // send updated data to parent
     };
 
     return (
@@ -28,8 +31,7 @@ export default function Modal ({modalOpen, setModalOpen, setIsArchived, textArea
                         label="Archive Reason"
                         variant='outlined'
                         InputProps={textAreaProps}
-                        // value={archiveReason}
-                        // onChange={(e) => { setTest(e.target.value)}}
+                        onChange={(e) => { setArchiveReason(e.target.value)}}
                     />
                 </DialogContent>
                 <DialogActions>

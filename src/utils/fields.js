@@ -1,5 +1,7 @@
 import { getLabelName } from "./utils";
 
+export const requiredFields = ['callHistory', 'phoneNumbers', 'relevantInfo', 'specificInstructions'];
+
 export const hotlines = [
     "988KingCounty",
     "washingtonTeenLink",

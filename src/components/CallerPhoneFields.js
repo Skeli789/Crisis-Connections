@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { Button, Input, InputLabel, FormControl, OutlinedInput } from '@mui/material';
+import { Button, Input, InputLabel, FormControl, FormHelperText, OutlinedInput } from '@mui/material';
 import { IMaskInput } from 'react-imask';
 import { getName } from '../utils/utils.js';
 
@@ -19,11 +19,14 @@ const TextMaskCustom = forwardRef(function TextMaskCustom(props, ref) {
     );
 });
 
-const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange, isNew}) => {
-    let label = "Phone Number"
-        label = index === 0 ? `${label} (Required)` : label;
+const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange, isNew, error = false}) => {
+    let label = "Phone Number";
+    const helperText = error && 'Enter a valid phone number.';
+
+    label = index === 0 ? `${label} (Required)` : label;
     
-    number = isNew ? undefined : number.toString();
+    // number = isNew ? undefined : number.toString();
+    number = number.toString();
 
     return (
         <FormControl className="phone-group_field" variant={fieldVarient}>
@@ -33,12 +36,18 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
                     <OutlinedInput
                         label={label}
                         value={number}
+                        error={error}
                         name={`phoneNumber-${index}`}
                         id={`phoneNumber-${index}`}
                         inputComponent={TextMaskCustom}
                         readOnly={!isEditMode}
                         onBlur={(e) => handleFieldChange(e.target.value, index)}
                     />
+                    {error && (
+                        <FormHelperText error>
+                            {helperText}
+                        </FormHelperText>
+                    )}
                 </>
             ) : (
                 <Input
@@ -53,10 +62,11 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     ); 
 }
 
-export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, callerList, duplicateData}) {
+export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, callerList, duplicateData, saveChanges}) {
     const [numbers, setNumbers] = useState(isNew ? [''] : caller.phoneNumbers.map(num => num.toString()));
     const [allHaveValue, setAllHaveValue] = useState(numbers.every(num => num.length === 10));
     const [duplicates, setDuplicates] = useState([]);
+    const [fieldWithErrors, setFieldWithErrors] = useState([]);
 
     const addField = () => {
         setNumbers([...numbers, '']);
@@ -64,12 +74,14 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
     }
 
     function removeField(index) {
-        setNumbers(numbers.filter((num, i) => i !== index));
+        const nums = numbers.filter((num, i) => i !== index);
         if (duplicates.some(dupe => dupe.phoneNumber === numbers[index])) {
             const dupes = duplicates.filter(dupe => dupe.phoneNumber !== numbers[index]);
             setDuplicates(dupes);
             duplicateData(dupes);
         }
+        setNumbers(nums);
+        saveChanges('phoneNumbers', nums);
     }
 
     const handleFieldChange = (newValue, i) => {
@@ -81,9 +93,6 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
         const notAlreadyLogged = !duplicates.some(dupe => dupe.index === i);
         let nums = numbers.map((existing, index) => { return index === i ? number : existing });
         let dupes = [];
-
-        setNumbers(nums);
-        setAllHaveValue(nums.every(num => num.length === 10));
 
         if (notAlreadyLogged && duplicateNums.length > 0) {
             const obj = {
@@ -100,8 +109,12 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
             dupes = duplicates.filter(dupe => dupe.phoneNumber === number);
         }
 
+        setNumbers(nums);
+        setAllHaveValue(nums.every(num => num.length === 10));
+        setFieldWithErrors(nums.map((num, i) => num.length < 10));
         duplicateData(dupes);
         setDuplicates(dupes);
+        saveChanges('phoneNumbers', nums);
     }
 
     return (
@@ -117,7 +130,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
                                 </>
                             </Button>
                         )}
-                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew}/>
+                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i]} />
                     </div>
                 )
             })}

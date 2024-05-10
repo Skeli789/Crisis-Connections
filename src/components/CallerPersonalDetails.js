@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { getLabelName } from '../utils/utils';
 import { fields, mapSelection } from '../utils/fields.js';
 
-const Background = ({isNew, caller, fieldVarient, isEditMode}) => { 
+const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => { 
     const fieldValues = {
         gender: !caller.gender.length ? [''] : caller.gender.map(item => mapSelection(item)),
         sexualOrientation: !caller.sexualOrientation.length ? [''] : caller.sexualOrientation.map(item => mapSelection(item)),
@@ -18,18 +18,21 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
     const addField = (field) => {
         const newObj = {...backgroundData, [field]: [...backgroundData[field], '']}
         setBackgroundData(newObj);
+        saveData({ target: {value: newObj[field].map(item => item.id ? item.id : item), name: field}});
     }
 
     const handleFieldChange = (newValue, field, index) => {
         const newObj = {...backgroundData};
         newObj[field][index] = newValue;
         setBackgroundData(newObj);
+        saveData({ target: {value: newObj[field].map(item => item.id ? item.id : item), name: field}});
     }
 
     const removeField = (field, index) => {
         let newObj = {...backgroundData};
         newObj[field] = newObj[field].filter((item, i) => i !== index);
         setBackgroundData(newObj);
+        saveData({ target: {value: newObj[field].map(item => item.id ? item.id : item), name: field}});
     }
 
     return (
@@ -83,21 +86,27 @@ const Background = ({isNew, caller, fieldVarient, isEditMode}) => {
     );
 }
 
-export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode}) {
+export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode, saveChanges}) {
     const locationFields = ['city', 'county', 'zip'];
     const location = locationFields.map(field => {
             return (
                 <TextField
                     key={field}
+                    name={field}
                     className={field}
                     id={field}
                     label={getLabelName(field)}
                     variant={fieldVarient}
                     defaultValue={isNew ? undefined : caller[field]}
+                    onChange={(e) => {saveData(e)}}
                     readOnly={!isEditMode} />
             )
         }
     );
+
+    function saveData(e) {
+        saveChanges(e.target.name, e.target.value);
+    }
 
     return (
         <Accordion className="caller-form_section" defaultExpanded elevation={0} square>
@@ -124,6 +133,7 @@ export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode
                     caller={caller}
                     fieldVarient={fieldVarient}
                     isEditMode={isEditMode}
+                    saveData = {saveData}
                 />
             </AccordionDetails>
         </Accordion>
