@@ -25,7 +25,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                 {(isEditMode && item.showDelete) && (
                     <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeTreatment()}>
                         <>
-                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                            <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                             <span className="a11y-text font-body-bold">Remove treatment</span>
                         </>
                     </Button>

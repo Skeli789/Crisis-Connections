@@ -51,7 +51,7 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
                                     {(isEditMode && i !== 0) && (
                                         <Button className="multiple-field_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
                                             <>
-                                                <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                                                <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                                                 <span className="a11y-text font-body-bold">Remove {field}</span>
                                             </>
                                         </Button>

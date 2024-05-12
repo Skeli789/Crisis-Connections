@@ -125,7 +125,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
                         {(isEditMode && i !== 0) && (
                             <Button className="phone-group_remove multiple-field_remove" variant="text" disableElevation type='button' onClick={() => removeField(i)}>
                                 <>
-                                    <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                                    <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                                     <span className="a11y-text font-body-bold">Remove phone number:{number}</span>
                                 </>
                             </Button>

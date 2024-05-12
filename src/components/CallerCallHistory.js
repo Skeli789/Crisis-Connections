@@ -14,7 +14,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                 {(isEditMode && log.showDelete) && (
                     <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeLog()}>
                         <>
-                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                            <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                             <span className="a11y-text font-body-bold">Remove call log</span>
                         </>
                     </Button>
