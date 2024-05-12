@@ -9,7 +9,7 @@ require('dotenv').config({path: __dirname + '/.env'});
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 3001;
 const gServer = app.listen(port, () =>
@@ -31,6 +31,7 @@ app.get('/getcallers', async (_, res) =>
 
     try
     {
+        console.log("----------------------------------------------");
         console.log("Getting all active callers from the database.");
         statusCode = StatusCode.SuccessOK;
         let activeCallerList = await database.LoadActiveCallersFromDatabase();
@@ -54,6 +55,7 @@ app.get('/getcallers', async (_, res) =>
  */
 app.get('/getarchivedcallers', async (_, res) =>
 {
+    console.log("----------------------------------------------");
     console.log("Getting all archived callers from the database.");
     var statusCode, retObj;
     const connectionId = await database.ConnectToDatabaseNewId();
@@ -77,14 +79,15 @@ app.get('/getarchivedcallers', async (_, res) =>
 });
 
 
-// POST Endpoints
+// PUT Endpoints
 
 /**
  * Endpoint: /addsinglecaller
  * Adds a new repeat caller to the database.
  */
-app.post('/addsinglecaller', async (req, res) =>
+app.put('/addsinglecaller', async (req, res) =>
 {
+    console.log("----------------------------------------------");
     console.log("Adding a single caller to the database.");
     var statusCode;
     const connectionId = await database.ConnectToDatabaseNewId();
@@ -104,14 +107,15 @@ app.post('/addsinglecaller', async (req, res) =>
     }
 
     await database.CloseDatabase(connectionId);
-    return res.status(statusCode);
+    return res.status(statusCode).send({});
 });
 /*
  * Endpoint: /updatesinglecaller
  * Updates a single repeat caller's data in the database.
  */
-app.post('/updatesinglecaller', async (req, res) =>
+app.put('/updatesinglecaller', async (req, res) =>
 {
+    console.log("----------------------------------------------");
     console.log("Updating a single caller in the database.");
     var statusCode;
     const connectionId = await database.ConnectToDatabaseNewId();
@@ -131,7 +135,7 @@ app.post('/updatesinglecaller', async (req, res) =>
     }
 
     await database.CloseDatabase(connectionId);
-    return res.status(statusCode);
+    return res.status(statusCode).send({});
 });
 
 module.exports = app;

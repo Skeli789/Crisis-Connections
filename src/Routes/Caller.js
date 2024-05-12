@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useLocation } from "react-router-dom";
-import { useQuery } from '@tanstack/react-query';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Button, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
 import { getActiveCallers, getArchivedCallers, saveNewCaller, saveUpdatedCaller, baseUser } from '../utils/api';
 import { requiredFields } from '../utils/fields';
@@ -15,6 +15,8 @@ import CallerTreatmentHistory from '../components/CallerTreatmentHistory';
 import CallerArchiveModal from '../components/CallerArchiveModal';
 
 import '../styles/routes/Caller.css';
+
+// TODO: Server side should be assigning id to new callers and return it to the front-end
 
 const callerQueries = {
     caller: getActiveCallers,
@@ -79,7 +81,7 @@ export default function Caller() {
             [editedUser, setEditedUser] = useState({...baseUser}),
             [modalOpen, setModalOpen] = useState(false),
             [disableSave, setDisableSave] = useState(true),
-            [toast, setToast] = useState({
+            [toast, setToast] = useState({ // Toast is a pop-up message that appears on the screen
                 open: false,
                 severity: '', // "success" or "error"
                 message: ''
@@ -100,18 +102,34 @@ export default function Caller() {
     const latestCallDate = isNew ? new Date() : new Date(Math.max(...caller.callHistory.map(e => new Date(e.dateTime))));
     const isOldCaller = isOld(latestCallDate);
 
-    const handleArchive = (reason) => {
+    // Other Variables
+    const queryClient = useQueryClient();
+
+    // Functions
+    function successPopUp(message) {
+        setToast({open: true, severity: "success", message: message});
+    }
+
+    function errorPopUp(message) {
+        setToast({open: true, severity: "error", message: message});
+    }
+
+    function handleClosePopUp() {
+        setToast({...toast, open: false})
+    }
+
+    async function handleArchive(reason) {
         // TODO: fill by with logged in user information if possible.
         const user = {...caller, archived: { isArchived: true, by: "", dateTime: Date.now(), reason: reason }};
         setIsArchived(true);
         setEditedUser(user);
-        handleFormSave(user);
+        await handleFormSave(user);
     };
 
-    const openArchiveModal = () => {
+    function openArchiveModal () {
         setModalOpen(true);
     };
-    
+
     function handleReactivate() {
         // TODO: set caller profile archive.isArchived = false
     }
@@ -140,6 +158,7 @@ export default function Caller() {
                 }
             }
         }
+
         // check if required have value
         isReady = requiredFields.every(field => {
             let hasValue = false;
@@ -169,35 +188,36 @@ export default function Caller() {
         return ({ isReady: isReady, latestUserInfo: changedProfile });
     }
 
-    function handleFormSave(user) {
+    const navigate = useNavigate();
+    async function handleFormSave(user) {
         const { isReady, latestUserInfo } = isFormReady(user);
         if (isReady) {
-            console.log('this is the user info to send to DB', latestUserInfo);
-            // TODO: when hooked up to DB response, remove line 167 and use new caller's id to navigate to detail page:
-            //  `#/caller/${profile.id}`
-
-            if (isNew) {
-                // Create a new id that is one higher than the highest id in the list
-                if (callerList.data == null || callerList.data.length === 0) {
-                    latestUserInfo.id = 1;
+            try
+            {
+                if (isNew) {
+                    // TODO: Set ID on server side
+                    // Create a new id that is one higher than the highest id in the list
+                    if (callerList.data == null || callerList.data.length === 0) {
+                        latestUserInfo.id = 1;
+                    } else {
+                        latestUserInfo.id = Math.max(...callerList.data.map(caller => caller.id)) + 1;
+                    }
+                    await saveNewCaller(latestUserInfo);
                 } else {
-                    latestUserInfo.id = Math.max(...callerList.data.map(caller => caller.id)) + 1;
+                    await saveUpdatedCaller(latestUserInfo);
                 }
-                saveNewCaller(latestUserInfo);
-            } else {
-                saveUpdatedCaller(latestUserInfo);
+
+                setIsEditMode(false);
+                successPopUp("Profile successfully saved!");
+                queryClient.removeQueries(); // Force clear cache
+                navigate(`/caller/${latestUserInfo.id}`);
+            } catch (error) {
+                errorPopUp("An error occurred on the server while saving the profile.");
+                console.log("Error saving profile", error);
             }
-
-            setIsEditMode(false);
-            // TODO: update toast to reflect DB save status
-            setToast({open: true, severity: "success", message: "Profile successfully saved!"});
         } else {
-            setToast({open: true, severity: "error", message: "Required fields must be filled out to save."});
+            errorPopUp("Required fields must be filled out to save.");
         }
-    }
-
-    function handleCloseToast() {
-        setToast({...toast, open: false})
     }
 
     function handleDuplicates(data) {
@@ -262,7 +282,7 @@ export default function Caller() {
                             disableElevation
                             // type="submit"
                             disabled={disableSave}
-                            onClick={() => { handleFormSave()}}
+                            onClick={async () => await handleFormSave()}
                         >
                             <span className="font-body-bold">Save</span>
                         </Button>
@@ -371,10 +391,10 @@ export default function Caller() {
                         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                         open={toast.open}
                         autoHideDuration={6000}
-                        onClose={handleCloseToast}
+                        onClose={handleClosePopUp}
                     >
                         <Alert
-                            onClose={handleCloseToast}
+                            onClose={handleClosePopUp}
                             severity={toast.severity}
                             variant="filled"
                             sx={{ width: '100%' }}

@@ -18,7 +18,7 @@ const apiHeader = {
 };
 
 
-export const getActiveCallers = async () => {
+export async function getActiveCallers() {
     let response;
     if (testEnv) {
         response = await axios.get(mockActiveCallers, { headers: apiHeader });
@@ -28,7 +28,7 @@ export const getActiveCallers = async () => {
     return response.data.record.activeCallers;
 };
 
-export const getArchivedCallers = async () => {
+export async function getArchivedCallers() {
     let response;
     if (testEnv) {
         response = await axios.get(mockArchivedCallers, { headers: apiHeader });
@@ -38,16 +38,15 @@ export const getArchivedCallers = async () => {
     return response.data.record.archivedCallers;
 };
 
-export const saveNewCaller = async (caller) => {
-    let response;
-    if (!testEnv) {
-        response = await axios.post(addNewCaller, caller);
-    }
-    return response.data;
-
+export async function saveNewCaller(caller) {
+  let response;
+  if (!testEnv) {
+      response = await axios.put(addNewCaller, caller);
+  }
+  return response.data;
 }
 
-export const saveUpdatedCaller = async (caller) => {
+export async function saveUpdatedCaller(caller) {
     let response;
     if (!testEnv) {
         response = await axios.put(updateExistingCaller, caller);
@@ -67,7 +66,7 @@ export const baseUser = {
       "reason": "",
       "dateTime": 0,
       "isArchived": false
-  },
+    },
     "birthday": undefined,
     "lastName": "",
     "ethnicity": [],
