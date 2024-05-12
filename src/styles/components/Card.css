@@ -14,8 +14,12 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
     position: relative;
+    cursor: pointer;
+}
+
+.card-list .card:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .card-list dd {
@@ -45,7 +49,6 @@
 
 .card-footer {
     text-align: center;
-    margin-top: 24px;
 }
 
 .card-alert {
