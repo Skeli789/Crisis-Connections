@@ -67,8 +67,8 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
 export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
     const initialEmpty = isNew || caller.callHistory.length === 0;
     // TODO: Prefill "with" name using login information, if possible
-    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: !initialEmpty};
-    const [history, setHistory] = useState(initialEmpty ? [newLog] : caller.callHistory);
+    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: true};
+    const [history, setHistory] = useState(initialEmpty ? [] : caller.callHistory);
 
     const addLog = () => {
         const logs = [...history, newLog];

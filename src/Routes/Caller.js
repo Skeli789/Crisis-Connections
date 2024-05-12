@@ -357,6 +357,15 @@ export default function Caller() {
                             />
                         </div>
                     </fieldset>
+                    <fieldset className="caller-form_section"  disabled={!isEditMode}>
+                        <CallerPersonalDetails
+                            isNew={isNew}
+                            fieldVarient={fieldVarient}
+                            isEditMode={isEditMode}
+                            caller={caller}
+                            saveChanges = {handleNewChanges}
+                        />
+                    </fieldset>
                     <fieldset className="caller-form_section" disabled={!isEditMode}>
                         <CallerCallHistory
                             isNew={isNew}
@@ -364,15 +373,6 @@ export default function Caller() {
                             isEditMode={isEditMode}
                             caller={caller}
                             textAreaProps={textAreaProps}
-                            saveChanges = {handleNewChanges}
-                        />
-                    </fieldset>
-                    <fieldset className="caller-form_section"  disabled={!isEditMode}>
-                        <CallerPersonalDetails
-                            isNew={isNew}
-                            fieldVarient={fieldVarient}
-                            isEditMode={isEditMode}
-                            caller={caller}
                             saveChanges = {handleNewChanges}
                         />
                     </fieldset>

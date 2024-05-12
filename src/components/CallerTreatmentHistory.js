@@ -76,7 +76,7 @@ export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMo
         notes: '',
         showDelete: true
     };
-    const [data, setData] = useState(caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : [newTreatment]);
+    const [data, setData] = useState(caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : []);
 
     const addTreatment = () => {
         const list = [...data, newTreatment];
