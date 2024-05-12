@@ -90,16 +90,16 @@ export default function Caller() {
     const   callerList = useQuery({queryKey: [isNew ? 'caller' : type], queryFn: callerQueries[isNew ? 'caller' : type]}),
             caller = !isNew && callerList.isSuccess ? callerList.data.find(caller => caller.id === callerId) : {...baseUser};  
 
-    const   [isArchived, setIsArchived] = useState(isNew ? false : caller.archived.isArchived);
+    const   [isArchived, setIsArchived] = useState(isNew || caller == null ? false : caller.archived.isArchived);
     const   [duplicates, setDuplicates] = useState([]);
 
     // Form Variables
     const fieldVarient = isEditMode ? 'outlined' :  'standard';
     const initialCheck = {
-        firstName: !isNew && !caller.firstName,
-        lastName: !isNew && !caller.lastName,
+        firstName: !isNew && caller != null && !caller.firstName,
+        lastName: !isNew && caller != null && !caller.lastName,
     };
-    const latestCallDate = isNew ? new Date() : new Date(Math.max(...caller.callHistory.map(e => new Date(e.dateTime))));
+    const latestCallDate = isNew || caller == null ? new Date() : new Date(Math.max(...caller.callHistory.map(e => new Date(e.dateTime))));
     const isOldCaller = isOld(latestCallDate);
 
     // Other Variables
@@ -114,6 +114,10 @@ export default function Caller() {
         setToast({open: true, severity: "error", message: message});
     }
 
+    function waitPopUp() {
+        setToast({open: true, severity: "info", message: "Please wait..."});
+    }
+
     function handleClosePopUp() {
         setToast({...toast, open: false})
     }
@@ -123,16 +127,19 @@ export default function Caller() {
         const user = {...caller, archived: { isArchived: true, by: "", dateTime: Date.now(), reason: reason }};
         setIsArchived(true);
         setEditedUser(user);
-        await handleFormSave(user);
+        await handleFormSave(user, "Profile successfully archived!");
     };
+
+    async function handleReactivate() {
+        const user = {...caller, archived: { isArchived: false }};
+        setIsArchived(false);
+        setEditedUser(user);
+        await handleFormSave(user, "Profile successfully reactivated!");
+    }
 
     function openArchiveModal () {
         setModalOpen(true);
     };
-
-    function handleReactivate() {
-        // TODO: set caller profile archive.isArchived = false
-    }
 
     function handleEdit() {
         setIsEditMode(true);
@@ -189,11 +196,13 @@ export default function Caller() {
     }
 
     const navigate = useNavigate();
-    async function handleFormSave(user) {
+    async function handleFormSave(user, saveMessage) {
         const { isReady, latestUserInfo } = isFormReady(user);
         if (isReady) {
             try
             {
+                waitPopUp(); // Tell the user to wait while the profile is being saved
+
                 if (isNew) {
                     // TODO: Set ID on server side
                     // Create a new id that is one higher than the highest id in the list
@@ -208,9 +217,9 @@ export default function Caller() {
                 }
 
                 setIsEditMode(false);
-                successPopUp("Profile successfully saved!");
+                successPopUp(saveMessage);
                 queryClient.removeQueries(); // Force clear cache
-                navigate(`/caller/${latestUserInfo.id}`);
+                handleRedirectToDetails(latestUserInfo);
             } catch (error) {
                 errorPopUp("An error occurred on the server while saving the profile.");
                 console.log("Error saving profile", error);
@@ -228,6 +237,11 @@ export default function Caller() {
         const updatedUser = {...editedUser, [field]: data};
         setEditedUser(updatedUser);
         setDisableSave(!isFormReady(updatedUser).isReady);
+    }
+
+    function handleRedirectToDetails(userData) {
+        let baseUrl = userData.archived.isArchived ? "archive" : "caller";
+        navigate(`/${baseUrl}/${userData.id}`);
     }
 
     // Sub Components
@@ -282,7 +296,7 @@ export default function Caller() {
                             disableElevation
                             // type="submit"
                             disabled={disableSave}
-                            onClick={async () => await handleFormSave()}
+                            onClick={async () => await handleFormSave(undefined, "Profile successfully saved!")}
                         >
                             <span className="font-body-bold">Save</span>
                         </Button>
@@ -292,7 +306,7 @@ export default function Caller() {
         )
     }
 
-    return ((callerList.isSuccess || isNew) ? (
+    return ((callerList.isSuccess || isNew) && caller != null ? (
             <div className="caller-details page-padding" data-is-edit={isEditMode}>
                 {/* Header */}
                 {!isEditMode && <BackButton/>}
@@ -304,14 +318,14 @@ export default function Caller() {
                 {(caller.archived.isArchived || isArchived) && !modalOpen && (
                     <p className='archive-reason font-body italic'>
                         <span className='font-body-bold'>Archive Reason: </span>
-                        {caller.archived.reason}
+                        {caller.archived.reason ? caller.archived.reason : "None"}
                     </p>
                 )}
                 {(duplicates.length > 0) && (
                     <DuplicateWarning duplicates={duplicates} />
                 )}
                 {/* Form Fields */}
-                <form action='' method="post" onSubmit={handleFormSave} className="caller-form">
+                <form action='' method="post" onSubmit={() => handleFormSave(undefined, "Profile successfully saved!")} className="caller-form">
                     <fieldset className="caller-details_header" disabled={!isEditMode}>
                         <div className="phone">
                             <CallerPhoneFields
@@ -403,9 +417,12 @@ export default function Caller() {
                 </form>
             </div>
         ) : (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '500px' }}>
-                <CircularProgress />
-            </Box>
+            <div className="caller-details page-padding">
+                <BackButton/>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '500px' }}>
+                    <CircularProgress />
+                </Box>
+            </div>
         )
     )
 }
