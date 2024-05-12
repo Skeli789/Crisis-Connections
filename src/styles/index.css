@@ -54,3 +54,8 @@ fieldset {
     white-space: nowrap !important;
     border: 0 !important;
 }
+
+.required {
+    color: var(--color-red);
+    font-size: 0.8rem;
+}

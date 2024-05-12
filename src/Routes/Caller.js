@@ -337,21 +337,19 @@ export default function Caller() {
                         <div className="caller-form_row info">
                             <TextField
                                 id="relevantInfo"
-                                label="Relevant Information (Required)"
+                                label={<>Relevant Information <span className="required">(Required)</span></>}
                                 variant={fieldVarient}
                                 defaultValue={isNew ? undefined :  caller.relevantInfo}
                                 InputProps={textAreaProps}
                                 readOnly={!isEditMode}
-                                error={isEditMode && editedUser.relevantInfo != null && editedUser.relevantInfo.trim() === ""}
                                 onChange={(e) => {handleNewChanges('relevantInfo', e.target.value)}}
                             />
                             <TextField
                                 id="specificInstructions"
-                                label="Specific Instruction (Required)"
+                                label={<>Specific Instruction <span className="required">(Required)</span></>}
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
-                                error={isEditMode && editedUser.specificInstructions != null && editedUser.specificInstructions.trim() === ""}
                                 defaultValue={isNew ? undefined : caller.specificInstructions}
                                 onChange={(e) => {handleNewChanges('specificInstructions', e.target.value)}}
                             />

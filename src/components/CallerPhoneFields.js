@@ -23,8 +23,8 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     let label = "Phone Number";
     const helperText = error && 'Enter a valid phone number.';
 
-    label = index === 0 ? `${label} (Required)` : label;
-    
+    label = index === 0 ? <>{label} <span className="required">(Required)</span></> : label;
+
     // number = isNew ? undefined : number.toString();
     number = number.toString();
 
@@ -36,6 +36,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
                     <OutlinedInput
                         label={label}
                         value={number}
+                        autoComplete="nope"
                         error={error}
                         name={`phoneNumber-${index}`}
                         id={`phoneNumber-${index}`}
@@ -111,7 +112,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
 
         setNumbers(nums);
         setAllHaveValue(nums.every(num => num.length === 10));
-        setFieldWithErrors(nums.map((num, i) => num.length < 10));
+        setFieldWithErrors(nums.map((num, i) => num.length > 0 && num.length < 10));
         duplicateData(dupes);
         setDuplicates(dupes);
         saveChanges('phoneNumbers', nums);
@@ -131,7 +132,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
                             </Button>
                         )}
                         <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode}
-                                    handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i] || number === ""} />
+                                    handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i]} />
                     </div>
                 )
             })}

@@ -96,6 +96,7 @@ export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode
                     className={field}
                     id={field}
                     label={getLabelName(field)}
+                    autoComplete="nope"
                     variant={fieldVarient}
                     defaultValue={isNew ? undefined : caller[field]}
                     onChange={(e) => {saveData(e)}}
