@@ -23,7 +23,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     let label = "Phone Number";
     const helperText = error && 'Enter a valid phone number.';
 
-    label = index === 0 ? <>{label} <span className="required">(Required)</span></> : label;
+    label = index === 0 ? <>{label} {isEditMode && <span className="required">(Required)</span>}</> : label;
 
     // number = isNew ? undefined : number.toString();
     number = number.toString();

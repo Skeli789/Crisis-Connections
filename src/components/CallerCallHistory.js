@@ -26,7 +26,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                     <DateTimePicker
                         className="history_content-date"
                         id={`caller-log-date-${index}`}
-                        label={<>Date and Time <span className="required">(Required)</span></>}
+                        label={<>Date and Time {isEditMode && <span className="required">(Required)</span>}</>}
                         defaultValue={dayjs(log.dateTime)}
                         variant={fieldVarient}
                         readOnly={!isEditMode}
@@ -44,7 +44,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
-                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={<>Service <span className="required">(Required)</span></>} />}
+                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={<>Service {isEditMode && <span className="required">(Required)</span>}</>} />}
                     />
                     {/* Call With */}
                     <TextField id={`caller-log-with-${index}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }} />

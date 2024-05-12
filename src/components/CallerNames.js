@@ -44,7 +44,7 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
             <TextField
                 id="firstName"
                 name="firstName"
-                label={<>First Name  <span className="required">(Required)</span></>}
+                label={<>First Name {isEditMode && <span className="required">(Required)</span>}</>}
                 variant={fieldVarient}
                 value={firstName}
                 autoComplete="nope"
@@ -60,7 +60,7 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
             <TextField
                 id="lastName"
                 name="lastName"
-                label={<>Last Name  <span className="required">(Required)</span></>}
+                label={<>Last Name {isEditMode && <span className="required">(Required)</span>}</>}
                 variant={fieldVarient}
                 value={lastName}
                 autoComplete="nope"

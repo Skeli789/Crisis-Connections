@@ -337,7 +337,7 @@ export default function Caller() {
                         <div className="caller-form_row info">
                             <TextField
                                 id="relevantInfo"
-                                label={<>Relevant Information <span className="required">(Required)</span></>}
+                                label={<>Relevant Information {isEditMode && <span className="required">(Required)</span>}</>}
                                 variant={fieldVarient}
                                 defaultValue={isNew ? undefined :  caller.relevantInfo}
                                 InputProps={textAreaProps}
@@ -346,7 +346,7 @@ export default function Caller() {
                             />
                             <TextField
                                 id="specificInstructions"
-                                label={<>Specific Instruction <span className="required">(Required)</span></>}
+                                label={<>Specific Instruction {isEditMode && <span className="required">(Required)</span>}</>}
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
