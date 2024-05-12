@@ -318,7 +318,7 @@ async function TryArchiveOldCallers(callers)
         let lastCallTimestamp = util.GetCallerLastCallTimestamp(caller);
         let sixMonthsAgoTimestamp = util.GetArchivalTimestamp();
 
-        if (lastCallTimestamp < sixMonthsAgoTimestamp)
+        if (lastCallTimestamp !== 0 && lastCallTimestamp < sixMonthsAgoTimestamp)
         {
             util.SetCallerToArchived(caller);
             await UpdateCallerInDatabase(caller);

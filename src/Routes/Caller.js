@@ -296,7 +296,7 @@ export default function Caller() {
                             disableElevation
                             // type="submit"
                             disabled={disableSave}
-                            onClick={async () => await handleFormSave(undefined, "Profile successfully saved!")}
+                            onClick={async () => await handleFormSave(null, "Profile successfully saved!")}
                         >
                             <span className="font-body-bold">Save</span>
                         </Button>
@@ -325,7 +325,7 @@ export default function Caller() {
                     <DuplicateWarning duplicates={duplicates} />
                 )}
                 {/* Form Fields */}
-                <form action='' method="post" onSubmit={() => handleFormSave(undefined, "Profile successfully saved!")} className="caller-form">
+                <form action='' method="post" onSubmit={() => handleFormSave(null, "Profile successfully saved!")} className="caller-form">
                     <fieldset className="caller-details_header" disabled={!isEditMode}>
                         <div className="phone">
                             <CallerPhoneFields

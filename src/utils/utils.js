@@ -84,7 +84,15 @@ export function sortCallers(list = []) {
             callHistory: caller.callHistory.sort((a,b) => new Date(b.dateTime) - new Date(a.dateTime)),
             ...caller
         })
-    }).sort((a,b) => new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime));
+    }).sort((a,b) => {
+        if (a.callHistory.length > 0 && b.callHistory.length > 0) {
+            return new Date(b.callHistory[0].dateTime) - new Date(a.callHistory[0].dateTime);
+        } else if (a.callHistory.length > 0) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
 }
 
 /**
