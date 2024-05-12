@@ -36,7 +36,8 @@ export default function Home() {
                 active: listType === 0,
                 archived: listType === 1
             },
-            activeType = isType.active ? 'Active' : 'Archived';
+            activeType = isType.active ? 'Active' : 'Archived',
+            oppositeType = isType.active ? 'Archived' : 'Active';
     
     // Component Functions
     const handleSearch = (input, type = listType) => {
@@ -102,7 +103,7 @@ export default function Home() {
                        <div className="empty-state">
                             <p>{allCallers[listType].length === 0 ? `There are no ${activeType.toLowerCase()} caller records.` : 'No results matching your search.'}</p>
                             <Button variant="text" disableElevation onClick={handleTabChange}>
-                                <span className="font-body-bold">{`Search ${activeType} Callers`}</span>
+                                <span className="font-body-bold">{`Search ${oppositeType} Callers`}</span>
                             </Button>
                        </div>
                     )}
@@ -118,16 +119,10 @@ export default function Home() {
                 <Tab label="Active" {...a11yProps(0)} />
                 <Tab label="Archive" {...a11yProps(1)} />
             </Tabs>
-            {isType.active && (
-                <div className="home-add">
-                    <Button className="button-icon" variant="text" disableElevation href="#/new">
-                        <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
-                        <span className="font-body-bold">add new caller</span>
-                    </Button>
-                </div>
-            )}
+
             <div className="home-search">
                 <TextField
+                    className="home-search-input"
                     aria-controls="content"
                     id="input-with-icon-textfield"
                     label="Search by name OR phone number"
@@ -151,6 +146,14 @@ export default function Home() {
 
                     iconbutton that toggles old only?
                  */}
+                {isType.active && (
+                    <div className="home-add">
+                        <Button className="button-icon" variant="text" disableElevation href="#/new">
+                            <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
+                            <span className="font-body-bold">add new caller</span>
+                        </Button>
+                    </div>
+                )}
             </div>
             <Content aria-live="polite" id="content" isLoaded/>
         </div>
