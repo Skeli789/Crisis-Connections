@@ -308,7 +308,8 @@ export default function Caller() {
         )
     }
 
-    return ((callerList.isSuccess || isNew) && caller != null ? (
+    let viewCaller = isEditMode ? editedUser : caller;
+    return ((callerList.isSuccess || isNew) && viewCaller != null ? (
             <div className="caller-details page-padding" data-is-edit={isEditMode}>
                 {/* Header */}
                 {!isEditMode && <BackButton/>}
@@ -317,22 +318,22 @@ export default function Caller() {
                     <Action/>
                     {(isOldCaller && !isArchived && !isEditMode) && <OldProfile/>}
                 </div>
-                {(caller.archived.isArchived || isArchived) && !modalOpen && (
+                {(viewCaller.archived.isArchived || isArchived) && !modalOpen && (
                     <p className='archive-reason font-body italic'>
                         <span className='font-body-bold'>Archive Reason: </span>
-                        {caller.archived.reason ? caller.archived.reason : "None"}
+                        {viewCaller.archived.reason ? viewCaller.archived.reason : "None"}
                     </p>
                 )}
                 {(duplicates.length > 0) && (
                     <DuplicateWarning duplicates={duplicates} />
                 )}
                 {/* Form Fields */}
-                <form action='' method="post" onSubmit={() => handleFormSave(null, "Profile successfully saved!")} className="caller-form">
+                <form key={isEditMode ? "edit" : "view"} action='' method="post" onSubmit={() => handleFormSave(null, "Profile successfully saved!")} className="caller-form">
                     <fieldset className="caller-details_header" disabled={!isEditMode}>
                         <div className="phone">
                             <CallerPhoneFields
                                 isNew = {isNew}
-                                caller = {caller}
+                                caller = {viewCaller}
                                 fieldVarient = {fieldVarient}
                                 isEditMode = {isEditMode}
                                 callerList = {callerList.data != null ? callerList.data : []}
@@ -346,7 +347,7 @@ export default function Caller() {
                                 fieldVarient = {fieldVarient}
                                 isEditMode = {isEditMode}
                                 initialCheck = {initialCheck}
-                                caller = {caller}
+                                caller = {viewCaller}
                                 saveChanges = {handleNewChanges}
                             />
                         </div>
@@ -355,7 +356,7 @@ export default function Caller() {
                                 id="relevantInfo"
                                 label={<>Relevant Information {isEditMode && <span className="required">(Required)</span>}</>}
                                 variant={fieldVarient}
-                                defaultValue={isNew ? undefined :  caller.relevantInfo}
+                                defaultValue={isNew ? undefined : viewCaller.relevantInfo}
                                 InputProps={textAreaProps}
                                 readOnly={!isEditMode}
                                 onChange={(e) => {handleNewChanges('relevantInfo', e.target.value)}}
@@ -366,7 +367,7 @@ export default function Caller() {
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
-                                defaultValue={isNew ? undefined : caller.specificInstructions}
+                                defaultValue={isNew ? undefined : viewCaller.specificInstructions}
                                 onChange={(e) => {handleNewChanges('specificInstructions', e.target.value)}}
                             />
                         </div>
@@ -376,7 +377,7 @@ export default function Caller() {
                             isNew={isNew}
                             fieldVarient={fieldVarient}
                             isEditMode={isEditMode}
-                            caller={caller}
+                            caller={viewCaller}
                             saveChanges = {handleNewChanges}
                         />
                     </fieldset>
@@ -385,7 +386,7 @@ export default function Caller() {
                             isNew={isNew}
                             fieldVarient={fieldVarient}
                             isEditMode={isEditMode}
-                            caller={caller}
+                            caller={viewCaller}
                             textAreaProps={textAreaProps}
                             saveChanges = {handleNewChanges}
                         />
@@ -395,7 +396,7 @@ export default function Caller() {
                             isNew={isNew}
                             fieldVarient={fieldVarient}
                             isEditMode={isEditMode}
-                            caller={caller}
+                            caller={viewCaller}
                             textAreaProps={textAreaProps}
                             saveChanges = {handleNewChanges}
                         />
