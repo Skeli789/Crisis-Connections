@@ -123,10 +123,13 @@ export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode
                     <DatePicker
                         id='caller-log-birthday'
                         label="Birthday"
-                        defaultValue={isNew ? undefined :  caller.birthday ? dayjs(caller.birthday) : null} 
+                        defaultValue={isNew ? undefined : caller.birthday ? dayjs(caller.birthday) : null} 
                         variant={fieldVarient}
                         readOnly={!isEditMode}
-                        slotProps={{ textField: { variant: fieldVarient } }}/>
+                        slotProps={{ textField: { variant: fieldVarient } }}
+                        maxDate={dayjs()} // Only allow past values
+                        onChange={(date) => { saveData({ target: {name: 'birthday', value: date ? date.valueOf() : ''}})}}
+                    />
                 </div>
                 <Background 
                     isNew={isNew}

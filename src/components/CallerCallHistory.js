@@ -30,6 +30,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         defaultValue={dayjs(log.dateTime)}
                         variant={fieldVarient}
                         readOnly={!isEditMode}
+                        maxDate={dayjs()} // Only allow past values
                         onBlur={(e) => { handleFieldChange(e.target.value, 'dateTime', index) }}
                         slotProps={{ textField: { variant: fieldVarient } }}
                     />
