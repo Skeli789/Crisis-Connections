@@ -142,7 +142,9 @@ export default function Caller() {
     };
 
     function handleEdit() {
+        setEditedUser({...caller});
         setIsEditMode(true);
+        setDisableSave(false);
     }
 
     function handleFormCancel() {
