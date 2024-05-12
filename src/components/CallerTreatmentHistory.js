@@ -41,6 +41,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     defaultValue={defaultUndergoing}
                     isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                     readOnly={!isEditMode}
+                    forcePopupIcon={isEditMode}
                     onChange={(e) => {handleFieldChange(e, 'undergoing')}}
                     renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
                 />

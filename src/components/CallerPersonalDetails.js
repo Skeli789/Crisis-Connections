@@ -64,7 +64,7 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
                                         value={selection}
                                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                                         readOnly={!isEditMode}
-                                        forcePopupIcon={true}
+                                        forcePopupIcon={isEditMode}
                                         onBlur={(e) => { handleFieldChange(e.target.value, field, i) }}
                                         renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
                                     />

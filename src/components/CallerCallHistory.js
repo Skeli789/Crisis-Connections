@@ -43,6 +43,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         defaultValue={isNew || !log.service ? undefined :  mapSelection(log.service)}
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
+                        forcePopupIcon={isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
                         renderInput={(params) => <TextField {...params} variant={fieldVarient} label={<>Service {isEditMode && <span className="required">(Required)</span>}</>} />}
                     />
