@@ -18,7 +18,6 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
     const addField = (field) => {
         const newObj = {...backgroundData, [field]: [...backgroundData[field], '']}
         setBackgroundData(newObj);
-        saveData({ target: {value: newObj[field].map(item => item.id ? item.id : item), name: field}});
     }
 
     const handleFieldChange = (newValue, field, index) => {
