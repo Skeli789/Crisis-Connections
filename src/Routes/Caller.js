@@ -322,7 +322,7 @@ export default function Caller() {
                                 defaultValue={isNew ? undefined :  caller.relevantInfo}
                                 InputProps={textAreaProps}
                                 readOnly={!isEditMode}
-                                error={isEditMode && editedUser.relevantInfo !== undefined && editedUser.relevantInfo.trim() === ''}
+                                error={isEditMode && editedUser.relevantInfo != null && editedUser.relevantInfo.trim() === ""}
                                 onChange={(e) => {handleNewChanges('relevantInfo', e.target.value)}}
                             />
                             <TextField
@@ -331,7 +331,7 @@ export default function Caller() {
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
-                                error={isEditMode && editedUser.specificInstructions?.trim() === ''}
+                                error={isEditMode && editedUser.specificInstructions != null && editedUser.specificInstructions.trim() === ""}
                                 defaultValue={isNew ? undefined : caller.specificInstructions}
                                 onChange={(e) => {handleNewChanges('specificInstructions', e.target.value)}}
                             />

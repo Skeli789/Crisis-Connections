@@ -49,6 +49,7 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
                 value={firstName}
                 readOnly={!isEditMode}
                 disabled={isEditMode && isNotProvided.firstName}
+                error={isEditMode && firstName != null && firstName.trim() === ""}
                 onChange={handleFieldChange}
             />
             { isEditMode && 
@@ -64,6 +65,7 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
                 value={lastName}
                 readOnly={!isEditMode}
                 disabled={isEditMode && isNotProvided.lastName}
+                error={isEditMode && lastName != null && lastName.trim() === ""}
                 onChange={handleFieldChange}
             />
             { isEditMode && 

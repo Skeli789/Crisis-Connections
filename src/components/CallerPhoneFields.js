@@ -130,7 +130,8 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
                                 </>
                             </Button>
                         )}
-                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i]} />
+                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode}
+                                    handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i] || number === ""} />
                     </div>
                 )
             })}
