@@ -124,32 +124,30 @@ exports =
             },
             "currentBehavioralTreatment": {
                 "type": "array",
-                "items": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "notes": {
-                                "type": "string"
-                            },
-                            "location": {
-                                "type": "string"
-                            },
-                            "undergoing": {
-                                "type": "string",
-                                "enum": [
-                                    "yes",
-                                    "no",
-                                    "unknown"
-                                ]
-                            }
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "notes": {
+                            "type": "string"
                         },
-                        "required": [
-                            "notes",
-                            "location",
-                            "undergoing"
-                        ]
-                    }
-                ]
+                        "location": {
+                            "type": "string"
+                        },
+                        "undergoing": {
+                            "type": "string",
+                            "enum": [
+                                "yes",
+                                "no",
+                                "unknown"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "notes",
+                        "location",
+                        "undergoing"
+                    ]
+                }
             },
             "relevantInfo": {
                 "type": "string"
@@ -159,109 +157,38 @@ exports =
             },
             "callHistory": {
                 "type": "array",
-                "items": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "with": {
-                                "type": "string"
-                            },
-                            "notes": {
-                                "type": "string"
-                            },
-                            "service": {
-                                "type": "string",
-                                "enum": [
-                                    "988KingCounty",
-                                    "washingtonTeenLink",
-                                    "washingtonRecoveryHelpLine",
-                                    "washingtonWarmLine",
-                                    "crisisServices",
-                                    "211KingCounty",
-                                    "washingtonSupportAfterSuicide"
-                                ]
-                            },
-                            "dateTime": {
-                                "type": "integer"
-                            }
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "dateTime": {
+                            "type": "integer"
                         },
-                        "required": [
-                            "with",
-                            "notes",
-                            "service",
-                            "dateTime"
-                        ]
+                        "with": {
+                            "type": "string"
+                        },
+                        "notes": {
+                            "type": "string"
+                        },
+                        "service": {
+                            "type": "string",
+                            "enum": [
+                                "988KingCounty",
+                                "washingtonTeenLink",
+                                "washingtonRecoveryHelpLine",
+                                "washingtonWarmLine",
+                                "crisisServices",
+                                "211KingCounty",
+                                "washingtonSupportAfterSuicide"
+                            ]
+                        }
                     },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "with": {
-                                "type": "string"
-                            },
-                            "notes": {
-                                "type": "string"
-                            },
-                            "service": {
-                                "type": "string"
-                            },
-                            "dateTime": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": [
-                            "with",
-                            "notes",
-                            "service",
-                            "dateTime"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "with": {
-                                "type": "string"
-                            },
-                            "notes": {
-                                "type": "string"
-                            },
-                            "service": {
-                                "type": "string"
-                            },
-                            "dateTime": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": [
-                            "with",
-                            "notes",
-                            "service",
-                            "dateTime"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "with": {
-                                "type": "string"
-                            },
-                            "notes": {
-                                "type": "string"
-                            },
-                            "service": {
-                                "type": "string"
-                            },
-                            "dateTime": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": [
-                            "with",
-                            "notes",
-                            "service",
-                            "dateTime"
-                        ]
-                    }
-                ]
+                    "required": [
+                        "dateTime",
+                        "with",
+                        "notes",
+                        "service"
+                    ]
+                }
             },
             "lastUpdated": {
                 "type": "object",
