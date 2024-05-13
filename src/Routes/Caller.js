@@ -210,6 +210,7 @@ export default function Caller() {
             try
             {
                 let ret;
+                setDisableSave(true);
                 waitPopUp(); // Tell the user to wait while the profile is being saved
 
                 if (isNew) {
@@ -225,6 +226,7 @@ export default function Caller() {
                 queryClient.removeQueries(); // Force clear cache
                 handleRedirectToDetails(latestUserInfo);
             } catch (error) {
+                setDisableSave(false);
                 errorPopUp("An error occurred on the server while saving the profile.");
                 console.log("Error saving profile", error);
             }
