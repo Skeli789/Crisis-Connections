@@ -421,6 +421,13 @@ export default function Caller() {
                     </Snackbar>
                 </form>
             </div>
+        ) : !isNew && callerList.isSuccess && viewCaller == null ? (
+            <div className="caller-details page-padding">
+                <BackButton/>
+                <div className="empty-state">
+                    <p>Caller profile not found.</p>
+                </div>
+            </div>
         ) : (
             <div className="caller-details page-padding">
                 <BackButton/>
