@@ -41,12 +41,11 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         id={`caller-log-service-${index}`}
                         variant={fieldVarient}
                         options={fields.services}
-                        defaultValue={isNew || !log.service ? undefined :  mapSelection(log.service)}
+                        defaultValue={isNew || !log.service ? undefined : mapSelection(log.service)}
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
                         forcePopupIcon={isEditMode}
-                        // TODO: Needs on change
-                        onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
+                        onChange = {(e, newValue) => { handleFieldChange(newValue.id, 'service', index) }}
                         renderInput={(params) => <TextField {...params} variant={fieldVarient} label={<>Service {isEditMode && <span className="required">(Required)</span>}</>} />}
                     />
                     {/* Call With */}
@@ -92,6 +91,7 @@ export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, t
     }
 
     const handleFieldChange = (newValue, field, i) => {
+        console.log('handleFieldChange', newValue, field, i);
         let logs = history.map((existing, index) => { return index === i ? {...existing, [field]: newValue} : existing });
         setHistory(logs);
         saveChanges('callHistory', logs);

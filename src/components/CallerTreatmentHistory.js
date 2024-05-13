@@ -3,16 +3,18 @@ import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, Te
 import { fields, mapSelection } from '../utils/fields.js';
 
 const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatment, textAreaProps, saveChanges}) => {
-    const defaultUndergoing = isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, false);
+    const defaultUndergoing = isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, true);
     const [value, setValue] = useState({ ...item, undergoing: defaultUndergoing });
 
     function handleFieldChange(e, name) {
         const fieldName = name ? name : e.target.name;
-        const newValue = e.target.value ? e.target.value : e.target.innerText.toLowerCase();
+        const newValue = e.target.value ? e.target.value : e.target.innerText;
         let obj = {...value, [fieldName]: newValue};
-
         setValue(obj);
 
+        if (fieldName === "undergoing") {
+            obj[fieldName] = newValue.toLowerCase();
+        }
         delete obj.showDelete;
         saveChanges(obj, index);
     }
@@ -52,7 +54,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     label="Location"
                     InputProps={textAreaProps}
                     variant={fieldVarient}
-                    onChange={(e) => {handleFieldChange(e)}}
+                    onBlur={(e) => {handleFieldChange(e)}}
                     defaultValue={isNew ? undefined :  item.location}
                 />
                 {/* Notes */}
@@ -62,7 +64,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     label="Notes"
                     InputProps={textAreaProps}
                     variant={fieldVarient}
-                    onChange={(e) => {handleFieldChange(e)}}
+                    onBlur={(e) => {handleFieldChange(e)}}
                     defaultValue={isNew ? undefined :  item.notes}
                 />
             </div>
@@ -93,6 +95,7 @@ export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMo
 
     const saveData = (obj, index) => {
         const list = data.map((item, i) => i === index ? obj : item);
+        setData(list);
         saveChanges('currentBehavioralTreatment', list);
     }
 

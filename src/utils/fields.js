@@ -49,7 +49,7 @@ function mapOptions(list, sort = true, formatString = true) {
 
     list = list.map(item => {
         return ({
-            label: item, // TODO: label: formatString ? getLabelName(item) : item,
+            label: formatString ? getLabelName(item) : item,
             id: item
         });
     });

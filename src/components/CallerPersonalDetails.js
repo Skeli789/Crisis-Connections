@@ -39,6 +39,7 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
             const data = backgroundData[field];
             const fieldLabel = getLabelName(field);
             const disableAdd = data[data.length - 1].length === 0;
+            const options = fields[field].filter(option => !data.some(selected => selected.id === option.id));
 
             return (
                 <div key={field} className="multiple-field">
@@ -60,16 +61,17 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
                                         freeSolo
                                         id={`${field}-${selection}-${i}`}
                                         variant={fieldVarient}
-                                        options={fields[field]}
+                                        options={options}
                                         value={selection}
+                                        disableClearable={true}
                                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                                         readOnly={!isEditMode}
                                         forcePopupIcon={isEditMode}
-                                        onBlur={(e) => { handleFieldChange(e.target.value, field, i) }}
-                                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
+                                        onChange={(e, newValue) => handleFieldChange(newValue, field, i)}
+                                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} autoComplete="nope" />}
                                     />
                                 </div>
-                                {isLast && (
+                                {isLast && options.length > 0 && (
                                     <Button className="multiple-field_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
                                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                                         <span className="font-body-bold">Add {field === 'sexualOrientation' ? 'Orientation' : fieldLabel}</span>
