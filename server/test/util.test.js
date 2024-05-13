@@ -43,6 +43,45 @@ describe("Test GetCallerLastCallTimestamp", async () =>
     });
 });
 
+describe("Test TrySetCallerToArchived", async () => {
+    it("should set the caller to archived if last call is older than 6 months", async () => {
+        const caller = {
+            callHistory: [
+                { dateTime: new Date().getTime() - 200 * 24 * 60 * 60 * 1000 } // 200 days ago
+            ],
+            archived: { isArchived: false }
+        };
+
+        const result = util.TrySetCallerToArchived(caller);
+        expect(result).to.be.true;
+        expect(caller.archived.isArchived).to.be.true;
+    });
+
+    it("should not set the caller to archived if last call is within 6 months", async () => {
+        const caller = {
+            callHistory: [
+                { dateTime: new Date().getTime() - 150 * 24 * 60 * 60 * 1000 } // 150 days ago
+            ],
+            archived: { isArchived: false }
+        };
+
+        const result = util.TrySetCallerToArchived(caller);
+        expect(result).to.be.false;
+        expect(caller.archived.isArchived).to.be.false;
+    });
+
+    it("should not set the caller to archived if there is no call history", async () => {
+        const caller = {
+            callHistory: [],
+            archived: { isArchived: false }
+        };
+
+        const result = util.TrySetCallerToArchived(caller);
+        expect(result).to.be.false;
+        expect(caller.archived.isArchived).to.be.false;
+    });
+});
+
 describe("Test SetCallerToArchived", async () =>
 {
     it(`should set the caller to archived`, async () =>

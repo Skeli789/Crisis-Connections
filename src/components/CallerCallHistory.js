@@ -31,7 +31,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         variant={fieldVarient}
                         readOnly={!isEditMode}
                         maxDate={dayjs()} // Only allow past values
-                        onBlur={(e) => { handleFieldChange(e.target.value, 'dateTime', index) }}
+                        onChange={(newDate) => { handleFieldChange(newDate.valueOf(), 'dateTime', index) }}
                         slotProps={{ textField: { variant: fieldVarient } }}
                     />
                     {/* Call Service */}
@@ -45,11 +45,18 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
                         forcePopupIcon={isEditMode}
+                        // TODO: Needs on change
                         onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
                         renderInput={(params) => <TextField {...params} variant={fieldVarient} label={<>Service {isEditMode && <span className="required">(Required)</span>}</>} />}
                     />
                     {/* Call With */}
-                    <TextField id={`caller-log-with-${index}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }} />
+                    <TextField id={`caller-log-with-${index}`}
+                        label="With"
+                        variant={fieldVarient}
+                        defaultValue={isNew ? undefined :  log.with}
+                        readOnly={!isEditMode}
+                        onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }}
+                    />
                     {/* Call Notes */}
                     <TextField
                         id={`caller-log-note-${index}`}

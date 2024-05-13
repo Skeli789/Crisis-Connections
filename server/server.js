@@ -89,25 +89,28 @@ app.put('/addsinglecaller', async (req, res) =>
 {
     console.log("----------------------------------------------");
     console.log("Adding a single caller to the database.");
-    var statusCode;
+    var statusCode, retObj;
     const connectionId = await database.ConnectToDatabaseNewId();
 
     try
     {
-        statusCode = StatusCode.SuccessOK;
         let newCaller = req.body;
         util.ValidateCallerJSONSchema(newCaller)
         await database.AddCallerToDatabase(newCaller);
+        console.log(`Added caller with id ${newCaller.id} to the database.`);
+        statusCode = StatusCode.SuccessOK;
+        retObj = newCaller;
     }
     catch (error)
     {
         console.log("An error occurred adding a single caller to the database:");
         console.log(error);
         statusCode = StatusCode.ServerErrorInternal;
+        retObj = {};
     }
 
     await database.CloseDatabase(connectionId);
-    return res.status(statusCode).send({});
+    return res.status(statusCode).send(retObj);
 });
 /*
  * Endpoint: /updatesinglecaller
@@ -117,25 +120,28 @@ app.put('/updatesinglecaller', async (req, res) =>
 {
     console.log("----------------------------------------------");
     console.log("Updating a single caller in the database.");
-    var statusCode;
+    var statusCode, retObj;
     const connectionId = await database.ConnectToDatabaseNewId();
 
     try
     {
-        statusCode = StatusCode.SuccessOK;
         let updatedCaller = req.body;
         util.ValidateCallerJSONSchema(updatedCaller);
         await database.UpdateCallerInDatabase(updatedCaller);
+        console.log(`Updated caller with id ${updatedCaller.id} in the database.`);
+        statusCode = StatusCode.SuccessOK;
+        retObj = updatedCaller;
     }
     catch (error)
     {
         console.log("An error occurred updating a single caller in the database:");
         console.log(error);
         statusCode = StatusCode.ServerErrorInternal;
+        retObj = {};
     }
 
     await database.CloseDatabase(connectionId);
-    return res.status(statusCode).send({});
+    return res.status(statusCode).send(retObj);
 });
 
 module.exports = app;

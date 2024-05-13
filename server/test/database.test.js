@@ -44,12 +44,14 @@ describe("Test Database Callers", async () =>
     it(`should add a caller to the active list`, async () =>
     {
         let caller = _.cloneDeep(gTestCaller);
+        caller.callHistory.push({"dateTime": new Date().getTime()}); // Add a call history entry to make the caller active
         await database.AddCallerToDatabase(caller);
 
         let activeCallers = await database.LoadActiveCallersFromDatabase();
         expect(activeCallers).to.be.an('array').that.is.not.empty;
         expect(activeCallers.length).to.equal(1);
         expect(activeCallers[0]).to.deep.equal(caller);
+        expect(activeCallers[0].id).to.equal(1);
 
         let archivedCallers = await database.LoadArchivedCallersFromDatabase();
         expect(archivedCallers).to.be.an('array').that.is.empty;
@@ -116,8 +118,6 @@ describe("Test Database Callers", async () =>
     {
         let testCaller1 = _.cloneDeep(gTestCaller);
         let testCaller2 = _.cloneDeep(gTestCaller);
-        testCaller1.id = 1;
-        testCaller2.id = 2;
         await database.AddCallerToDatabase(testCaller1);
         await database.AddCallerToDatabase(testCaller2);
 
@@ -141,14 +141,14 @@ describe("Test TryArchiveOldCallers", async () =>
     beforeEach(ClearTestDatabase);
     const sixMonthsAgoTimestamp = util.GetArchivalTimestamp(); // 6 months ago
 
-    it("should not archive any callers if all have been contacted within the last 6 months", async () => {
+    it("should not archive any callers if all have been contacted within the last 6 months or never called", async () => {
         // Create the caller objects and add them to the database
         let callers = [
             _.cloneDeep(gTestCaller),
             _.cloneDeep(gTestCaller),
             _.cloneDeep(gTestCaller),
         ];
-        callers[0].callHistory = [{"dateTime": new Date().getTime() - 1000}]; // 1 Second ago    
+        callers[0].callHistory = []; // Never called
         callers[1].callHistory = [{"dateTime": new Date().getTime() - 60000}]; // 1 Minute ago
         callers[2].callHistory = [{"dateTime": new Date().getTime() - 13133442000}]; // 5 Months ago
         await database.AddCallersToDatabase(callers);
@@ -173,9 +173,6 @@ describe("Test TryArchiveOldCallers", async () =>
             _.cloneDeep(gTestCaller),
             _.cloneDeep(gTestCaller),
         ]
-        callers[0].id = 1;
-        callers[1].id = 2;
-        callers[2].id = 3;
         callers[0].callHistory = [{"dateTime": sixMonthsAgoTimestamp - 1000}]; // 1 second before 6 months ago
         callers[1].callHistory = [{"dateTime": sixMonthsAgoTimestamp - 10000}]; // 10 seconds before 6 months ago
         callers[2].callHistory = [{"dateTime": sixMonthsAgoTimestamp - 60000}]; // 1 minute before 6 months ago
@@ -202,9 +199,6 @@ describe("Test TryArchiveOldCallers", async () =>
             _.cloneDeep(gTestCaller),
             _.cloneDeep(gTestCaller),
         ]
-        callers[0].id = 1;
-        callers[1].id = 2;
-        callers[2].id = 3;
         callers[0].callHistory = [{"dateTime": sixMonthsAgoTimestamp - 1000}]; // 1 second before 6 months ago
         callers[1].callHistory = [{"dateTime": sixMonthsAgoTimestamp - 10000}]; // 10 seconds before 6 months ago
         callers[2].callHistory = [{"dateTime": oneSecondAgoTimestamp}]; // 1 second ago

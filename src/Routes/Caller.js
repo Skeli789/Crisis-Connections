@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Button, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
 import { getActiveCallers, getArchivedCallers, saveNewCaller, saveUpdatedCaller, baseUser } from '../utils/api';
 import { requiredFields } from '../utils/fields';
-import { formatPhoneNumber, getName, isOld } from '../utils/utils';
+import { formatPhoneNumber, getName, isOld, sortByCallHistory } from '../utils/utils';
 
 import OldProfile from '../components/OldProfile';
 import CallerPhoneFields from '../components/CallerPhoneFields';
@@ -16,7 +16,6 @@ import CallerArchiveModal from '../components/CallerArchiveModal';
 
 import '../styles/routes/Caller.css';
 
-// TODO: Server side should be assigning id to new callers and return it to the front-end
 
 const callerQueries = {
     caller: getActiveCallers,
@@ -132,6 +131,13 @@ export default function Caller() {
 
     async function handleReactivate() {
         const user = {...caller, archived: { isArchived: false }};
+        // Add a new field to the call history so the system doesn't archive it again
+        if (user.callHistory.length > 0) {
+            let sortedCallHistory = sortByCallHistory(user.callHistory);
+            let lastService = sortedCallHistory[sortedCallHistory.length - 1].service; // Use the last service from the call history and user can edit if need be
+            user.callHistory.push({dateTime: Date.now(), service: lastService, with: "", notes: "Added by reactivation."}); // TODO: Populate with
+        }
+
         setIsArchived(false);
         setEditedUser(user);
         await handleFormSave(user, "Profile successfully reactivated!");
@@ -199,24 +205,20 @@ export default function Caller() {
 
     const navigate = useNavigate();
     async function handleFormSave(user, saveMessage) {
-        const { isReady, latestUserInfo } = isFormReady(user);
+        let { isReady, latestUserInfo } = isFormReady(user);
         if (isReady) {
             try
             {
+                let ret;
                 waitPopUp(); // Tell the user to wait while the profile is being saved
 
                 if (isNew) {
-                    // TODO: Set ID on server side
-                    // Create a new id that is one higher than the highest id in the list
-                    if (callerList.data == null || callerList.data.length === 0) {
-                        latestUserInfo.id = 1;
-                    } else {
-                        latestUserInfo.id = Math.max(...callerList.data.map(caller => caller.id)) + 1;
-                    }
-                    await saveNewCaller(latestUserInfo);
+                    ret = await saveNewCaller(latestUserInfo);
                 } else {
-                    await saveUpdatedCaller(latestUserInfo);
+                    ret = await saveUpdatedCaller(latestUserInfo);
                 }
+                if (ret != null && Object.keys(ret).length !== 0)
+                    latestUserInfo = ret;
 
                 setIsEditMode(false);
                 successPopUp(saveMessage);

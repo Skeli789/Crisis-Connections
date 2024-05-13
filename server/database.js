@@ -206,6 +206,15 @@ async function AddCallerToDatabase(caller)
     {
         const database = await GetDatabase();
         const collection = database.collection(CALLERS);
+        
+        // Assign an ID to the caller
+        const maxId = await collection.find().sort({"id": -1}).limit(1).toArray();
+        caller.id = maxId.length > 0 ? maxId[0].id + 1 : 1;
+
+        // Try to archive the caller if they haven't been contacted in 6 months
+        util.TrySetCallerToArchived(caller);
+
+        // Add the caller to the database
         await collection.insertOne(caller);
         util.RemoveMongoIdFieldFromCallers([caller]); // Prevents issues with saving them back to the database
     }
@@ -220,19 +229,8 @@ module.exports.AddCallerToDatabase = AddCallerToDatabase;
 
 async function AddCallersToDatabase(callers)
 {
-    try
-    {
-        const database = await GetDatabase();
-        const collection = database.collection(CALLERS);
-        await collection.insertMany(callers);
-        util.RemoveMongoIdFieldFromCallers(callers); // Prevents issues with saving them back to the database
-    }
-    catch (error)
-    {
-        console.log("An error occurred adding the callers to the database:");
-        console.log(error);
-        throw(error);
-    }
+    for (let caller of callers)
+        await AddCallerToDatabase(caller);
 };
 module.exports.AddCallersToDatabase = AddCallersToDatabase; // Specifically for testing
 
@@ -244,7 +242,11 @@ module.exports.AddCallersToDatabase = AddCallersToDatabase; // Specifically for 
 async function UpdateCallerInDatabase(caller)
 {
     try
-    {
+    {        
+        // Try to archive the caller if they haven't been contacted in 6 months
+        util.TrySetCallerToArchived(caller);
+
+        // Update the caller in the database
         const database = await GetDatabase();
         const collection = database.collection(CALLERS);
         let query = {"id": caller.id};
@@ -315,14 +317,8 @@ async function TryArchiveOldCallers(callers)
     // Go through every caller and set the ones older than 6 months to archived
     for (let caller of callers)
     {
-        let lastCallTimestamp = util.GetCallerLastCallTimestamp(caller);
-        let sixMonthsAgoTimestamp = util.GetArchivalTimestamp();
-
-        if (lastCallTimestamp !== 0 && lastCallTimestamp < sixMonthsAgoTimestamp)
-        {
-            util.SetCallerToArchived(caller);
+        if (util.TrySetCallerToArchived(caller))
             await UpdateCallerInDatabase(caller);
-        }
     }
 }
 module.exports.TryArchiveOldCallers = TryArchiveOldCallers;

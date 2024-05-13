@@ -41,14 +41,32 @@ function GetCallerLastCallTimestamp(caller)
     caller.callHistory.forEach(call =>
     {
         if (call.dateTime > lastCall)
-        {
             lastCall = call.dateTime;
-        }
     });
 
     return lastCall;
 }
 module.exports.GetCallerLastCallTimestamp = GetCallerLastCallTimestamp;
+
+/**
+ * Tries to set the caller to archived based on the last call timestamp and archival timestamp.
+ * @param {string} caller - The caller to be set to archived.
+ * @returns {boolean} - Returns true if the caller was successfully set to archived, false otherwise.
+ */
+function TrySetCallerToArchived(caller)
+{
+    const lastCallTimestamp = GetCallerLastCallTimestamp(caller);
+    const archivalTimestamp = GetArchivalTimestamp();
+
+    if (lastCallTimestamp !== 0 && lastCallTimestamp < archivalTimestamp) // Has to have called at least once
+    {
+        SetCallerToArchived(caller);
+        return true;
+    }
+
+    return false;
+}
+module.exports.TrySetCallerToArchived = TrySetCallerToArchived;
 
 /**
  * Sets the caller to archived status.
