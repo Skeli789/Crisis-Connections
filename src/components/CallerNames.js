@@ -4,6 +4,7 @@ import { Checkbox, FormControlLabel, TextField } from '@mui/material';
 export default function Names({isNew, fieldVarient, isEditMode, initialCheck, caller, saveChanges}) {
     const [firstName, setFirstName] = useState(isNew ? '' : (caller.firstName ? caller.firstName : 'Not Provided'));
     const [lastName, setLastName] = useState(isNew ? '' : (caller.lastName ? caller.lastName : 'Not Provided'));
+    const [aka, setAka] = useState(isNew ? '' : (caller.aka ? caller.aka : 'Not Provided'));
     const [isNotProvided, setIsNotProvided] = useState({firstName: initialCheck.firstName, lastName: initialCheck.lastName});
     const fnCheck = isNotProvided.firstName;
     const lnCheck = isNotProvided.lastName;
@@ -12,10 +13,18 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
         const fieldName = e.target.name;
         const value = e.target.value;
 
-        if (fieldName === 'firstName') {
-            setFirstName(value);
-        } else if (fieldName === 'lastName') {
-            setLastName(value);
+        switch (fieldName) {
+            case 'firstName':
+                setFirstName(value);
+                break;
+            case 'lastName':
+                setLastName(value);
+                break;
+            case 'aka':
+                setAka(value);
+                break;
+            default:
+                break;
         }
 
         saveChanges(fieldName, value);
@@ -29,15 +38,22 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
         prop[name] = isChecked;
         setIsNotProvided(prop);
         
-        if (name === 'firstName') {
-            setFirstName(isChecked ? 'Not Provided' : '');
-        } else if (name === 'lastName') {
-            setLastName(isChecked ? 'Not Provided' : '');
+        switch (name) {
+            case 'firstName':
+                setFirstName(isChecked ? 'Not Provided' : '');
+                break;
+            case 'lastName':
+                setLastName(isChecked ? 'Not Provided' : '');
+                break;
+            case 'aka':
+                setAka(isChecked ? 'Not Provided' : '');
+                break;
+            default:
+                break;
         }
 
         saveChanges(name, '');
-
-}
+    }
 
     return (
         <>
@@ -73,6 +89,16 @@ export default function Names({isNew, fieldVarient, isEditMode, initialCheck, ca
                     <FormControlLabel className="additional" name="na-lastName" control={<Checkbox checked={lnCheck} />} label="Not Provided" onChange={handleNotProvided} />
                 </div>
             }
+            <TextField
+                id="aka"
+                name="aka"
+                label="Also Known As"
+                variant={fieldVarient}
+                value={aka}
+                autoComplete="nope"
+                readOnly={!isEditMode}
+                onChange={handleFieldChange}
+            />
         </>
     )
 }

@@ -56,7 +56,13 @@ export default function Home() {
                 const isPhoneMatch = card.phoneNumbers.some(number => {
                     return searchNums ? number.toString().includes(searchValueNum) : false;
                 });
-                const isAkaMatch = card.aka.some(detail => detail.toLowerCase().includes(searchValue));
+
+                let isAkaMatch = false;
+                if (Array.isArray(card.aka)) {
+                    isAkaMatch = card.aka.some(aka => aka.toLowerCase().includes(searchValue));
+                } else {
+                    isAkaMatch = card.aka.toLowerCase().includes(searchValue);
+                }
     
                 return isNameMatch || isPhoneMatch || isAkaMatch;
             })

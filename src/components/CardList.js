@@ -7,7 +7,7 @@ export default function CardList({callers = []}) {
         const name = getName(caller.firstName,caller.lastName);
         const services = [...new Set(caller.callHistory.map(log => log.service))];
         const isArchived = caller.archived.isArchived;
-        const aka = caller.aka.join(', ');
+        const aka = caller.aka;
 
         return (
             <li key={caller.id}>

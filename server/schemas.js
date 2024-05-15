@@ -14,10 +14,7 @@ exports =
                 "type": "string"
             },
             "aka": {
-                "type": "array",
-                "items": {
-                    "type": "string"
-                }
+                "type": "string"
             },
             "city": {
                 "type": "string"

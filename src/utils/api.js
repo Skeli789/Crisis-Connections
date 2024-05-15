@@ -56,7 +56,7 @@ export async function saveUpdatedCaller(caller) {
 
 export const baseUser = {
     "id": 0,
-    "aka": [],
+    "aka": "",
     "zip": "",
     "city": "",
     "county": "",

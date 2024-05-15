@@ -4,7 +4,7 @@ exports =
     gTestCaller:
     {
         "id": 867451541,
-        "aka": [""],
+        "aka": "",
         "zip": "",
         "city": "Santel",
         "county": "",
