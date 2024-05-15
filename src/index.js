@@ -13,39 +13,50 @@ const testEnv = process.env.REACT_APP_TEST === "true";
 let queryClient, persister;
 
 if (testEnv) {
-  // Tanstack query with local storage:
-  queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false, refetchOnMount: false, refetchOnReconnect: false,
-        gcTime: 1000 * 60 * 60 * 24, // 24 hours
-        staleTime: Infinity,
-      },
-    },
-  });
+	// Tanstack query with local storage:
+	queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+				refetchOnMount: false,
+				refetchOnReconnect: false,
+				gcTime: 1000 * 60 * 60 * 24, // 24 hours
+				staleTime: Infinity,
+			},
+		},
+	});
 
-  persister = createSyncStoragePersister({
-    storage: window.localStorage,
-  });
+	persister = createSyncStoragePersister({
+		storage: window.localStorage,
+	});
 } else {
-  // Regular tanstack query
-  queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, refetchOnWindowFocus: false, refetchOnMount: false, refetchOnReconnect: false}}});
+	// Regular tanstack query
+	queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+				refetchOnMount: true,
+				refetchOnReconnect: false,
+				staleTime: Infinity,
+			}
+		}
+	});
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    {
-      testEnv ?
-        <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-          <App />
-        </PersistQueryClientProvider>
-      :
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-    }
-  </React.StrictMode>
+	<React.StrictMode>
+		{
+			testEnv ?
+				<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+					<App />
+				</PersistQueryClientProvider>
+				:
+				<QueryClientProvider client={queryClient}>
+					<App />
+				</QueryClientProvider>
+		}
+	</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -8,6 +8,7 @@ import { fields, mapSelection } from '../utils/fields.js';
 const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAreaProps, handleFieldChange}) => {
     return (
         <>
+            {/* Call Log Header */}
             <div className="history_header">
                 <span aria-hidden="true" className="material-symbols-outlined">call_log</span>
                 <h3 className="font-title">Call Log</h3>
@@ -20,6 +21,8 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                     </Button>
                 )}
             </div>
+
+            {/* Call Log Content */}
             <div className="history_content">
                 <div className="caller-form_row">
                     {/* Call Date */}
@@ -52,7 +55,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                     <TextField id={`caller-log-with-${index}`}
                         label="With"
                         variant={fieldVarient}
-                        defaultValue={isNew ? undefined :  log.with}
+                        defaultValue={isNew ? undefined : log.with}
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }}
                     />
@@ -63,7 +66,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         label="Notes"
                         InputProps={textAreaProps}
                         variant={fieldVarient}
-                        defaultValue={isNew ? undefined :  log.notes}
+                        defaultValue={isNew ? undefined : log.notes}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'notes', index) }}
                     />
                 </div>
@@ -72,7 +75,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
     )
 } 
 
-export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
+export default function CallHistory({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
     const initialEmpty = isNew || caller.callHistory.length === 0;
     // TODO: Prefill "with" name using login information, if possible
     const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: true};
@@ -84,14 +87,13 @@ export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, t
         saveChanges('callHistory', logs);
     }
 
-    function removeLog(index) {
+    const removeLog = (index) => {
         const logs = history.filter((log, i) => i !== index);
         setHistory(logs);
         saveChanges('callHistory', logs);
     }
 
     const handleFieldChange = (newValue, field, i) => {
-        console.log('handleFieldChange', newValue, field, i);
         let logs = history.map((existing, index) => { return index === i ? {...existing, [field]: newValue} : existing });
         setHistory(logs);
         saveChanges('callHistory', logs);

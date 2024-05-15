@@ -16,7 +16,6 @@ import CallerArchiveModal from '../components/CallerArchiveModal';
 
 import '../styles/routes/Caller.css';
 
-
 const callerQueries = {
     caller: getActiveCallers,
     archive: getArchivedCallers
@@ -93,7 +92,7 @@ export default function Caller() {
     const   [duplicates, setDuplicates] = useState([]);
 
     // Form Variables
-    const fieldVarient = isEditMode ? 'outlined' :  'standard';
+    const fieldVarient = isEditMode ? 'outlined' : 'standard';
     const initialCheck = {
         firstName: !isNew && caller != null && !caller.firstName,
         lastName: !isNew && caller != null && !caller.lastName,
@@ -103,6 +102,7 @@ export default function Caller() {
 
     // Other Variables
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     // Functions
     function successPopUp(message) {
@@ -135,7 +135,7 @@ export default function Caller() {
         if (user.callHistory.length > 0) {
             let sortedCallHistory = sortByCallHistory(user.callHistory);
             let lastService = sortedCallHistory[sortedCallHistory.length - 1].service; // Use the last service from the call history and user can edit if need be
-            user.callHistory.push({dateTime: Date.now(), service: lastService, with: "", notes: "Added by reactivation."}); // TODO: Populate with
+            user.callHistory.push({dateTime: Date.now(), service: lastService, with: "", notes: "Added by reactivation."}); // TODO: Populate with logged in user information if possible
         }
 
         setIsArchived(false);
@@ -196,14 +196,13 @@ export default function Caller() {
 
         // set last updated to now
         changedProfile.lastUpdated = {
-            by: "", // TODO: Replace with username
+            by: "", // TODO: Replace with logged in user information if possible
             dateTime: Date.now(),
         }
 
         return ({ isReady: isReady, latestUserInfo: changedProfile });
     }
 
-    const navigate = useNavigate();
     async function handleFormSave(user, saveMessage) {
         let { isReady, latestUserInfo } = isFormReady(user);
         if (isReady) {
@@ -261,17 +260,18 @@ export default function Caller() {
         );
 
         const active = (!isEditMode && (
-                <>
-                    <Button variant="contained" disableElevation onClick={handleEdit}>
-                        <span className="font-body-bold">Edit</span>
-                    </Button>
-                    <Button variant="text" disableElevation onClick={openArchiveModal}>
-                        <span className="font-body-bold">Archive</span>
-                    </Button>
-                    <CallerArchiveModal textAreaProps={textAreaProps} modalOpen={modalOpen} setModalOpen={setModalOpen} setIsArchived={setIsArchived} archiveUser={handleArchive}/>
-                </>
-            )
-        )
+            <>
+                <Button variant="contained" disableElevation onClick={handleEdit}>
+                    <span className="font-body-bold">Edit</span>
+                </Button>
+                <Button variant="text" disableElevation onClick={openArchiveModal}>
+                    <span className="font-body-bold">Archive</span>
+                </Button>
+                <CallerArchiveModal textAreaProps={textAreaProps} modalOpen={modalOpen}
+                                    setModalOpen={setModalOpen} setIsArchived={setIsArchived}
+                                    archiveUser={handleArchive}/>
+            </>
+        ))
 
         return (
             caller.archived.isArchived ? archived : active
@@ -331,6 +331,7 @@ export default function Caller() {
                 {(duplicates.length > 0) && (
                     <DuplicateWarning duplicates={duplicates} />
                 )}
+
                 {/* Form Fields */}
                 <form key={isEditMode ? "edit" : "view"} action='' method="post" onSubmit={() => handleFormSave(null, "Profile successfully saved!")} className="caller-form">
                     <fieldset className="caller-details_header" disabled={!isEditMode}>

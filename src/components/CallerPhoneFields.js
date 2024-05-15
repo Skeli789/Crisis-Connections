@@ -63,7 +63,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     ); 
 }
 
-export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, callerList, duplicateData, saveChanges}) {
+export default function PhoneNumbers({isNew, caller, fieldVarient, isEditMode, callerList, duplicateData, saveChanges}) {
     const [numbers, setNumbers] = useState(isNew ? [''] : caller.phoneNumbers.map(num => num.toString()));
     const [allHaveValue, setAllHaveValue] = useState(numbers.every(num => num.length === 10));
     const [duplicates, setDuplicates] = useState([]);
@@ -74,7 +74,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
         setAllHaveValue(false);
     }
 
-    function removeField(index) {
+    const removeField = (index) => {
         const nums = numbers.filter((num, i) => i !== index);
         if (duplicates.some(dupe => dupe.phoneNumber === numbers[index])) {
             const dupes = duplicates.filter(dupe => dupe.phoneNumber !== numbers[index]);

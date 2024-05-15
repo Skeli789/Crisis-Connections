@@ -7,11 +7,13 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
     const [value, setValue] = useState({ ...item, undergoing: defaultUndergoing });
 
     function handleFieldChange(e, name) {
+        // Update the internal state
         const fieldName = name ? name : e.target.name;
         const newValue = e.target.value ? e.target.value : e.target.innerText;
         let obj = {...value, [fieldName]: newValue};
         setValue(obj);
 
+        // Update the global state
         if (fieldName === "undergoing") {
             obj[fieldName] = newValue.toLowerCase();
         }
@@ -21,6 +23,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
 
     return (
         <>
+            {/* Treatment Header */}
             <div className="history_header">
                 <span aria-hidden="true" className="material-symbols-outlined">medical_services</span>
                 <h3 className="font-title">Treatment</h3>
@@ -33,6 +36,8 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     </Button>
                 )}
             </div>
+
+            {/* Treatment Content */}
             <div className="history_content caller-form_row treatment">
                 {/* Undergoing */}
                 <Autocomplete
@@ -55,7 +60,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     InputProps={textAreaProps}
                     variant={fieldVarient}
                     onBlur={(e) => {handleFieldChange(e)}}
-                    defaultValue={isNew ? undefined :  item.location}
+                    defaultValue={isNew ? undefined : item.location}
                 />
                 {/* Notes */}
                 <TextField
@@ -65,14 +70,14 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     InputProps={textAreaProps}
                     variant={fieldVarient}
                     onBlur={(e) => {handleFieldChange(e)}}
-                    defaultValue={isNew ? undefined :  item.notes}
+                    defaultValue={isNew ? undefined : item.notes}
                 />
             </div>
         </>
     )
 };
 
-export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMode, textAreaProps, saveChanges}) {
+export default function TreatmentHistory({isNew, caller, fieldVarient, isEditMode, textAreaProps, saveChanges}) {
     const newTreatment = {
         undergoing: undefined,
         location: '',

@@ -45,7 +45,7 @@ export default function Home() {
         const searchValue = inputText.trim().toLowerCase();
         let list = allCallers[type];
 
-        // Todo: clean this up or move to utils or something...
+        // TODO: clean this up or move to utils or something...
         if (input) {
             list = list.filter(card => {
                 const callerName = `${card.firstName} ${card.lastName}`.trim().toLowerCase();
@@ -143,7 +143,8 @@ export default function Home() {
                         )
                     }}
                 />
-                {/* Filter by last called date
+                {/* TODO:
+                    Filter by last called date
                     all dates
                     within last 6 months
                     over 6 months ago  

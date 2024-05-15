@@ -10,7 +10,7 @@ function LogOut() {
         </Button>
     );
     
-    const isSignedIn = true; // Replace with SSO info
+    const isSignedIn = true; // TODO: Replace with login info
 
     return isSignedIn ? btn : null;
 }

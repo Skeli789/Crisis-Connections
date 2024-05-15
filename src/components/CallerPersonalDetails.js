@@ -39,7 +39,7 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
             const data = backgroundData[field];
             const fieldLabel = getLabelName(field);
             const disableAdd = data[data.length - 1].length === 0;
-            const options = fields[field].filter(option => !data.some(selected => selected.id === option.id));
+            const options = fields[field].filter(option => !data.some(selected => selected.id === option.id)); // Onlyy show options that haven't been selected
 
             return (
                 <div key={field} className="multiple-field">
