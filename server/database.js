@@ -227,6 +227,10 @@ async function AddCallerToDatabase(caller)
 }
 module.exports.AddCallerToDatabase = AddCallerToDatabase;
 
+/**
+ * Adds callers to the database.
+ * @param {Array} callers - An array of callers to be added to the database.
+ */
 async function AddCallersToDatabase(callers)
 {
     for (let caller of callers)
