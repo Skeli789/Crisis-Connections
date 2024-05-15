@@ -1,9 +1,11 @@
 .home-search {
-    max-width: 400px;
+    margin-top: 32px;
+    display: flex;
+    justify-content: space-between;
 }
 
-.home-search, .home-add {
-    margin-top: 32px;
+.home-search-input {
+    max-width: 400px;
 }
 
 .home-search_results {

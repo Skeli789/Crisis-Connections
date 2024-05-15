@@ -8,29 +8,33 @@ import { fields, mapSelection } from '../utils/fields.js';
 const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAreaProps, handleFieldChange}) => {
     return (
         <>
+            {/* Call Log Header */}
             <div className="history_header">
                 <span aria-hidden="true" className="material-symbols-outlined">call_log</span>
                 <h3 className="font-title">Call Log</h3>
                 {(isEditMode && log.showDelete) && (
                     <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeLog()}>
                         <>
-                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                            <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                             <span className="a11y-text font-body-bold">Remove call log</span>
                         </>
                     </Button>
                 )}
             </div>
+
+            {/* Call Log Content */}
             <div className="history_content">
                 <div className="caller-form_row">
                     {/* Call Date */}
                     <DateTimePicker
                         className="history_content-date"
                         id={`caller-log-date-${index}`}
-                        label="Date and Time (Required)"
+                        label={<>Date and Time {isEditMode && <span className="required">(Required)</span>}</>}
                         defaultValue={dayjs(log.dateTime)}
                         variant={fieldVarient}
                         readOnly={!isEditMode}
-                        onBlur={(e) => { handleFieldChange(e.target.value, 'dateTime', index) }}
+                        maxDate={dayjs()} // Only allow past values
+                        onChange={(newDate) => { handleFieldChange(newDate.valueOf(), 'dateTime', index) }}
                         slotProps={{ textField: { variant: fieldVarient } }}
                     />
                     {/* Call Service */}
@@ -40,14 +44,21 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         id={`caller-log-service-${index}`}
                         variant={fieldVarient}
                         options={fields.services}
-                        defaultValue={isNew || !log.service ? undefined :  mapSelection(log.service)}
+                        defaultValue={isNew || !log.service ? undefined : mapSelection(log.service)}
                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                         readOnly={!isEditMode}
-                        onBlur={(e) => { handleFieldChange(e.target.value, 'service', index) }}
-                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label="Service (Required)" />}
+                        forcePopupIcon={isEditMode}
+                        onChange = {(e, newValue) => { handleFieldChange(newValue.id, 'service', index) }}
+                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={<>Service {isEditMode && <span className="required">(Required)</span>}</>} />}
                     />
                     {/* Call With */}
-                    <TextField id={`caller-log-with-${index}`} label="With" variant={fieldVarient} defaultValue={isNew ? undefined :  log.with} readOnly={!isEditMode} onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }} />
+                    <TextField id={`caller-log-with-${index}`}
+                        label="With"
+                        variant={fieldVarient}
+                        defaultValue={isNew ? undefined : log.with}
+                        readOnly={!isEditMode}
+                        onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }}
+                    />
                     {/* Call Notes */}
                     <TextField
                         id={`caller-log-note-${index}`}
@@ -55,7 +66,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                         label="Notes"
                         InputProps={textAreaProps}
                         variant={fieldVarient}
-                        defaultValue={isNew ? undefined :  log.notes}
+                        defaultValue={isNew ? undefined : log.notes}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'notes', index) }}
                     />
                 </div>
@@ -64,11 +75,11 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
     )
 } 
 
-export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
+export default function CallHistory({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
     const initialEmpty = isNew || caller.callHistory.length === 0;
     // TODO: Prefill "with" name using login information, if possible
-    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: !initialEmpty};
-    const [history, setHistory] = useState(initialEmpty ? [newLog] : caller.callHistory);
+    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: true};
+    const [history, setHistory] = useState(initialEmpty ? [] : caller.callHistory.map(log => { return {...log, showDelete: false } }));
 
     const addLog = () => {
         const logs = [...history, newLog];
@@ -76,7 +87,7 @@ export default function CallHistory ({isNew, fieldVarient, isEditMode, caller, t
         saveChanges('callHistory', logs);
     }
 
-    function removeLog(index) {
+    const removeLog = (index) => {
         const logs = history.filter((log, i) => i !== index);
         setHistory(logs);
         saveChanges('callHistory', logs);

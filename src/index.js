@@ -2,38 +2,61 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
 import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// Regular tanstack query (will also need QueryClientProvider instead of PersistQueryClientProvider):
-// const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, refetchOnWindowFocus: false, refetchOnMount: false, refetchOnReconnect: false}}});
+const testEnv = process.env.REACT_APP_TEST === "true";
+let queryClient, persister;
 
-// Tanstack query with local storage:
-// TODO: we will probably want to switch back to above regular cache when we are dealing with real/sensitive data. Just using this here to not use too many api calls to my mock data which has limit of 10k calls, otherwise it calls on every refresh.
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false, refetchOnMount: false, refetchOnReconnect: false,
-      gcTime: 1000 * 60 * 60 * 24, // 24 hours
-      staleTime: Infinity,
-    },
-  },
-});
+if (testEnv) {
+	// Tanstack query with local storage:
+	queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+				refetchOnMount: false,
+				refetchOnReconnect: false,
+				gcTime: 1000 * 60 * 60 * 24, // 24 hours
+				staleTime: Infinity,
+			},
+		},
+	});
 
-const persister = createSyncStoragePersister({
-  storage: window.localStorage,
-});
+	persister = createSyncStoragePersister({
+		storage: window.localStorage,
+	});
+} else {
+	// Regular tanstack query
+	queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+				refetchOnMount: true,
+				refetchOnReconnect: false,
+				staleTime: Infinity,
+			}
+		}
+	});
+}
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-      <App />
-    </PersistQueryClientProvider>
-  </React.StrictMode>
+	<React.StrictMode>
+		{
+			testEnv ?
+				<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+					<App />
+				</PersistQueryClientProvider>
+				:
+				<QueryClientProvider client={queryClient}>
+					<App />
+				</QueryClientProvider>
+		}
+	</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

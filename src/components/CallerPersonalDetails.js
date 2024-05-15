@@ -18,7 +18,6 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
     const addField = (field) => {
         const newObj = {...backgroundData, [field]: [...backgroundData[field], '']}
         setBackgroundData(newObj);
-        saveData({ target: {value: newObj[field].map(item => item.id ? item.id : item), name: field}});
     }
 
     const handleFieldChange = (newValue, field, index) => {
@@ -40,6 +39,7 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
             const data = backgroundData[field];
             const fieldLabel = getLabelName(field);
             const disableAdd = data[data.length - 1].length === 0;
+            const options = fields[field].filter(option => !data.some(selected => selected.id === option.id)); // Onlyy show options that haven't been selected
 
             return (
                 <div key={field} className="multiple-field">
@@ -51,7 +51,7 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
                                     {(isEditMode && i !== 0) && (
                                         <Button className="multiple-field_remove" variant="text" disableElevation type='button' onClick={() => removeField(field, i)}>
                                             <>
-                                                <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                                                <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                                                 <span className="a11y-text font-body-bold">Remove {field}</span>
                                             </>
                                         </Button>
@@ -61,16 +61,17 @@ const Background = ({isNew, caller, fieldVarient, isEditMode, saveData}) => {
                                         freeSolo
                                         id={`${field}-${selection}-${i}`}
                                         variant={fieldVarient}
-                                        options={fields[field]}
+                                        options={options}
                                         value={selection}
+                                        disableClearable={true}
                                         isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                                         readOnly={!isEditMode}
-                                        forcePopupIcon={true}
-                                        onBlur={(e) => { handleFieldChange(e.target.value, field, i) }}
-                                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} />}
+                                        forcePopupIcon={isEditMode}
+                                        onChange={(e, newValue) => handleFieldChange(newValue, field, i)}
+                                        renderInput={(params) => <TextField {...params} variant={fieldVarient} label={fieldLabel} autoComplete="nope" />}
                                     />
                                 </div>
-                                {isLast && (
+                                {isLast && options.length > 0 && (
                                     <Button className="multiple-field_add" variant="text" disableElevation disabled={disableAdd} onClick={() => {addField(field)}}>
                                         <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
                                         <span className="font-body-bold">Add {field === 'sexualOrientation' ? 'Orientation' : fieldLabel}</span>
@@ -96,6 +97,7 @@ export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode
                     className={field}
                     id={field}
                     label={getLabelName(field)}
+                    autoComplete="nope"
                     variant={fieldVarient}
                     defaultValue={isNew ? undefined : caller[field]}
                     onChange={(e) => {saveData(e)}}
@@ -123,10 +125,13 @@ export default function PersonalDetails({caller, isNew, fieldVarient, isEditMode
                     <DatePicker
                         id='caller-log-birthday'
                         label="Birthday"
-                        defaultValue={isNew ? undefined :  caller.birthday ? dayjs(caller.birthday) : null} 
+                        defaultValue={isNew ? undefined : caller.birthday ? dayjs(caller.birthday) : null} 
                         variant={fieldVarient}
                         readOnly={!isEditMode}
-                        slotProps={{ textField: { variant: fieldVarient } }}/>
+                        slotProps={{ textField: { variant: fieldVarient } }}
+                        maxDate={dayjs()} // Only allow past values
+                        onChange={(date) => { saveData({ target: {name: 'birthday', value: date ? date.valueOf() : ''}})}}
+                    />
                 </div>
                 <Background 
                     isNew={isNew}

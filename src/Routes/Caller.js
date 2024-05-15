@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useLocation } from "react-router-dom";
-import { useQuery } from '@tanstack/react-query';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Button, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
-import { getActiveCallers, getArchivedCallers, baseUser } from '../utils/api';
+import { getActiveCallers, getArchivedCallers, saveNewCaller, saveUpdatedCaller, baseUser } from '../utils/api';
 import { requiredFields } from '../utils/fields';
-import { formatPhoneNumber, getName, isOld } from '../utils/utils';
+import { formatPhoneNumber, getName, isOld, sortByCallHistory } from '../utils/utils';
 
 import OldProfile from '../components/OldProfile';
 import CallerPhoneFields from '../components/CallerPhoneFields';
@@ -73,13 +73,13 @@ export default function Caller() {
             params = pathname.split('/'),
             type = params[1],
             isNew = type === 'new',
-            callerId = params[2];
+            callerId = parseInt(params[2]);
     // State Variables
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
-            [editedUser, setEditedUser] = useState({}),
+            [editedUser, setEditedUser] = useState({...baseUser}),
             [modalOpen, setModalOpen] = useState(false),
             [disableSave, setDisableSave] = useState(true),
-            [toast, setToast] = useState({
+            [toast, setToast] = useState({ // Toast is a pop-up message that appears on the screen
                 open: false,
                 severity: '', // "success" or "error"
                 message: ''
@@ -87,37 +87,70 @@ export default function Caller() {
     // Caller Variables
     const   callerList = useQuery({queryKey: [isNew ? 'caller' : type], queryFn: callerQueries[isNew ? 'caller' : type]}),
             caller = !isNew && callerList.isSuccess ? callerList.data.find(caller => caller.id === callerId) : {...baseUser};  
-            
-    const   [isArchived, setIsArchived] = useState(isNew ? false : caller.archived.isArchived);
+
+    const   [isArchived, setIsArchived] = useState(isNew || caller == null ? false : caller.archived.isArchived);
     const   [duplicates, setDuplicates] = useState([]);
 
     // Form Variables
-    const fieldVarient = isEditMode ? 'outlined' :  'standard';
+    const fieldVarient = isEditMode ? 'outlined' : 'standard';
     const initialCheck = {
-        firstName: !isNew && !caller.firstName,
-        lastName: !isNew && !caller.lastName,
+        firstName: !isNew && caller != null && !caller.firstName,
+        lastName: !isNew && caller != null && !caller.lastName,
     };
-    const latestCallDate = isNew ? new Date() : new Date(Math.max(...caller.callHistory.map(e => new Date(e.dateTime))));
+    const latestCallDate = isNew || caller == null ? new Date() : new Date(Math.max(...caller.callHistory.map(e => new Date(e.dateTime))));
     const isOldCaller = isOld(latestCallDate);
 
-    const handleArchive = (reason) => {
-        // TODO: fill by with logged in user information if possible.
-        const user = {...caller, archived: { isArchived: true, by: '', dateTime: Date.now(), reason: reason }};
-        setIsArchived(true);
-        setEditedUser(user);
-        handleFormSave(user);
-    };
+    // Other Variables
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
-    const openArchiveModal = () => {
-        setModalOpen(true);
-    };
-    
-    function handleReactivate() {
-        // TODO: set caller profile archive.isArchived = false
+    // Functions
+    function successPopUp(message) {
+        setToast({open: true, severity: "success", message: message});
     }
 
+    function errorPopUp(message) {
+        setToast({open: true, severity: "error", message: message});
+    }
+
+    function waitPopUp() {
+        setToast({open: true, severity: "info", message: "Please wait..."});
+    }
+
+    function handleClosePopUp() {
+        setToast({...toast, open: false})
+    }
+
+    async function handleArchive(reason) {
+        // TODO: fill by with logged in user information if possible.
+        const user = {...caller, archived: { isArchived: true, by: "", dateTime: Date.now(), reason: reason }};
+        setIsArchived(true);
+        setEditedUser(user);
+        await handleFormSave(user, "Profile successfully archived!");
+    };
+
+    async function handleReactivate() {
+        const user = {...caller, archived: { isArchived: false }};
+        // Add a new field to the call history so the system doesn't archive it again
+        if (user.callHistory.length > 0) {
+            let sortedCallHistory = sortByCallHistory(user.callHistory);
+            let lastService = sortedCallHistory[sortedCallHistory.length - 1].service; // Use the last service from the call history and user can edit if need be
+            user.callHistory.push({dateTime: Date.now(), service: lastService, with: "", notes: "Added by reactivation."}); // TODO: Populate with logged in user information if possible
+        }
+
+        setIsArchived(false);
+        setEditedUser(user);
+        await handleFormSave(user, "Profile successfully reactivated!");
+    }
+
+    function openArchiveModal () {
+        setModalOpen(true);
+    };
+
     function handleEdit() {
+        setEditedUser({...caller});
         setIsEditMode(true);
+        setDisableSave(false);
     }
 
     function handleFormCancel() {
@@ -140,6 +173,7 @@ export default function Caller() {
                 }
             }
         }
+
         // check if required have value
         isReady = requiredFields.every(field => {
             let hasValue = false;
@@ -160,28 +194,44 @@ export default function Caller() {
             return hasValue;
         });
 
-
+        // set last updated to now
+        changedProfile.lastUpdated = {
+            by: "", // TODO: Replace with logged in user information if possible
+            dateTime: Date.now(),
+        }
 
         return ({ isReady: isReady, latestUserInfo: changedProfile });
     }
 
-    function handleFormSave(user) {
-        const { isReady, latestUserInfo } = isFormReady(user);
-        // TODO: push update to database
+    async function handleFormSave(user, saveMessage) {
+        let { isReady, latestUserInfo } = isFormReady(user);
         if (isReady) {
-            console.log('this is the user info to send to DB', latestUserInfo);
-            // TODO: when hooked up to DB response, remove line 167 and use new caller's id to navigate to detail page:
-            //  `#/caller/${profile.id}`
-            setIsEditMode(false);
-            // TODO: update toast to reflect DB save status
-            setToast({open: true, severity: "success", message: "Profile successfully saved!"});
-        } else {
-            setToast({open: true, severity: "error", message: "Required fields must be filled out to save."});
-        }
-    }
+            try
+            {
+                let ret;
+                setDisableSave(true);
+                waitPopUp(); // Tell the user to wait while the profile is being saved
 
-    function handleCloseToast() {
-        setToast({...toast, open: false})
+                if (isNew) {
+                    ret = await saveNewCaller(latestUserInfo);
+                } else {
+                    ret = await saveUpdatedCaller(latestUserInfo);
+                }
+                if (ret != null && Object.keys(ret).length !== 0)
+                    latestUserInfo = ret;
+
+                setIsEditMode(false);
+                successPopUp(saveMessage);
+                queryClient.removeQueries(); // Force clear cache
+                handleRedirectToDetails(latestUserInfo);
+            } catch (error) {
+                setDisableSave(false);
+                errorPopUp("An error occurred on the server while saving the profile.");
+                console.log("Error saving profile", error);
+            }
+        } else {
+            errorPopUp("Required fields must be filled out to save.");
+        }
     }
 
     function handleDuplicates(data) {
@@ -192,6 +242,11 @@ export default function Caller() {
         const updatedUser = {...editedUser, [field]: data};
         setEditedUser(updatedUser);
         setDisableSave(!isFormReady(updatedUser).isReady);
+    }
+
+    function handleRedirectToDetails(userData) {
+        let baseUrl = userData.archived.isArchived ? "archive" : "caller";
+        navigate(`/${baseUrl}/${userData.id}`);
     }
 
     // Sub Components
@@ -205,17 +260,18 @@ export default function Caller() {
         );
 
         const active = (!isEditMode && (
-                <>
-                    <Button variant="contained" disableElevation onClick={handleEdit}>
-                        <span className="font-body-bold">Edit</span>
-                    </Button>
-                    <Button variant="text" disableElevation onClick={openArchiveModal}>
-                        <span className="font-body-bold">Archive</span>
-                    </Button>
-                    <CallerArchiveModal textAreaProps={textAreaProps} modalOpen={modalOpen} setModalOpen={setModalOpen} setIsArchived={setIsArchived} archiveUser={handleArchive}/>
-                </>
-            )
-        )
+            <>
+                <Button variant="contained" disableElevation onClick={handleEdit}>
+                    <span className="font-body-bold">Edit</span>
+                </Button>
+                <Button variant="text" disableElevation onClick={openArchiveModal}>
+                    <span className="font-body-bold">Archive</span>
+                </Button>
+                <CallerArchiveModal textAreaProps={textAreaProps} modalOpen={modalOpen}
+                                    setModalOpen={setModalOpen} setIsArchived={setIsArchived}
+                                    archiveUser={handleArchive}/>
+            </>
+        ))
 
         return (
             caller.archived.isArchived ? archived : active
@@ -246,7 +302,7 @@ export default function Caller() {
                             disableElevation
                             // type="submit"
                             disabled={disableSave}
-                            onClick={() => { handleFormSave()}}
+                            onClick={async () => await handleFormSave(null, "Profile successfully saved!")}
                         >
                             <span className="font-body-bold">Save</span>
                         </Button>
@@ -256,7 +312,8 @@ export default function Caller() {
         )
     }
 
-    return ((callerList.isSuccess || isNew) ? (
+    let viewCaller = isEditMode ? editedUser : caller;
+    return ((callerList.isSuccess || isNew) && viewCaller != null ? (
             <div className="caller-details page-padding" data-is-edit={isEditMode}>
                 {/* Header */}
                 {!isEditMode && <BackButton/>}
@@ -265,25 +322,26 @@ export default function Caller() {
                     <Action/>
                     {(isOldCaller && !isArchived && !isEditMode) && <OldProfile/>}
                 </div>
-                {(caller.archived.isArchived || isArchived) && !modalOpen && (
+                {(viewCaller.archived.isArchived || isArchived) && !modalOpen && (
                     <p className='archive-reason font-body italic'>
                         <span className='font-body-bold'>Archive Reason: </span>
-                        {caller.archived.reason}
+                        {viewCaller.archived.reason ? viewCaller.archived.reason : "None"}
                     </p>
                 )}
                 {(duplicates.length > 0) && (
                     <DuplicateWarning duplicates={duplicates} />
                 )}
+
                 {/* Form Fields */}
-                <form action='' method="post" onSubmit={handleFormSave} className="caller-form">
+                <form key={isEditMode ? "edit" : "view"} action='' method="post" onSubmit={() => handleFormSave(null, "Profile successfully saved!")} className="caller-form">
                     <fieldset className="caller-details_header" disabled={!isEditMode}>
                         <div className="phone">
                             <CallerPhoneFields
                                 isNew = {isNew}
-                                caller = {caller}
+                                caller = {viewCaller}
                                 fieldVarient = {fieldVarient}
                                 isEditMode = {isEditMode}
-                                callerList = {callerList.data}
+                                callerList = {callerList.data != null ? callerList.data : []}
                                 duplicateData = {handleDuplicates}
                                 saveChanges = {handleNewChanges}
                             />
@@ -294,49 +352,47 @@ export default function Caller() {
                                 fieldVarient = {fieldVarient}
                                 isEditMode = {isEditMode}
                                 initialCheck = {initialCheck}
-                                caller = {caller}
+                                caller = {viewCaller}
                                 saveChanges = {handleNewChanges}
                             />
                         </div>
                         <div className="caller-form_row info">
                             <TextField
                                 id="relevantInfo"
-                                label="Relevant Information (Required)"
+                                label={<>Relevant Information {isEditMode && <span className="required">(Required)</span>}</>}
                                 variant={fieldVarient}
-                                defaultValue={isNew ? undefined :  caller.relevantInfo}
+                                defaultValue={isNew ? undefined : viewCaller.relevantInfo}
                                 InputProps={textAreaProps}
                                 readOnly={!isEditMode}
-                                error={isEditMode && editedUser.relevantInfo !== undefined && editedUser.relevantInfo.trim() === ''}
                                 onChange={(e) => {handleNewChanges('relevantInfo', e.target.value)}}
                             />
                             <TextField
                                 id="specificInstructions"
-                                label="Specific Instruction (Required)"
+                                label={<>Specific Instruction {isEditMode && <span className="required">(Required)</span>}</>}
                                 InputProps={textAreaProps}
                                 variant={fieldVarient}
                                 readOnly={!isEditMode}
-                                error={isEditMode && editedUser.specificInstructions?.trim() === ''}
-                                defaultValue={isNew ? undefined : caller.specificInstructions}
+                                defaultValue={isNew ? undefined : viewCaller.specificInstructions}
                                 onChange={(e) => {handleNewChanges('specificInstructions', e.target.value)}}
                             />
                         </div>
-                    </fieldset>
-                    <fieldset className="caller-form_section" disabled={!isEditMode}>
-                        <CallerCallHistory
-                            isNew={isNew}
-                            fieldVarient={fieldVarient}
-                            isEditMode={isEditMode}
-                            caller={caller}
-                            textAreaProps={textAreaProps}
-                            saveChanges = {handleNewChanges}
-                        />
                     </fieldset>
                     <fieldset className="caller-form_section"  disabled={!isEditMode}>
                         <CallerPersonalDetails
                             isNew={isNew}
                             fieldVarient={fieldVarient}
                             isEditMode={isEditMode}
-                            caller={caller}
+                            caller={viewCaller}
+                            saveChanges = {handleNewChanges}
+                        />
+                    </fieldset>
+                    <fieldset className="caller-form_section" disabled={!isEditMode}>
+                        <CallerCallHistory
+                            isNew={isNew}
+                            fieldVarient={fieldVarient}
+                            isEditMode={isEditMode}
+                            caller={viewCaller}
+                            textAreaProps={textAreaProps}
                             saveChanges = {handleNewChanges}
                         />
                     </fieldset>
@@ -345,7 +401,7 @@ export default function Caller() {
                             isNew={isNew}
                             fieldVarient={fieldVarient}
                             isEditMode={isEditMode}
-                            caller={caller}
+                            caller={viewCaller}
                             textAreaProps={textAreaProps}
                             saveChanges = {handleNewChanges}
                         />
@@ -355,10 +411,10 @@ export default function Caller() {
                         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                         open={toast.open}
                         autoHideDuration={6000}
-                        onClose={handleCloseToast}
+                        onClose={handleClosePopUp}
                     >
                         <Alert
-                            onClose={handleCloseToast}
+                            onClose={handleClosePopUp}
                             severity={toast.severity}
                             variant="filled"
                             sx={{ width: '100%' }}
@@ -368,10 +424,20 @@ export default function Caller() {
                     </Snackbar>
                 </form>
             </div>
+        ) : !isNew && callerList.isSuccess && viewCaller == null ? (
+            <div className="caller-details page-padding">
+                <BackButton/>
+                <div className="empty-state">
+                    <p>Caller profile not found.</p>
+                </div>
+            </div>
         ) : (
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '500px' }}>
-                <CircularProgress />
-            </Box>
+            <div className="caller-details page-padding">
+                <BackButton/>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '500px' }}>
+                    <CircularProgress />
+                </Box>
+            </div>
         )
     )
 }

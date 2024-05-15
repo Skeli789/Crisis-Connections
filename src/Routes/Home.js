@@ -36,7 +36,8 @@ export default function Home() {
                 active: listType === 0,
                 archived: listType === 1
             },
-            activeType = isType.active ? 'Archived' : 'Active';
+            activeType = isType.active ? 'Active' : 'Archived',
+            oppositeType = isType.active ? 'Archived' : 'Active';
     
     // Component Functions
     const handleSearch = (input, type = listType) => {
@@ -44,7 +45,7 @@ export default function Home() {
         const searchValue = inputText.trim().toLowerCase();
         let list = allCallers[type];
 
-        // Todo: clean this up or move to utils or something...
+        // TODO: clean this up or move to utils or something...
         if (input) {
             list = list.filter(card => {
                 const callerName = `${card.firstName} ${card.lastName}`.trim().toLowerCase();
@@ -55,7 +56,13 @@ export default function Home() {
                 const isPhoneMatch = card.phoneNumbers.some(number => {
                     return searchNums ? number.toString().includes(searchValueNum) : false;
                 });
-                const isAkaMatch = card.aka.some(detail => detail.toLowerCase().includes(searchValue));
+
+                let isAkaMatch = false;
+                if (Array.isArray(card.aka)) {
+                    isAkaMatch = card.aka.some(aka => aka.toLowerCase().includes(searchValue));
+                } else {
+                    isAkaMatch = card.aka.toLowerCase().includes(searchValue);
+                }
     
                 return isNameMatch || isPhoneMatch || isAkaMatch;
             })
@@ -102,7 +109,7 @@ export default function Home() {
                        <div className="empty-state">
                             <p>{allCallers[listType].length === 0 ? `There are no ${activeType.toLowerCase()} caller records.` : 'No results matching your search.'}</p>
                             <Button variant="text" disableElevation onClick={handleTabChange}>
-                                <span className="font-body-bold">{`Search ${activeType} Callers`}</span>
+                                <span className="font-body-bold">{`Search ${oppositeType} Callers`}</span>
                             </Button>
                        </div>
                     )}
@@ -118,16 +125,10 @@ export default function Home() {
                 <Tab label="Active" {...a11yProps(0)} />
                 <Tab label="Archive" {...a11yProps(1)} />
             </Tabs>
-            {isType.active && (
-                <div className="home-add">
-                    <Button className="button-icon" variant="text" disableElevation href="#/new">
-                        <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
-                        <span className="font-body-bold">add new caller</span>
-                    </Button>
-                </div>
-            )}
+
             <div className="home-search">
                 <TextField
+                    className="home-search-input"
                     aria-controls="content"
                     id="input-with-icon-textfield"
                     label="Search by name OR phone number"
@@ -142,7 +143,8 @@ export default function Home() {
                         )
                     }}
                 />
-                {/* Filter by last called date
+                {/* TODO:
+                    Filter by last called date
                     all dates
                     within last 6 months
                     over 6 months ago  
@@ -151,6 +153,14 @@ export default function Home() {
 
                     iconbutton that toggles old only?
                  */}
+                {isType.active && (
+                    <div className="home-add">
+                        <Button className="button-icon" variant="text" disableElevation href="#/new">
+                            <span aria-hidden="true" className="material-symbols-outlined">add_circle</span>
+                            <span className="font-body-bold">add new caller</span>
+                        </Button>
+                    </div>
+                )}
             </div>
             <Content aria-live="polite" id="content" isLoaded/>
         </div>

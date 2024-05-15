@@ -3,11 +3,11 @@ import { formatDate, getName, isOld } from '../utils/utils';
   
 export default function CardList({callers = []}) {
     const list = callers?.map(caller => {
-        const lastCalled = formatDate(caller.callHistory[0].dateTime);
+        const lastCalled = caller.callHistory != null && caller.callHistory.length > 0 ? formatDate(caller.callHistory[0].dateTime) : "Never";
         const name = getName(caller.firstName,caller.lastName);
         const services = [...new Set(caller.callHistory.map(log => log.service))];
         const isArchived = caller.archived.isArchived;
-        const aka = caller.aka.join(', ');
+        const aka = caller.aka;
 
         return (
             <li key={caller.id}>

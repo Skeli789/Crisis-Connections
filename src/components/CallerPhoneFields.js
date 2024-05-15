@@ -23,8 +23,8 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     let label = "Phone Number";
     const helperText = error && 'Enter a valid phone number.';
 
-    label = index === 0 ? `${label} (Required)` : label;
-    
+    label = index === 0 ? <>{label} {isEditMode && <span className="required">(Required)</span>}</> : label;
+
     // number = isNew ? undefined : number.toString();
     number = number.toString();
 
@@ -36,6 +36,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
                     <OutlinedInput
                         label={label}
                         value={number}
+                        autoComplete="nope"
                         error={error}
                         name={`phoneNumber-${index}`}
                         id={`phoneNumber-${index}`}
@@ -62,7 +63,7 @@ const PhoneField = ({number, index, fieldVarient, isEditMode, handleFieldChange,
     ); 
 }
 
-export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, callerList, duplicateData, saveChanges}) {
+export default function PhoneNumbers({isNew, caller, fieldVarient, isEditMode, callerList, duplicateData, saveChanges}) {
     const [numbers, setNumbers] = useState(isNew ? [''] : caller.phoneNumbers.map(num => num.toString()));
     const [allHaveValue, setAllHaveValue] = useState(numbers.every(num => num.length === 10));
     const [duplicates, setDuplicates] = useState([]);
@@ -73,7 +74,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
         setAllHaveValue(false);
     }
 
-    function removeField(index) {
+    const removeField = (index) => {
         const nums = numbers.filter((num, i) => i !== index);
         if (duplicates.some(dupe => dupe.phoneNumber === numbers[index])) {
             const dupes = duplicates.filter(dupe => dupe.phoneNumber !== numbers[index]);
@@ -111,7 +112,7 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
 
         setNumbers(nums);
         setAllHaveValue(nums.every(num => num.length === 10));
-        setFieldWithErrors(nums.map((num, i) => num.length < 10));
+        setFieldWithErrors(nums.map((num, i) => num.length > 0 && num.length < 10));
         duplicateData(dupes);
         setDuplicates(dupes);
         saveChanges('phoneNumbers', nums);
@@ -125,12 +126,13 @@ export default function PhoneNumbers ({isNew, caller, fieldVarient, isEditMode, 
                         {(isEditMode && i !== 0) && (
                             <Button className="phone-group_remove multiple-field_remove" variant="text" disableElevation type='button' onClick={() => removeField(i)}>
                                 <>
-                                    <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                                    <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                                     <span className="a11y-text font-body-bold">Remove phone number:{number}</span>
                                 </>
                             </Button>
                         )}
-                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode} handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i]} />
+                        <PhoneField number={number} index={i} fieldVarient={fieldVarient} isEditMode={isEditMode}
+                                    handleFieldChange={handleFieldChange} isFirst={i === 0} isNew={isNew} error={fieldWithErrors[i]} />
                     </div>
                 )
             })}

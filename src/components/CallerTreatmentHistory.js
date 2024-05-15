@@ -3,34 +3,41 @@ import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, Te
 import { fields, mapSelection } from '../utils/fields.js';
 
 const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatment, textAreaProps, saveChanges}) => {
-    const defaultUndergoing = isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, false);
+    const defaultUndergoing = isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, true);
     const [value, setValue] = useState({ ...item, undergoing: defaultUndergoing });
 
     function handleFieldChange(e, name) {
+        // Update the internal state
         const fieldName = name ? name : e.target.name;
-        const newValue = e.target.value ? e.target.value : e.target.innerText.toLowerCase();
+        const newValue = e.target.value ? e.target.value : e.target.innerText;
         let obj = {...value, [fieldName]: newValue};
-
         setValue(obj);
 
+        // Update the global state
+        if (fieldName === "undergoing") {
+            obj[fieldName] = newValue.toLowerCase();
+        }
         delete obj.showDelete;
         saveChanges(obj, index);
     }
 
     return (
         <>
+            {/* Treatment Header */}
             <div className="history_header">
                 <span aria-hidden="true" className="material-symbols-outlined">medical_services</span>
                 <h3 className="font-title">Treatment</h3>
                 {(isEditMode && item.showDelete) && (
                     <Button className="call-log_remove" variant="text" disableElevation type='button' onClick={() => removeTreatment()}>
                         <>
-                            <span aria-hidden="true" className="material-symbols-outlined red">cancel</span>
+                            <span aria-hidden="true" className="material-symbols-outlined red">delete</span>
                             <span className="a11y-text font-body-bold">Remove treatment</span>
                         </>
                     </Button>
                 )}
             </div>
+
+            {/* Treatment Content */}
             <div className="history_content caller-form_row treatment">
                 {/* Undergoing */}
                 <Autocomplete
@@ -41,6 +48,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     defaultValue={defaultUndergoing}
                     isOptionEqualToValue={isNew ? undefined : (option, value) => option.id === value.id}
                     readOnly={!isEditMode}
+                    forcePopupIcon={isEditMode}
                     onChange={(e) => {handleFieldChange(e, 'undergoing')}}
                     renderInput={(params) => <TextField {...params} readOnly={!isEditMode} variant={fieldVarient} label="Undergoing" />}
                 />
@@ -51,8 +59,8 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     label="Location"
                     InputProps={textAreaProps}
                     variant={fieldVarient}
-                    onChange={(e) => {handleFieldChange(e)}}
-                    defaultValue={isNew ? undefined :  item.location}
+                    onBlur={(e) => {handleFieldChange(e)}}
+                    defaultValue={isNew ? undefined : item.location}
                 />
                 {/* Notes */}
                 <TextField
@@ -61,22 +69,22 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     label="Notes"
                     InputProps={textAreaProps}
                     variant={fieldVarient}
-                    onChange={(e) => {handleFieldChange(e)}}
-                    defaultValue={isNew ? undefined :  item.notes}
+                    onBlur={(e) => {handleFieldChange(e)}}
+                    defaultValue={isNew ? undefined : item.notes}
                 />
             </div>
         </>
     )
 };
 
-export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMode, textAreaProps, saveChanges}) {
+export default function TreatmentHistory({isNew, caller, fieldVarient, isEditMode, textAreaProps, saveChanges}) {
     const newTreatment = {
         undergoing: undefined,
         location: '',
         notes: '',
         showDelete: true
     };
-    const [data, setData] = useState(caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : [newTreatment]);
+    const [data, setData] = useState(caller.currentBehavioralTreatment.length > 0 ? caller.currentBehavioralTreatment : []);
 
     const addTreatment = () => {
         const list = [...data, newTreatment];
@@ -92,6 +100,7 @@ export default function TreatmentHistory ({isNew, caller, fieldVarient, isEditMo
 
     const saveData = (obj, index) => {
         const list = data.map((item, i) => i === index ? obj : item);
+        setData(list);
         saveChanges('currentBehavioralTreatment', list);
     }
 

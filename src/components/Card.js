@@ -1,6 +1,7 @@
 import React from "react";
-import { formatPhoneNumber, getLabelName } from "../utils/utils";
+import { useNavigate } from "react-router-dom";
 import { Button } from '@mui/material';
+import { formatPhoneNumber, getLabelName } from "../utils/utils";
 import OldProfile from "./OldProfile";
   
 export default function Card({
@@ -13,6 +14,12 @@ export default function Card({
     isArchived = false,
     isOld = false
 }) {
+
+    const navigate = useNavigate();
+    const routeChange = () => {
+        let href = `${isArchived ? 'archive' : 'caller'}/${id}`;
+        navigate(href);
+    }
 
     aka = aka ? aka : '-';
 
@@ -29,7 +36,7 @@ export default function Card({
     });
 
     return (
-        <div className='card' data-is-old={isOld}>
+        <div className='card' data-is-old={isOld} onClick={routeChange}>
             {(isOld && !isArchived) && <div className="card-alert"><OldProfile /></div>}
             <dl className='card-data'>
                 <div className='card-data_detail name'>
