@@ -2,12 +2,13 @@
  * The main page of the site.
 */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { createTheme, alpha, getContrastRatio, ThemeProvider } from '@mui/material/styles';
 import {
     createHashRouter,
     RouterProvider,
     Outlet,
+    useNavigate,
 } from "react-router-dom";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -19,6 +20,7 @@ import Footer from "./components/Footer";
 import Home from "./Routes/Home";
 import Caller from "./Routes/Caller";
 import Error404 from "./Routes/Error404";
+import Login from "./Routes/Login";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
@@ -66,6 +68,10 @@ const router = createHashRouter([
             element: <Caller />
         },
         {
+            path: "login",
+            element: <Login />
+        },
+        {
             path: '*',
             element: <Error404/>
         },
@@ -78,6 +84,15 @@ const router = createHashRouter([
 ]);
 
 function App() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const user = localStorage.getItem('user');
+        if (!user) {
+            navigate('/login');
+        }
+    }, [navigate]);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <RouterProvider router={router} />

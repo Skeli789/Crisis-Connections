@@ -6,6 +6,7 @@ import { sortByCallHistory } from '../utils/utils.js';
 import { fields, mapSelection } from '../utils/fields.js';
 
 const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAreaProps, handleFieldChange}) => {
+    const userName = localStorage.getItem('user') || ''; // Retrieve user's name from local storage if available
     return (
         <>
             {/* Call Log Header */}
@@ -55,7 +56,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                     <TextField id={`caller-log-with-${index}`}
                         label="With"
                         variant={fieldVarient}
-                        defaultValue={isNew ? undefined : log.with}
+                        defaultValue={isNew ? '' : log.with || userName} // Populate with user's name if available
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }}
                     />
@@ -78,7 +79,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
 export default function CallHistory({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
     const initialEmpty = isNew || caller.callHistory.length === 0;
     // TODO: Prefill "with" name using login information, if possible
-    const newLog = {dateTime: Date.now(), service: undefined, with: '', notes: '', showDelete: true};
+    const newLog = {dateTime: Date.now(), service: undefined, with: localStorage.getItem('user') || '', notes: '', showDelete: true}; // Prefill "with" field with user's name from local storage if available
     const [history, setHistory] = useState(initialEmpty ? [] : caller.callHistory.map(log => { return {...log, showDelete: false } }));
 
     const addLog = () => {
