@@ -2,7 +2,7 @@
     background: var(--gradient-bkg-dark);
     color: var(--color-blue-dark);
     /* text-align: center; */
-    margin-top: 40px;
+    margin-top: 1%;
     min-height: 200px;
     display: flex;
     flex-direction: column;

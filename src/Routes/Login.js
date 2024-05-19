@@ -1,36 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUser, setUser } from '../utils/utils';
+
+import '../styles/routes/Login.css';
 
 export default function Login() {
     const [name, setName] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        const user = localStorage.getItem('user');
+        const user = getUser();
         if (user) {
-            navigate('/');
+            navigate('/'); // Redirect to home page if user is already logged in
         }
     }, [navigate]);
 
     const handleLogin = (e) => {
         e.preventDefault();
         if (name !== '') {
-            localStorage.setItem('user', name);
-            navigate('/');
+            setUser(name); // Save the user
+            navigate('/'); // Redirect to home page
+            window.location.reload(); // Force a reload to ensure the user is set in local storage
         }
     };
-
-    useEffect(() => {
-        const clearUser = () => {
-            const now = new Date();
-            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-            const msUntilEndOfDay = endOfDay - now;
-            setTimeout(() => {
-                localStorage.removeItem('user');
-            }, msUntilEndOfDay);
-        };
-        clearUser();
-    }, []);
 
     return (
         <div className="login-container">

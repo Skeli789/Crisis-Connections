@@ -4,7 +4,6 @@ import { fields, mapSelection } from '../utils/fields.js';
 
 const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatment, textAreaProps, saveChanges}) => {
     const defaultUndergoing = isNew || !item.undergoing ? undefined : mapSelection(item.undergoing, true);
-    const userName = localStorage.getItem('user') || ''; // Retrieve user's name from local storage if available
     const [value, setValue] = useState({ ...item, undergoing: defaultUndergoing });
 
     function handleFieldChange(e, name) {
@@ -61,7 +60,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     InputProps={textAreaProps}
                     variant={fieldVarient}
                     onBlur={(e) => {handleFieldChange(e)}}
-                    defaultValue={isNew ? undefined : item.location || userName} // Populate with user's name if available
+                    defaultValue={isNew ? undefined : item.location}
                 />
                 {/* Notes */}
                 <TextField
@@ -71,7 +70,7 @@ const Treatment = ({isNew, item, fieldVarient, isEditMode, index, removeTreatmen
                     InputProps={textAreaProps}
                     variant={fieldVarient}
                     onBlur={(e) => {handleFieldChange(e)}}
-                    defaultValue={isNew ? undefined : item.notes || userName} // Populate with user's name if available
+                    defaultValue={isNew ? undefined : item.notes}
                 />
             </div>
         </>

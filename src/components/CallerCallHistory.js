@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, TextField } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { sortByCallHistory } from '../utils/utils.js';
+import { getUser, sortByCallHistory } from '../utils/utils.js';
 import { fields, mapSelection } from '../utils/fields.js';
 
 const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAreaProps, handleFieldChange}) => {
-    const userName = localStorage.getItem('user') || ''; // Retrieve user's name from local storage if available
+    const userName = getUser();
     return (
         <>
             {/* Call Log Header */}
@@ -56,7 +56,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
                     <TextField id={`caller-log-with-${index}`}
                         label="With"
                         variant={fieldVarient}
-                        defaultValue={isNew ? '' : log.with || userName} // Populate with user's name if available
+                        defaultValue={isNew ? userName : log.with ? log.with : ""} // Populate with user's name if available
                         readOnly={!isEditMode}
                         onBlur={(e) => { handleFieldChange(e.target.value, 'with', index) }}
                     />
@@ -78,8 +78,7 @@ const CallLog = ({log, index, isNew, fieldVarient, isEditMode, removeLog, textAr
 
 export default function CallHistory({isNew, fieldVarient, isEditMode, caller, textAreaProps, saveChanges}) {
     const initialEmpty = isNew || caller.callHistory.length === 0;
-    // TODO: Prefill "with" name using login information, if possible
-    const newLog = {dateTime: Date.now(), service: undefined, with: localStorage.getItem('user') || '', notes: '', showDelete: true}; // Prefill "with" field with user's name from local storage if available
+    const newLog = {dateTime: Date.now(), service: undefined, with: getUser(), notes: '', showDelete: true}; // Prefill "with" field with user's name
     const [history, setHistory] = useState(initialEmpty ? [] : caller.callHistory.map(log => { return {...log, showDelete: false } }));
 
     const addLog = () => {

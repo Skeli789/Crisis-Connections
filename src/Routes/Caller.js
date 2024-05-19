@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, Button, Box, CircularProgress, Snackbar, TextField } from '@mui/material';
 import { getActiveCallers, getArchivedCallers, saveNewCaller, saveUpdatedCaller, baseUser } from '../utils/api';
 import { requiredFields } from '../utils/fields';
-import { formatPhoneNumber, getName, isOld, sortByCallHistory } from '../utils/utils';
+import { formatPhoneNumber, getName, getUser, isOld, sortByCallHistory } from '../utils/utils';
 
 import OldProfile from '../components/OldProfile';
 import CallerPhoneFields from '../components/CallerPhoneFields';
@@ -122,8 +122,7 @@ export default function Caller() {
     }
 
     async function handleArchive(reason) {
-        // TODO: fill by with logged in user information if possible.
-        const user = {...caller, archived: { isArchived: true, by: "", dateTime: Date.now(), reason: reason }};
+        const user = {...caller, archived: { isArchived: true, by: getUser() || 'Unknown User', dateTime: Date.now(), reason: reason }};
         setIsArchived(true);
         setEditedUser(user);
         await handleFormSave(user, "Profile successfully archived!");
@@ -135,7 +134,7 @@ export default function Caller() {
         if (user.callHistory.length > 0) {
             let sortedCallHistory = sortByCallHistory(user.callHistory);
             let lastService = sortedCallHistory[sortedCallHistory.length - 1].service; // Use the last service from the call history and user can edit if need be
-            user.callHistory.push({dateTime: Date.now(), service: lastService, with: "", notes: "Added by reactivation."}); // TODO: Populate with logged in user information if possible
+            user.callHistory.push({dateTime: Date.now(), service: lastService, with: getUser() || 'Unknown User', notes: "Added by reactivation."});
         }
 
         setIsArchived(false);
@@ -196,7 +195,7 @@ export default function Caller() {
 
         // set last updated to now
         changedProfile.lastUpdated = {
-            by: "", // TODO: Replace with logged in user information if possible
+            by: getUser() || 'Unknown User',
             dateTime: Date.now(),
         }
 

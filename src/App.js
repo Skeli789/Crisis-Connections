@@ -2,13 +2,12 @@
  * The main page of the site.
 */
 
-import React, { useEffect } from "react";
+import React from "react";
 import { createTheme, alpha, getContrastRatio, ThemeProvider } from '@mui/material/styles';
 import {
     createHashRouter,
     RouterProvider,
     Outlet,
-    useNavigate,
 } from "react-router-dom";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -21,6 +20,7 @@ import Home from "./Routes/Home";
 import Caller from "./Routes/Caller";
 import Error404 from "./Routes/Error404";
 import Login from "./Routes/Login";
+import { getUser } from "./utils/utils";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
@@ -83,21 +83,35 @@ const router = createHashRouter([
     },
 ]);
 
-function App() {
-    const navigate = useNavigate();
+const loginOnlyRouter = createHashRouter([
+    {
+        element: <AppLayout />,
+        children: [
+            {
+                path: '*',
+                element: <Login/>
+            }
+        ]
+    }
+]);
 
-    useEffect(() => {
-        const user = localStorage.getItem('user');
-        if (!user) {
-            navigate('/login');
-        }
-    }, [navigate]);
 
-    return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <RouterProvider router={router} />
-        </LocalizationProvider>
-    );
+const App = () => {
+    const user = getUser();
+    if (!user) {
+        // Always show the login page if the user is not logged in
+        return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <RouterProvider router={loginOnlyRouter} />
+            </LocalizationProvider>
+        );
+    } else {
+        return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <RouterProvider router={router} />
+            </LocalizationProvider>
+        );
+    }
 }
 
 export default App;
