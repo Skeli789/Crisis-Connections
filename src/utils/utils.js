@@ -108,8 +108,34 @@ export function isOld(date) {
     return dayjs(date).isBefore(sixMonthsAgo, 'day');
 }
 
+/**
+ * A helper function that gets the name of the user from local storage.
+ * 
+ * @returns {string} The user's name or empty string.
+ */
+
+export function getUser() {
+    return localStorage.getItem('user') || '';
+}
+
+/**
+ * Sets the user in the local storage.
+ * 
+ * @param {string} name - The name of the user.
+ */
+export function setUser(name) {
+    localStorage.setItem('user', name);
+}
+
+/**
+ * Removes the user from the local storage.
+ */
+export function removeUser() {
+    localStorage.removeItem('user');
+}
+
 /***********************************************************/
 
-const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, isOld, sortByCallHistory, sortCallers };
+const helperFunctions = { formatDate, formatPhoneNumber, getLabelName, getName, isOld, getUser, setUser, removeUser, sortByCallHistory, sortCallers };
 
 export default helperFunctions;

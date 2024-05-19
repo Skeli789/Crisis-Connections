@@ -1,11 +1,14 @@
 nav {
     box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 nav .logos {
     display: flex;
     align-items: center;
-    background: var(--gradient-bkg);
+    background: var(--gradient-nav);
 }
 
 .logos-main {
@@ -22,6 +25,7 @@ nav .main {
     display: flex;
     align-items: center;
     margin-right: 36px;
+    background: rgba(255, 255, 255, 1);
 }
 
 .nav-heading {

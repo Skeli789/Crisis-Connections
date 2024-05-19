@@ -19,6 +19,8 @@ import Footer from "./components/Footer";
 import Home from "./Routes/Home";
 import Caller from "./Routes/Caller";
 import Error404 from "./Routes/Error404";
+import Login from "./Routes/Login";
+import { getUser } from "./utils/utils";
 
 // This CSS must go below the module imports!
 import './styles/App.css';
@@ -66,6 +68,10 @@ const router = createHashRouter([
             element: <Caller />
         },
         {
+            path: "login",
+            element: <Login />
+        },
+        {
             path: '*',
             element: <Error404/>
         },
@@ -77,12 +83,35 @@ const router = createHashRouter([
     },
 ]);
 
-function App() {
-    return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <RouterProvider router={router} />
-        </LocalizationProvider>
-    );
+const loginOnlyRouter = createHashRouter([
+    {
+        element: <AppLayout />,
+        children: [
+            {
+                path: '*',
+                element: <Login/>
+            }
+        ]
+    }
+]);
+
+
+const App = () => {
+    const user = getUser();
+    if (!user) {
+        // Always show the login page if the user is not logged in
+        return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <RouterProvider router={loginOnlyRouter} />
+            </LocalizationProvider>
+        );
+    } else {
+        return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <RouterProvider router={router} />
+            </LocalizationProvider>
+        );
+    }
 }
 
 export default App;

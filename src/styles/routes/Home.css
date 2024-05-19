@@ -1,3 +1,7 @@
+.home {
+    height: 100%;
+}
+
 .home-search {
     margin-top: 32px;
     display: flex;

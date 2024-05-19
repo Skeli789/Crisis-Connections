@@ -1,18 +1,26 @@
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
-import { getLabelName } from "../utils/utils";
+import { Link, useNavigate } from 'react-router-dom';
+import { getLabelName, getUser, removeUser } from "../utils/utils";
 import { hotlines } from '../utils/fields';
 
 function LogOut() {
+    const navigate = useNavigate();
+    
+    function logOut() {
+        // Remove user from local storage
+        removeUser();
+        // Redirect to login page
+        navigate('/login');
+        window.location.reload(); // Force a reload to ensure the user is removed from local storage
+    }
+
     const btn = (
-        <Button variant="text" disableElevation>
+        <Button variant="text" onClick={logOut} disableElevation>
             <span className="font-body-bold">Log out</span>
         </Button>
     );
-    
-    const isSignedIn = true; // TODO: Replace with login info
 
-    return isSignedIn ? btn : null;
+    return btn;
 }
 
 const logos = hotlines.map(hotline => {
@@ -22,6 +30,7 @@ const logos = hotlines.map(hotline => {
 });
   
 export default function NavBar() {
+    const userName = getUser();
     return (
         <nav>
             <div className="logos page-padding">
@@ -30,11 +39,24 @@ export default function NavBar() {
             </div>
             <section className="main page-padding">
                 <div className="nav-heading">
-                    <Link to="/">
-                        <span className="nav-heading_text font-heading">Frequent Callers</span>
-                    </Link>
+                {
+                    userName ?
+                        <Link to="/">
+                            <span className="nav-heading_text font-heading">Frequent Callers</span>
+                        </Link>
+                    :
+                        <Link to="/login">
+                            <span className="nav-heading_text font-heading">Login</span>
+                        </Link>
+                }
                 </div>
-                <LogOut />
+                {
+                    userName &&
+                        <div>
+                            <span className="font-heading">Welcome, {userName}</span>
+                            <LogOut />
+                        </div>
+                }
             </section>
         </nav>
     );
