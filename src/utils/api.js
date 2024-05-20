@@ -39,17 +39,22 @@ export async function getArchivedCallers() {
 };
 
 export async function saveNewCaller(caller) {
-  let response;
-  if (!testEnv) {
-      response = await axios.put(addNewCaller, caller);
-  }
-  return response.data;
+    let response;
+    if (!testEnv) {
+        response = await axios.put(addNewCaller, caller);
+    } else {
+        caller.id = 1;
+        response = {data: caller};
+    }
+    return response.data;
 }
 
 export async function saveUpdatedCaller(caller) {
     let response;
     if (!testEnv) {
         response = await axios.put(updateExistingCaller, caller);
+    } else {
+        response = {data: caller};
     }
     return response.data;
 }

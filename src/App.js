@@ -42,8 +42,10 @@ const theme = createTheme({
 const AppLayout = () => (
     <ThemeProvider theme={theme}>
         <NavBar />
-        <Outlet />
-        <Footer />
+        <div className="main-container">
+            <Outlet />
+            <Footer />
+        </div>
     </ThemeProvider>
 );
 

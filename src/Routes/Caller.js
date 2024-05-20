@@ -73,7 +73,7 @@ export default function Caller() {
             params = pathname.split('/'),
             type = params[1],
             isNew = type === 'new',
-            callerId = parseInt(params[2]);
+            callerId = !isNaN(params[2]) ? parseInt(params[2]) : params[2];
     // State Variables
     const   [isEditMode, setIsEditMode] = useState(isNew ? true : false),
             [editedUser, setEditedUser] = useState({...baseUser}),

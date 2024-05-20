@@ -19,6 +19,7 @@ export default function Card({
     const routeChange = () => {
         let href = `${isArchived ? 'archive' : 'caller'}/${id}`;
         navigate(href);
+        window.scrollTo(0, 0);
     }
 
     aka = aka ? aka : '-';

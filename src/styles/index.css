@@ -9,9 +9,14 @@
     margin: 0;
 }
 
+html {
+    height: 100%;
+}
+
 body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    height: 100%;
 }
 
 img, picture, video, canvas, svg {
@@ -30,12 +35,18 @@ p, h1, h2, h3, h4, h5, h6 {
 #root {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
+    height: 100%;
 }
 
 #root, #__next {
     isolation: isolate;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
 }
 
 fieldset {
