@@ -31,8 +31,9 @@
     "@testing-library/user-event": "^14.5.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start-client": "react-scripts start",
+    "start": "cd server && yarn start",
+    "build": "react-scripts build && (cd server && yarn install)",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

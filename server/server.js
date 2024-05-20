@@ -1,17 +1,19 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors');
+const path = require('path');
 const {StatusCode} = require('status-code-enum');
 const database = require('./database.js');
 const util = require('./util.js');
 require('dotenv').config({path: __dirname + '/.env'});
 
-app.use(cors());
+const buildPath = path.join(__dirname, '..', 'build');
+
+app.use(express.static(buildPath)); //For the production server
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const gServer = app.listen(port, () =>
 {
     console.log(`server running on ${port}`);
@@ -142,6 +144,22 @@ app.put('/updatesinglecaller', async (req, res) =>
 
     await database.CloseDatabase(connectionId);
     return res.status(statusCode).send(retObj);
+});
+
+//Must get at the end of the file!
+/*
+ * Endpoint: /
+ * Returns the base webpage of the site.
+*/
+app.get('/*', function (req, res)
+{
+    // Split the homepage off of the request URL
+    let file = req.url.split('/Crisis-Connections')[1];
+    if (file === "/" || file === "")
+        file = "index.html";
+
+    // Send the file
+    res.sendFile(path.join(buildPath, file));
 });
 
 module.exports = app;
